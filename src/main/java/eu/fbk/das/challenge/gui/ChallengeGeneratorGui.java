@@ -14,6 +14,7 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -104,10 +105,14 @@ public class ChallengeGeneratorGui {
 		// "green leaves", "", "", "green leaves week 6 < 20", "",
 		// "" } };
 		challengeTable = new JTable(null, challengeColNames);
+		challengeTable.setDragEnabled(true);
+		challengeTable.setDropMode(DropMode.INSERT_ROWS);
+		challengeTable.setTransferHandler(new TableRowTransferHandler(
+				challengeTable));
 		challengeTable.setRowHeight(20);
 		challengeTable.setModel(new DefaultTableModel(null, challengeColNames));
-		challengeTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-		challengeTable.getColumnModel().getColumn(0).setMinWidth(100);
+		challengeTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+		challengeTable.getColumnModel().getColumn(0).setMinWidth(50);
 		challengeTable.getColumnModel().getColumn(1).setMinWidth(75);
 		challengeTable.getColumnModel().getColumn(2).setMinWidth(50);
 		challengeTable.getColumnModel().getColumn(3).setMinWidth(20);
@@ -121,6 +126,7 @@ public class ChallengeGeneratorGui {
 		challengeTable.getColumnModel().getColumn(9).setMinWidth(100);
 		challengeTable.getColumnModel().getColumn(10).setPreferredWidth(100);
 		challengeTable.getColumnModel().getColumn(10).setMinWidth(100);
+
 		challengeTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		challengeTable.setFillsViewportHeight(true);
 
@@ -128,12 +134,13 @@ public class ChallengeGeneratorGui {
 		scrollpane.setPreferredSize(new Dimension(652, 402));
 		JSplitPane jsplitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				scrollpane, analytics);
+		jsplitpane.setOpaque(false);
 		jsplitpane.setOneTouchExpandable(true);
 		jsplitpane.setPreferredSize(new Dimension(669, 500));
 
 		GridBagConstraints gbc_configurationPanel = new GridBagConstraints();
 		gbc_configurationPanel.insets = new Insets(5, 5, 5, 0);
-		gbc_configurationPanel.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc_configurationPanel.anchor = GridBagConstraints.NORTH;
 		gbc_configurationPanel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_configurationPanel.gridx = 0;
 		gbc_configurationPanel.gridy = 0;
@@ -198,7 +205,6 @@ public class ChallengeGeneratorGui {
 		GridBagConstraints gbcsplit = new GridBagConstraints();
 		gbcsplit.gridheight = 2;
 		gbcsplit.insets = new Insets(0, 5, 5, 0);
-		gbcsplit.anchor = GridBagConstraints.FIRST_LINE_START;
 		gbcsplit.fill = GridBagConstraints.BOTH;
 		gbcsplit.gridx = 0;
 		gbcsplit.gridy = 1;
@@ -218,7 +224,7 @@ public class ChallengeGeneratorGui {
 		GridBagConstraints gbc_logList = new GridBagConstraints();
 		gbc_logList.insets = new Insets(0, 5, 5, 0);
 		gbc_logList.weighty = 1.0;
-		gbc_logList.anchor = GridBagConstraints.LAST_LINE_END;
+		gbc_logList.anchor = GridBagConstraints.SOUTH;
 		gbc_logList.fill = GridBagConstraints.BOTH;
 		gbc_logList.gridx = 0;
 		gbc_logList.gridy = 3;

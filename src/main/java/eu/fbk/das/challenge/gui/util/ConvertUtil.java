@@ -12,9 +12,6 @@ public class ConvertUtil {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Vector convertChallenge(ChallengeRuleRow crr) {
 		Vector result = new Vector();
-		// { "w1_challengeY", "Percent", "carDistance", "2", "400",
-		// "green leaves", "", "", "green leaves week 6 < 20", "",
-		// "" } };
 		result.add(crr.getName());
 		result.add(crr.getType());
 		result.add(crr.getGoalType());

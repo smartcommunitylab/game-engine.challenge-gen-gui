@@ -7,10 +7,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -34,6 +36,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,7 +58,7 @@ public class ChallengeGeneratorGui {
 
 	private JTable challengeTable;
 
-	private JFrame app;
+	private static JFrame app;
 
 	private JButton btnCheckConnection;
 
@@ -65,12 +68,21 @@ public class ChallengeGeneratorGui {
 			"Goal Type", "Target", "Bonus", "Point type", "Difficulty",
 			"Baseline variable", "Selection criteria Custom data",
 			"Selectin criteria points", "Selection criteria badges" };
+	private JTextField gameIdField;
+
+	private JMenuItem mntmUpload;
+
+	private JMenuItem mntmGenerate;
+
+	private JList<String> logList;
 
 	public ChallengeGeneratorGui() {
+		logger.info("Gui creation");
 		app = new JFrame("ChallengeGeneratorGui");
 		app.setMinimumSize(new Dimension(1024, 768));
 		app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		app.setSize(new Dimension(800, 600));
+		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -126,7 +138,7 @@ public class ChallengeGeneratorGui {
 		gbc_configurationPanel.gridx = 0;
 		gbc_configurationPanel.gridy = 0;
 		gbc_configurationPanel.weightx = 1.0;
-		gbc_configurationPanel.weighty = 0.2;
+		gbc_configurationPanel.weighty = 0.1;
 
 		centerPanel.add(configurationPanel, gbc_configurationPanel);
 
@@ -140,7 +152,7 @@ public class ChallengeGeneratorGui {
 		hostLabel.setLabelFor(hostTextField);
 		hostTextField.setPreferredSize(new Dimension(200, 20));
 		configurationPanel.add(hostTextField);
-		hostTextField.setColumns(30);
+		hostTextField.setColumns(25);
 
 		JLabel userLabel = new JLabel("Username");
 		userLabel.setMinimumSize(new Dimension(200, 14));
@@ -161,6 +173,7 @@ public class ChallengeGeneratorGui {
 		passwordTextField.setColumns(15);
 
 		btnCheckConnection = new JButton("check connection");
+		btnCheckConnection.setEnabled(false);
 		btnCheckConnection.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -171,6 +184,15 @@ public class ChallengeGeneratorGui {
 			}
 
 		});
+
+		JLabel gameIdLabel = new JLabel("GameID");
+		gameIdLabel.setMinimumSize(new Dimension(200, 14));
+		configurationPanel.add(gameIdLabel);
+
+		gameIdField = new JTextField();
+		gameIdField.setMinimumSize(new Dimension(200, 20));
+		gameIdField.setColumns(15);
+		configurationPanel.add(gameIdField);
 		configurationPanel.add(btnCheckConnection);
 
 		GridBagConstraints gbcsplit = new GridBagConstraints();
@@ -191,7 +213,7 @@ public class ChallengeGeneratorGui {
 
 		panel.add(centerPanel, BorderLayout.CENTER);
 
-		JList logList = new JList();
+		logList = new JList<String>();
 		logList.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		GridBagConstraints gbc_logList = new GridBagConstraints();
 		gbc_logList.insets = new Insets(0, 5, 5, 0);
@@ -211,6 +233,7 @@ public class ChallengeGeneratorGui {
 		menuBar.add(mnNewMenu);
 
 		JMenuItem mntmNewMenuItem = new JMenuItem("New");
+		mntmNewMenuItem.setEnabled(false);
 		mntmNewMenuItem.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -250,18 +273,28 @@ public class ChallengeGeneratorGui {
 		mnNewMenu.add(mntmOpenMenuItem);
 
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Save");
+		mntmNewMenuItem_2.setEnabled(false);
 		mnNewMenu.add(mntmNewMenuItem_2);
 
 		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Exit");
+		mntmNewMenuItem_3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				System.exit(0);
+			}
+		});
 		mnNewMenu.add(mntmNewMenuItem_3);
 
 		JMenu mnChallenges = new JMenu("Challenges");
 		menuBar.add(mnChallenges);
 
-		JMenuItem mntmGenerate = new JMenuItem("Generate");
+		mntmGenerate = new JMenuItem("Generate");
+		mntmGenerate.setEnabled(false);
+		mntmGenerate.setAction(new GenerateAction());
 		mnChallenges.add(mntmGenerate);
 
-		JMenuItem mntmUpload = new JMenuItem("Upload");
+		mntmUpload = new JMenuItem("Upload");
+		mntmUpload.setEnabled(false);
 		mnChallenges.add(mntmUpload);
 
 		JPanel statusBarPanel = new JPanel();
@@ -317,6 +350,7 @@ public class ChallengeGeneratorGui {
 			statusBar.setForeground(Color.black);
 		}
 		statusBar.setText(text);
+		refresh();
 	}
 
 	public void setHost(String host) {
@@ -329,5 +363,53 @@ public class ChallengeGeneratorGui {
 
 	public void setPassword(String psw) {
 		passwordTextField.setText(psw);
+	}
+
+	public String getHost() {
+		return hostTextField.getText();
+	}
+
+	public String getUser() {
+		return userTextField.getText();
+	}
+
+	public String getPassword() {
+		return String.valueOf(passwordTextField.getPassword());
+	}
+
+	public void enableCheckConnection(boolean b) {
+		btnCheckConnection.setEnabled(b);
+	}
+
+	public void setGameId(String gameId) {
+		gameIdField.setText(gameId);
+	}
+
+	public void enableGenerate(boolean b) {
+		mntmGenerate.setEnabled(b);
+	}
+
+	private class GenerateAction extends AbstractAction {
+		private static final long serialVersionUID = 7562917295725963136L;
+
+		public GenerateAction() {
+			putValue(NAME, "Generate");
+			putValue(SHORT_DESCRIPTION, "Challenge generation");
+			setEnabled(false);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			controller.generate();
+		}
+	}
+
+	public String getGameId() {
+		return gameIdField.getText();
+	}
+
+	public void addLog(String log) {
+		String[] listData = StringUtils.split(log, "\n");
+		logList.setListData(listData);
+		refresh();
 	}
 }

@@ -8,6 +8,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,6 +25,10 @@ public class ChallengeGuiController {
 
 	private ChallengeRules challenges;
 	private ChallengeGeneratorGui window;
+
+	private String input;
+	private String templateDir;
+	private String output;
 
 	public ChallengeGuiController() {
 		init();
@@ -51,6 +57,8 @@ public class ChallengeGuiController {
 	public void openChallenges(File f) {
 		// load basic properties from file
 		loadPropertiesFromFile();
+		// unlock check connection button
+		window.enableCheckConnection(true);
 		// open challenges file
 		ChallengeRules temp = null;
 		try {
@@ -84,6 +92,10 @@ public class ChallengeGuiController {
 		window.setUser(user);
 		String psw = PropertiesUtil.get(PropertiesUtil.PASSWORD);
 		window.setPassword(psw);
+		String gameId = PropertiesUtil.get(PropertiesUtil.GAMEID);
+		window.setGameId(gameId);
+		templateDir = PropertiesUtil.get(PropertiesUtil.TEMPLATE_DIR);
+		output = "output.json";
 	}
 
 	public void checkConnection(String host, String user, char[] password) {
@@ -106,6 +118,7 @@ public class ChallengeGuiController {
 			window.setStatusBar(
 					"Connection parameters to gamification engine are ok",
 					false);
+			window.enableGenerate(true);
 		} else {
 			window.setStatusBar(
 					"Error in connection parameters to gamification engine",
@@ -127,5 +140,23 @@ public class ChallengeGuiController {
 			return false;
 		}
 
+	}
+
+	public void generate() {
+		String host = window.getHost();
+		String gameId = window.getGameId();
+		String username = window.getUser();
+		String password = window.getPassword();
+		window.setStatusBar("Challenge generation in progress", false);
+		SwingUtilities.invokeLater(new ChallengeRunnable(this, host, gameId,
+				challenges, templateDir, output, username, password));
+	}
+
+	public void setStatusBar(String text, boolean b) {
+		window.setStatusBar(text, b);
+	}
+
+	public void addLog(String log) {
+		window.addLog(log);
 	}
 }

@@ -255,7 +255,6 @@ public class ChallengeGeneratorGui {
 		menuBar.add(mnNewMenu);
 
 		JMenuItem mntmNewMenuItem = new JMenuItem("New");
-		mntmNewMenuItem.setEnabled(false);
 		mntmNewMenuItem.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -294,9 +293,35 @@ public class ChallengeGeneratorGui {
 		});
 		mnNewMenu.add(mntmOpenMenuItem);
 
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Save");
-		mntmNewMenuItem_2.setEnabled(false);
-		mnNewMenu.add(mntmNewMenuItem_2);
+		JMenuItem mntmSaveMenuItem = new JMenuItem("Save");
+		mntmSaveMenuItem.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				JFileChooser chooser = new JFileChooser() {
+
+					private static final long serialVersionUID = 7489308134784417097L;
+
+					@Override
+					public void approveSelection() {
+						File f = getSelectedFile();
+						if (!f.getAbsolutePath().toLowerCase().endsWith(".csv")) {
+							f = new File(f.getAbsolutePath() + ".csv");
+						}
+						logger.info("Save challenges to " + f.getAbsolutePath());
+						super.approveSelection();
+						controller.saveChallenges(f,
+								(DefaultTableModel) challengeTable.getModel());
+					}
+
+				};
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"Comma separated file (.csv)", "csv");
+				chooser.setFileFilter(filter);
+				chooser.showSaveDialog(null);
+			}
+		});
+		mnNewMenu.add(mntmSaveMenuItem);
 
 		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Exit");
 		mntmNewMenuItem_3.addMouseListener(new MouseAdapter() {

@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
@@ -36,6 +38,7 @@ public class ChallengeGuiController {
 
 	private void init() {
 		challenges = new ChallengeRules();
+		challenges.getChallenges().add(new ChallengeRuleRow());
 	}
 
 	/**
@@ -166,5 +169,14 @@ public class ChallengeGuiController {
 	public void removeChallenge(int index) {
 		challenges.getChallenges().remove(index);
 		window.setChallenges(challenges);
+	}
+
+	public void saveChallenges(File f, DefaultTableModel defaultTableModel) {
+		try {
+			ChallengeRulesLoader.write(f,
+					ConvertUtil.convertTable(defaultTableModel));
+		} catch (IllegalArgumentException | IOException e) {
+			logger.error(e);
+		}
 	}
 }

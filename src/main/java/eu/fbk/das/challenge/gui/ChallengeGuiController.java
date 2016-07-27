@@ -157,9 +157,14 @@ public class ChallengeGuiController {
 		window.addLog(log);
 	}
 
-	public void addChallenge() {
+	public void addChallenge(int index) {
 		ChallengeRuleRow row = new ChallengeRuleRow();
-		challenges.add(row);
+		challenges.getChallenges().add(index, row);
+		window.setChallenges(challenges);
+	}
+
+	public void removeChallenge(int index) {
+		challenges.getChallenges().remove(index);
 		window.setChallenges(challenges);
 	}
 }

@@ -79,7 +79,8 @@ public class ChallengeGeneratorGui {
 	private JMenuItem mntmGenerate;
 
 	private JList<String> logList;
-	private final Action action = new SwingAction();
+	private final Action insertAction = new InsertAction();
+	private final Action deleteAction = new DeleteAction();
 
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
@@ -140,10 +141,11 @@ public class ChallengeGeneratorGui {
 		addPopup(challengeTable, popupMenu);
 
 		JMenuItem mntmInsert = new JMenuItem("Insert");
-		mntmInsert.setAction(action);
+		mntmInsert.setAction(insertAction);
 		popupMenu.add(mntmInsert);
 
 		JMenuItem mntmDelete = new JMenuItem("Delete");
+		mntmDelete.setAction(deleteAction);
 		popupMenu.add(mntmDelete);
 		scrollpane.setPreferredSize(new Dimension(652, 402));
 		JSplitPane jsplitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -453,14 +455,34 @@ public class ChallengeGeneratorGui {
 		});
 	}
 
-	private class SwingAction extends AbstractAction {
-		public SwingAction() {
+	private class InsertAction extends AbstractAction {
+		private static final long serialVersionUID = 7597057801468846067L;
+
+		public InsertAction() {
 			putValue(NAME, "Insert");
-			putValue(SHORT_DESCRIPTION, "Insert new blank challenge");
+			putValue(SHORT_DESCRIPTION, "Insert new challenge");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			controller.addChallenge();
+			if (challengeTable.getSelectedRow() != -1) {
+				controller.addChallenge(challengeTable.getSelectedRow());
+			}
 		}
 	}
+
+	private class DeleteAction extends AbstractAction {
+		private static final long serialVersionUID = 4637589614176994853L;
+
+		public DeleteAction() {
+			putValue(NAME, "Delete");
+			putValue(SHORT_DESCRIPTION, "Delete selected challenge");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			if (challengeTable.getSelectedRow() != -1) {
+				controller.removeChallenge(challengeTable.getSelectedRow());
+			}
+		}
+	}
+
 }

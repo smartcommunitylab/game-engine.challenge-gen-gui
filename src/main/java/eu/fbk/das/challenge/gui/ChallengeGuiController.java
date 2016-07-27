@@ -46,8 +46,6 @@ public class ChallengeGuiController {
 		init();
 		// set data
 		window.setChallenges(challenges);
-		// refresh window
-		window.refresh();
 	}
 
 	public void setWindow(ChallengeGeneratorGui window) {
@@ -77,7 +75,6 @@ public class ChallengeGuiController {
 			}
 			// set data and refresh window
 			window.setChallenges(challenges);
-			window.refresh();
 		} else {
 			logger.info("Challenges not loaded from file "
 					+ f.getAbsolutePath());
@@ -158,5 +155,11 @@ public class ChallengeGuiController {
 
 	public void addLog(String log) {
 		window.addLog(log);
+	}
+
+	public void addChallenge() {
+		ChallengeRuleRow row = new ChallengeRuleRow();
+		challenges.add(row);
+		window.setChallenges(challenges);
 	}
 }

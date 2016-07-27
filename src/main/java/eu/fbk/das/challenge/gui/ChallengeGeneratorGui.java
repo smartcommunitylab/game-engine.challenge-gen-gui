@@ -2,6 +2,7 @@ package eu.fbk.das.challenge.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -13,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DropMode;
 import javax.swing.JButton;
@@ -25,6 +27,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -76,6 +79,7 @@ public class ChallengeGeneratorGui {
 	private JMenuItem mntmGenerate;
 
 	private JList<String> logList;
+	private final Action action = new SwingAction();
 
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
@@ -131,6 +135,16 @@ public class ChallengeGeneratorGui {
 		challengeTable.setFillsViewportHeight(true);
 
 		JScrollPane scrollpane = new JScrollPane(challengeTable);
+
+		JPopupMenu popupMenu = new JPopupMenu();
+		addPopup(challengeTable, popupMenu);
+
+		JMenuItem mntmInsert = new JMenuItem("Insert");
+		mntmInsert.setAction(action);
+		popupMenu.add(mntmInsert);
+
+		JMenuItem mntmDelete = new JMenuItem("Delete");
+		popupMenu.add(mntmDelete);
 		scrollpane.setPreferredSize(new Dimension(652, 402));
 		JSplitPane jsplitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				scrollpane, analytics);
@@ -341,7 +355,7 @@ public class ChallengeGeneratorGui {
 			}
 			challengeTable.setModel(model);
 		}
-
+		refresh();
 	}
 
 	public void refresh() {
@@ -417,5 +431,36 @@ public class ChallengeGeneratorGui {
 		String[] listData = StringUtils.split(log, "\n");
 		logList.setListData(listData);
 		refresh();
+	}
+
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
+	}
+
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "Insert");
+			putValue(SHORT_DESCRIPTION, "Insert new blank challenge");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			controller.addChallenge();
+		}
 	}
 }

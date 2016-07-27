@@ -115,7 +115,12 @@ public class ChallengeGeneratorGui {
 		challengeTable.setTransferHandler(new TableRowTransferHandler(
 				challengeTable));
 		challengeTable.setRowHeight(20);
-		challengeTable.setModel(new DefaultTableModel(null, challengeColNames));
+		challengeTable.setModel(new DefaultTableModel(new Object[][] { { "",
+				"", "", "", "", "", "", "", "", "", null }, }, new String[] {
+				"Name", "Type", "Goal Type", "Target", "Bonus", "Point type",
+				"Difficulty", "Baseline variable",
+				"Selection criteria Custom data", "Selectin criteria points",
+				"Selection criteria badges" }));
 		challengeTable.getColumnModel().getColumn(0).setPreferredWidth(50);
 		challengeTable.getColumnModel().getColumn(0).setMinWidth(50);
 		challengeTable.getColumnModel().getColumn(1).setMinWidth(75);
@@ -310,8 +315,11 @@ public class ChallengeGeneratorGui {
 						}
 						logger.info("Save challenges to " + f.getAbsolutePath());
 						super.approveSelection();
-						controller.saveChallenges(f,
-								(DefaultTableModel) challengeTable.getModel());
+						controller.saveChallenges(
+								f,
+								ConvertUtil
+										.convertTable((DefaultTableModel) challengeTable
+												.getModel()));
 					}
 
 				};
@@ -342,6 +350,7 @@ public class ChallengeGeneratorGui {
 
 		mntmUpload = new JMenuItem("Upload");
 		mntmUpload.setEnabled(false);
+		mntmUpload.setAction(new UploadAction());
 		mnChallenges.add(mntmUpload);
 
 		JPanel statusBarPanel = new JPanel();
@@ -369,6 +378,7 @@ public class ChallengeGeneratorGui {
 				controller = new ChallengeGuiController();
 				window = new ChallengeGeneratorGui();
 				controller.setWindow(window);
+				controller.newSession();
 			}
 		});
 	}
@@ -507,6 +517,30 @@ public class ChallengeGeneratorGui {
 			if (challengeTable.getSelectedRow() != -1) {
 				controller.removeChallenge(challengeTable.getSelectedRow());
 			}
+		}
+	}
+
+	public ChallengeRules getChallenges() {
+		return ConvertUtil.convertTable((DefaultTableModel) challengeTable
+				.getModel());
+	}
+
+	public void enableUpload(boolean b) {
+		mntmUpload.setEnabled(b);
+	}
+
+	private class UploadAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1L;
+
+		public UploadAction() {
+			putValue(NAME, "Upload");
+			putValue(SHORT_DESCRIPTION, "Challenge generation upload");
+			setEnabled(false);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			controller.upload();
 		}
 	}
 

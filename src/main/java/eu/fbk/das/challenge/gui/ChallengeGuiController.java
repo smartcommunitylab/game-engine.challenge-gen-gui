@@ -5,16 +5,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
@@ -25,29 +21,20 @@ public class ChallengeGuiController {
 	private static final Logger logger = LogManager
 			.getLogger(ChallengeGuiController.class);
 
-	private ChallengeRules challenges;
 	private ChallengeGeneratorGui window;
 
-	private String input;
 	private String templateDir;
 	private String output;
 
 	public ChallengeGuiController() {
-		init();
-	}
-
-	private void init() {
-		challenges = new ChallengeRules();
-		challenges.getChallenges().add(new ChallengeRuleRow());
 	}
 
 	/**
 	 * Reset current state, without save anything and refresh interface
 	 */
 	public void newSession() {
-		// reset data
-		init();
-		// set data
+		ChallengeRules challenges = new ChallengeRules();
+		challenges.getChallenges().add(new ChallengeRuleRow());
 		window.setChallenges(challenges);
 	}
 
@@ -71,8 +58,7 @@ public class ChallengeGuiController {
 		}
 		if (temp != null) {
 			logger.info("Challenges loaded from file " + f.getAbsolutePath());
-			challenges.getChallenges().clear();
-			List<ChallengeRuleRow> rows = new ArrayList<ChallengeRuleRow>();
+			ChallengeRules challenges = new ChallengeRules();
 			for (ChallengeRuleRow crr : temp.getChallenges()) {
 				challenges.getChallenges().add(crr);
 			}
@@ -99,14 +85,12 @@ public class ChallengeGuiController {
 	}
 
 	public void checkConnection(String host, String user, char[] password) {
-		System.out.println("check");
 		String psw = String.valueOf(password);
 		boolean result = false;
 		if (!host.isEmpty() && user.isEmpty() && psw.isEmpty()) {
 			result = checkConnection(host, user, psw, false);
 		} else if (host != null && user != null && psw != null
 				&& !host.isEmpty() && !user.isEmpty() && !psw.isEmpty()) {
-			System.out.println("con auth");
 			logger.debug("Trying to connect with host " + host + " with user "
 					+ user);
 			result = checkConnection(host, user, psw, true);
@@ -118,13 +102,14 @@ public class ChallengeGuiController {
 			window.setStatusBar(
 					"Connection parameters to gamification engine are ok",
 					false);
+			logger.info("Connection parameters to gamification engine are ok");
 			window.enableGenerate(true);
 		} else {
 			window.setStatusBar(
 					"Error in connection parameters to gamification engine",
 					true);
+			logger.warn("Error in connection parameters to gamification engine");
 		}
-
 	}
 
 	private boolean checkConnection(String host, String user, String psw,
@@ -143,13 +128,15 @@ public class ChallengeGuiController {
 	}
 
 	public void generate() {
+		logger.info("Challenge generation in progress");
 		String host = window.getHost();
 		String gameId = window.getGameId();
 		String username = window.getUser();
 		String password = window.getPassword();
 		window.setStatusBar("Challenge generation in progress", false);
-		SwingUtilities.invokeLater(new ChallengeRunnable(this, host, gameId,
-				challenges, templateDir, output, username, password));
+		SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this, host,
+				gameId, window.getChallenges(), templateDir, output, username,
+				password));
 	}
 
 	public void setStatusBar(String text, boolean b) {
@@ -161,22 +148,42 @@ public class ChallengeGuiController {
 	}
 
 	public void addChallenge(int index) {
+		ChallengeRules challenges = window.getChallenges();
 		ChallengeRuleRow row = new ChallengeRuleRow();
 		challenges.getChallenges().add(index, row);
 		window.setChallenges(challenges);
+		window.setStatusBar("Added new challenge ", false);
 	}
 
 	public void removeChallenge(int index) {
+		ChallengeRules challenges = window.getChallenges();
 		challenges.getChallenges().remove(index);
 		window.setChallenges(challenges);
+		window.setStatusBar("Removed challenge ", false);
 	}
 
-	public void saveChallenges(File f, DefaultTableModel defaultTableModel) {
+	public void saveChallenges(File f, ChallengeRules ch) {
 		try {
-			ChallengeRulesLoader.write(f,
-					ConvertUtil.convertTable(defaultTableModel));
+			ChallengeRulesLoader.write(f, ch);
+			window.setStatusBar("File saved " + f.getAbsolutePath(), false);
 		} catch (IllegalArgumentException | IOException e) {
+			window.setStatusBar("Error in saving file " + f.getAbsolutePath(),
+					true);
 			logger.error(e);
 		}
+	}
+
+	public void upload() {
+		String host = window.getHost();
+		String gameId = window.getGameId();
+		String username = window.getUser();
+		String password = window.getPassword();
+		window.setStatusBar("Challenge generation in progress", false);
+		SwingUtilities.invokeLater(new ChallengeUploadRunnable(this, host,
+				gameId, username, password, "output.json"));
+	}
+
+	public void enableUpload(boolean b) {
+		window.enableUpload(b);
 	}
 }

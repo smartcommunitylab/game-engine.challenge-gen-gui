@@ -35,20 +35,57 @@ public class ConvertUtil {
 		for (Vector v : vec) {
 			int i = 0;
 			ChallengeRuleRow crr = new ChallengeRuleRow();
-			crr.setName((String) v.get(0));
-			crr.setType((String) v.get(1));
-			crr.setGoalType((String) v.get(2));
-			crr.setTarget(v.get(3));
+			if (v.get(0) != null) {
+				crr.setName((String) v.get(0));
+			} else {
+				crr.setName("");
+			}
+			if (v.get(1) != null) {
+				crr.setType((String) v.get(1));
+			} else {
+				crr.setType("");
+			}
+			if (v.get(2) != null) {
+				crr.setGoalType((String) v.get(2));
+			} else {
+				crr.setGoalType("");
+			}
+			if (v.get(3) != null) {
+				crr.setTarget(v.get(3));
+			} else {
+				crr.setTarget("");
+			}
 			if (v.get(4) != null && v.get(4) instanceof Integer) {
 				crr.setBonus((Integer) v.get(4));
 			} else {
 				crr.setBonus(0);
 			}
-			crr.setPointType((String) v.get(6));
-			crr.setBaselineVar((String) v.get(7));
-			crr.setSelectionCriteriaCustomData((String) v.get(8));
-			crr.setSelectionCriteriaBadges((String) v.get(9));
-			crr.setSelectionCriteriaPoints((String) v.get(10));
+			// v.get(5) is difficulty, for now blank
+			if (v.get(6) != null) {
+				crr.setPointType((String) v.get(6));
+			} else {
+				crr.setPointType("");
+			}
+			if (v.get(7) != null) {
+				crr.setBaselineVar((String) v.get(7));
+			} else {
+				crr.setBaselineVar("");
+			}
+			if (v.get(8) != null) {
+				crr.setSelectionCriteriaCustomData((String) v.get(8));
+			} else {
+				crr.setSelectionCriteriaCustomData("");
+			}
+			if (v.get(9) != null) {
+				crr.setSelectionCriteriaBadges((String) v.get(9));
+			} else {
+				crr.setSelectionCriteriaBadges("");
+			}
+			if (v.get(10) != null) {
+				crr.setSelectionCriteriaPoints((String) v.get(10));
+			} else {
+				crr.setSelectionCriteriaPoints("");
+			}
 			result.getChallenges().add(crr);
 		}
 		return result;

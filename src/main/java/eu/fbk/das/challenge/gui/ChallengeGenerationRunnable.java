@@ -1,9 +1,15 @@
 package eu.fbk.das.challenge.gui;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import eu.trentorise.game.challenges.ChallengeGeneratorTool;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 
-public class ChallengeRunnable implements Runnable {
+public class ChallengeGenerationRunnable implements Runnable {
+
+	private static final Logger logger = LogManager
+			.getLogger(ChallengeGenerationRunnable.class);
 
 	private ChallengeGuiController controller;
 	private String host;
@@ -14,7 +20,7 @@ public class ChallengeRunnable implements Runnable {
 	private String password;
 	private ChallengeRules challenges;
 
-	public ChallengeRunnable(ChallengeGuiController controller, String host,
+	public ChallengeGenerationRunnable(ChallengeGuiController controller, String host,
 			String gameId, ChallengeRules challenges, String templateDir,
 			String output, String username, String password) {
 		this.controller = controller;
@@ -33,5 +39,7 @@ public class ChallengeRunnable implements Runnable {
 				templateDir, output, username, password);
 		controller.setStatusBar("Challenge generation completed", false);
 		controller.addLog(log);
+		controller.enableUpload(true);
+		logger.info("Challenge generation completed");
 	}
 }

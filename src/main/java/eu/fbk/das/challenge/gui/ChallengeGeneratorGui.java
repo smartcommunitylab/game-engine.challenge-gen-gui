@@ -12,10 +12,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -28,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -82,20 +86,27 @@ public class ChallengeGeneratorGui {
 	private final Action insertAction = new InsertAction();
 	private final Action deleteAction = new DeleteAction();
 
+	private JScrollPane scrollPane;
+
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
 		app = new JFrame("ChallengeGeneratorGui");
 		app.setMinimumSize(new Dimension(1024, 768));
-		app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		app.setSize(new Dimension(800, 600));
 		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		try {
+			app.setIconImage(ImageIO.read(getClass().getResource(
+					"/images/1469713255_Bulb_On-40.png")));
+		} catch (IOException e1) {
+			logger.error(e1);
+		}
 
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		panel.setLayout(new BorderLayout(5, 5));
 		JPanel centerPanel = new JPanel();
 		GridBagLayout gbl_centerPanel = new GridBagLayout();
-		gbl_centerPanel.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0 };
+		gbl_centerPanel.rowWeights = new double[] { 0.0, 0.0, 0.0 };
 		gbl_centerPanel.columnWeights = new double[] { 1.0 };
 		centerPanel.setLayout(gbl_centerPanel);
 
@@ -166,7 +177,7 @@ public class ChallengeGeneratorGui {
 		gbc_configurationPanel.gridx = 0;
 		gbc_configurationPanel.gridy = 0;
 		gbc_configurationPanel.weightx = 1.0;
-		gbc_configurationPanel.weighty = 0.1;
+		gbc_configurationPanel.weighty = 0.05;
 
 		centerPanel.add(configurationPanel, gbc_configurationPanel);
 
@@ -224,13 +235,12 @@ public class ChallengeGeneratorGui {
 		configurationPanel.add(btnCheckConnection);
 
 		GridBagConstraints gbcsplit = new GridBagConstraints();
-		gbcsplit.gridheight = 2;
 		gbcsplit.insets = new Insets(0, 5, 5, 0);
 		gbcsplit.fill = GridBagConstraints.BOTH;
 		gbcsplit.gridx = 0;
 		gbcsplit.gridy = 1;
 		gbcsplit.weightx = 1.0;
-		gbcsplit.weighty = 1.0;
+		gbcsplit.weighty = 0.6;
 
 		gbcsplit.fill = GridBagConstraints.BOTH;
 		gbcsplit.gridy = 1;
@@ -240,16 +250,20 @@ public class ChallengeGeneratorGui {
 
 		panel.add(centerPanel, BorderLayout.CENTER);
 
-		logList = new JList<String>();
+		DefaultListModel<String> model = new DefaultListModel<String>();
+
+		scrollPane = new JScrollPane();
+
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.weighty = 0.1;
+		gbc_scrollPane.anchor = GridBagConstraints.SOUTH;
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 2;
+		centerPanel.add(scrollPane, gbc_scrollPane);
+		logList = new JList<String>(model);
+		scrollPane.setViewportView(logList);
 		logList.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		GridBagConstraints gbc_logList = new GridBagConstraints();
-		gbc_logList.insets = new Insets(0, 5, 5, 0);
-		gbc_logList.weighty = 1.0;
-		gbc_logList.anchor = GridBagConstraints.SOUTH;
-		gbc_logList.fill = GridBagConstraints.BOTH;
-		gbc_logList.gridx = 0;
-		gbc_logList.gridy = 3;
-		centerPanel.add(logList, gbc_logList);
 
 		app.getContentPane().add(panel);
 
@@ -465,9 +479,17 @@ public class ChallengeGeneratorGui {
 	}
 
 	public void addLog(String log) {
+		DefaultListModel<String> model = (DefaultListModel<String>) logList
+				.getModel();
 		String[] listData = StringUtils.split(log, "\n");
-		logList.setListData(listData);
-		refresh();
+		for (String e : listData) {
+			model.addElement(e);
+		}
+
+		// scroll to the bottom
+		scrollPane.validate();
+		JScrollBar vertical = scrollPane.getVerticalScrollBar();
+		vertical.setValue(vertical.getMaximum());
 	}
 
 	private static void addPopup(Component component, final JPopupMenu popup) {

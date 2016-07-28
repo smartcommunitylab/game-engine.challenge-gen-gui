@@ -85,30 +85,34 @@ public class ChallengeGuiController {
 	}
 
 	public void checkConnection(String host, String user, char[] password) {
+		String msg = "";
 		String psw = String.valueOf(password);
 		boolean result = false;
 		if (!host.isEmpty() && user.isEmpty() && psw.isEmpty()) {
 			result = checkConnection(host, user, psw, false);
 		} else if (host != null && user != null && psw != null
 				&& !host.isEmpty() && !user.isEmpty() && !psw.isEmpty()) {
-			logger.debug("Trying to connect with host " + host + " with user "
-					+ user);
+			msg = "Trying to connect with host " + host + " with user " + user;
+			logger.debug(msg);
+			addLog(msg);
 			result = checkConnection(host, user, psw, true);
 		} else {
 			result = false;
-			logger.warn("Gamification engine connection parameters are invalid");
+			msg = "Gamification engine connection parameters are invalid";
+			logger.warn(msg);
+			addLog(msg);
 		}
 		if (result) {
-			window.setStatusBar(
-					"Connection parameters to gamification engine are ok",
-					false);
-			logger.info("Connection parameters to gamification engine are ok");
+			msg = "Connection parameters to gamification engine are ok";
+			window.setStatusBar(msg, false);
+			logger.info(msg);
+			addLog(msg);
 			window.enableGenerate(true);
 		} else {
-			window.setStatusBar(
-					"Error in connection parameters to gamification engine",
-					true);
-			logger.warn("Error in connection parameters to gamification engine");
+			msg = "Error in connection parameters to gamification engine";
+			window.setStatusBar(msg, true);
+			logger.warn(msg);
+			addLog(msg);
 		}
 	}
 
@@ -178,7 +182,7 @@ public class ChallengeGuiController {
 		String gameId = window.getGameId();
 		String username = window.getUser();
 		String password = window.getPassword();
-		window.setStatusBar("Challenge generation in progress", false);
+		window.setStatusBar("Challenge upload in progress", false);
 		SwingUtilities.invokeLater(new ChallengeUploadRunnable(this, host,
 				gameId, username, password, "output.json"));
 	}

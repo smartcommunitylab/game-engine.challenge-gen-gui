@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -38,6 +40,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
@@ -49,6 +52,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.util.Rotation;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
@@ -94,6 +104,12 @@ public class ChallengeGeneratorGui {
 
 	private AboutDialog about = new AboutDialog();
 
+	private ChartPanel chartPanel;
+
+	private JFreeChart chart;
+
+	private JPanel analytics;
+
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
 		app = new JFrame("ChallengeGeneratorGui");
@@ -117,7 +133,7 @@ public class ChallengeGeneratorGui {
 		centerPanel.setLayout(gbl_centerPanel);
 
 		JPanel configurationPanel = new JPanel();
-		JPanel analytics = new JPanel();
+		analytics = new JPanel();
 		analytics.setMinimumSize(new Dimension(250, 0));
 		// Object[][] data = {
 		// { "w1_challengeX", "Percent", "carDistance", "2", "400",
@@ -172,6 +188,7 @@ public class ChallengeGeneratorGui {
 		scrollpane.setPreferredSize(new Dimension(652, 402));
 		JSplitPane jsplitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				scrollpane, analytics);
+		analytics.setLayout(new BorderLayout(0, 50));
 		jsplitpane.setOpaque(false);
 		jsplitpane.setOneTouchExpandable(true);
 		jsplitpane.setPreferredSize(new Dimension(669, 500));
@@ -400,6 +417,7 @@ public class ChallengeGeneratorGui {
 
 		about = new AboutDialog();
 		about.setVisible(false);
+
 	}
 
 	public static void main(String[] args) {
@@ -643,4 +661,46 @@ public class ChallengeGeneratorGui {
 			about.setVisible(true);
 		}
 	}
+
+	public void updateChart(DefaultPieDataset pieDataSet, List<Integer> values,
+			int totalPlayers) {
+		// clean panel
+		analytics.removeAll();
+
+		// info panel
+		JPanel infoPanel = new JPanel();
+		analytics.add(infoPanel, BorderLayout.NORTH);
+
+		// add info about total players
+		JLabel totalLabel = new JLabel("Number of players : " + totalPlayers);
+		totalLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+		totalLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoPanel.add(totalLabel, BorderLayout.NORTH);
+
+		// add info about challenges for player
+		JLabel challengeNumberLabel = new JLabel("Challenges for player : "
+				+ values.toString());
+		challengeNumberLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+		challengeNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoPanel.add(challengeNumberLabel, BorderLayout.CENTER);
+
+		// add info about total players
+
+		// create chart
+		chart = ChartFactory.createPieChart("Challenges type for users",
+				pieDataSet, true, true, false);
+
+		PiePlot plot = (PiePlot) chart.getPlot();
+		plot.setDirection(Rotation.CLOCKWISE);
+		plot.setForegroundAlpha(0.8f);
+		plot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+				"{0} {1} {2}"));
+
+		chartPanel = new ChartPanel(chart, true);
+		chartPanel.setVisible(true);
+
+		analytics.add(chartPanel, BorderLayout.CENTER);
+		refresh();
+	}
+
 }

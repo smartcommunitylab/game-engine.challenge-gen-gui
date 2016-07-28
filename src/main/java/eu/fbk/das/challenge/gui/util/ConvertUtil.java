@@ -1,9 +1,12 @@
 package eu.fbk.das.challenge.gui.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
+import eu.fbk.das.challenge.gui.ChallengeReport;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 
@@ -89,5 +92,43 @@ public class ConvertUtil {
 			result.getChallenges().add(crr);
 		}
 		return result;
+	}
+
+	public static List<ChallengeReport> convertChallengeReport(
+			List<String> lines) {
+		List<ChallengeReport> reports = new ArrayList<ChallengeReport>();
+		for (String line : lines) {
+			ChallengeReport cr = new ChallengeReport();
+			String[] elem = line.split(";");
+			if (elem[0] != null) {
+				cr.setPlayer(elem[0]);
+			}
+			if (elem[1] != null) {
+				cr.setChallengeName(elem[1]);
+			}
+			if (elem[2] != null) {
+				cr.setChallengeType(elem[2]);
+			}
+			if (elem[3] != null) {
+				cr.setTransportMode(elem[3]);
+			}
+			if (elem[4] != null) {
+				cr.setBaselineValue(elem[4]);
+			}
+			if (elem[5] != null) {
+				cr.setTargetValue(elem[5]);
+			}
+			if (elem[6] != null) {
+				cr.setPrize(elem[6]);
+			}
+			if (elem[7] != null) {
+				cr.setPointType(elem[7]);
+			}
+			if (elem[8] != null) {
+				cr.setChId(elem[8]);
+			}
+			reports.add(cr);
+		}
+		return reports;
 	}
 }

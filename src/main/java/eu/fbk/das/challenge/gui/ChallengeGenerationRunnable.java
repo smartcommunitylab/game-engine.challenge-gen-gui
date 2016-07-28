@@ -20,9 +20,9 @@ public class ChallengeGenerationRunnable implements Runnable {
 	private String password;
 	private ChallengeRules challenges;
 
-	public ChallengeGenerationRunnable(ChallengeGuiController controller, String host,
-			String gameId, ChallengeRules challenges, String templateDir,
-			String output, String username, String password) {
+	public ChallengeGenerationRunnable(ChallengeGuiController controller,
+			String host, String gameId, ChallengeRules challenges,
+			String templateDir, String output, String username, String password) {
 		this.controller = controller;
 		this.host = host;
 		this.gameId = gameId;
@@ -41,5 +41,6 @@ public class ChallengeGenerationRunnable implements Runnable {
 		controller.addLog(log);
 		controller.enableUpload(true);
 		logger.info("Challenge generation completed");
+		controller.updateChart("generated-rules-report.csv");
 	}
 }

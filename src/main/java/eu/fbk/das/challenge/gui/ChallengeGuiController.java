@@ -1,16 +1,24 @@
 package eu.fbk.das.challenge.gui;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jfree.data.general.DefaultPieDataset;
 
+import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
@@ -189,6 +197,38 @@ public class ChallengeGuiController {
 
 	public void enableUpload(boolean b) {
 		window.enableUpload(b);
+	}
+
+	public void updateChart(String file) {
+		try {
+			// read generate challenges data from file, remove first ( labels )
+			List<String> lines = IOUtils.readLines(new FileInputStream(file));
+			lines.remove(0);
+			// convert and group by challenge type
+			List<ChallengeReport> report = ConvertUtil
+					.convertChallengeReport(lines);
+			Map<String, List<ChallengeReport>> map = report.stream().collect(
+					Collectors.groupingBy(ChallengeReport::getChallengeType));
+			// update chart data
+			DefaultPieDataset pieDataSet = new DefaultPieDataset();
+			for (String key : map.keySet()) {
+				pieDataSet.setValue(key, map.get(key).size());
+			}
+			// update challenge for player count
+
+			Map<String, List<ChallengeReport>> mapPlayer = report.stream()
+					.collect(Collectors.groupingBy(ChallengeReport::getPlayer));
+			List<Integer> values = new ArrayList<Integer>();
+			for (String key : mapPlayer.keySet()) {
+				if (!values.contains(mapPlayer.get(key).size())) {
+					values.add(mapPlayer.get(key).size());
+				}
+			}
+			// update chart area
+			window.updateChart(pieDataSet, values, mapPlayer.size());
+		} catch (IOException e) {
+			logger.error(e);
+		}
 	}
 
 }

@@ -89,7 +89,10 @@ public class ChallengeGeneratorGui {
 	private final Action deleteAction = new DeleteAction();
 
 	private JScrollPane scrollPane;
-	private final Action action = new SaveLogAction();
+	private final Action saveAction = new SaveLogAction();
+	private final Action aboutAction = new AboutAction();
+
+	private AboutDialog about = new AboutDialog();
 
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
@@ -272,7 +275,7 @@ public class ChallengeGeneratorGui {
 		addPopup(logList, popupMenu_1);
 
 		JMenuItem mntmSaveLog = new JMenuItem("save log");
-		mntmSaveLog.setAction(action);
+		mntmSaveLog.setAction(saveAction);
 		popupMenu_1.add(mntmSaveLog);
 
 		app.getContentPane().add(panel);
@@ -377,6 +380,13 @@ public class ChallengeGeneratorGui {
 		mntmUpload.setAction(new UploadAction());
 		mnChallenges.add(mntmUpload);
 
+		JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.setAction(aboutAction);
+		mnHelp.add(mntmAbout);
+
 		JPanel statusBarPanel = new JPanel();
 		statusBarPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED, null,
 				null));
@@ -387,6 +397,9 @@ public class ChallengeGeneratorGui {
 		statusBar = new JLabel("");
 		statusBarPanel.add(statusBar);
 		app.setVisible(true);
+
+		about = new AboutDialog();
+		about.setVisible(false);
 	}
 
 	public static void main(String[] args) {
@@ -615,6 +628,19 @@ public class ChallengeGeneratorGui {
 
 			};
 			chooser.showSaveDialog(null);
+		}
+	}
+
+	private class AboutAction extends AbstractAction {
+		private static final long serialVersionUID = 6922499789788835040L;
+
+		public AboutAction() {
+			putValue(NAME, "About");
+			putValue(SHORT_DESCRIPTION, "About");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			about.setVisible(true);
 		}
 	}
 }

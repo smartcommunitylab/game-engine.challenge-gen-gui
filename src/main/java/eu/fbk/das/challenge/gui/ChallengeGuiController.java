@@ -190,4 +190,5 @@ public class ChallengeGuiController {
 	public void enableUpload(boolean b) {
 		window.enableUpload(b);
 	}
+
 }

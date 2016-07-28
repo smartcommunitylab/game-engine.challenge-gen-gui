@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -44,6 +45,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,6 +89,7 @@ public class ChallengeGeneratorGui {
 	private final Action deleteAction = new DeleteAction();
 
 	private JScrollPane scrollPane;
+	private final Action action = new SaveLogAction();
 
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
@@ -264,6 +267,13 @@ public class ChallengeGeneratorGui {
 		logList = new JList<String>(model);
 		scrollPane.setViewportView(logList);
 		logList.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+
+		JPopupMenu popupMenu_1 = new JPopupMenu();
+		addPopup(logList, popupMenu_1);
+
+		JMenuItem mntmSaveLog = new JMenuItem("save log");
+		mntmSaveLog.setAction(action);
+		popupMenu_1.add(mntmSaveLog);
 
 		app.getContentPane().add(panel);
 
@@ -566,4 +576,45 @@ public class ChallengeGeneratorGui {
 		}
 	}
 
+	private class SaveLogAction extends AbstractAction {
+		private static final long serialVersionUID = 8184822790331262798L;
+
+		public SaveLogAction() {
+			putValue(NAME, "Save log");
+			putValue(SHORT_DESCRIPTION, "save log");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser chooser = new JFileChooser() {
+
+				private static final long serialVersionUID = -7993854134304731166L;
+
+				@Override
+				public void approveSelection() {
+					File f = getSelectedFile();
+					if (!f.getAbsolutePath().toLowerCase().endsWith(".log")) {
+						f = new File(f.getAbsolutePath() + ".log");
+					}
+					logger.info("Save log to " + f.getAbsolutePath());
+					super.approveSelection();
+					try {
+						StringBuffer sb = new StringBuffer();
+						for (int i = 0; i < logList.getModel().getSize(); i++) {
+							Object item = logList.getModel().getElementAt(i);
+							sb.append(item + "\n");
+						}
+						IOUtils.write(sb.toString(), new FileOutputStream(f));
+						setStatusBar("Log saved " + f.getAbsolutePath(), false);
+					} catch (IOException e) {
+						setStatusBar(
+								"Error in log save " + f.getAbsolutePath(),
+								false);
+						logger.error(e);
+					}
+				}
+
+			};
+			chooser.showSaveDialog(null);
+		}
+	}
 }

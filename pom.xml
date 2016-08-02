@@ -6,6 +6,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>game-engine.challenge-gen-gui</name>
 	<description>challenge generator gui</description>
+	
+	<properties>
+		<gui.mainClass>eu.fbk.das.challenge.gui.ChallengeGeneratorGui</gui.mainClass>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>it.smartcommunitylab</groupId>
@@ -18,4 +23,73 @@
 			<version>1.0.19</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.2</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>gui</id>
+			<build>
+				<finalName>challengeGenerator</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>${gui.mainClass}</mainClass>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>lib/</classpathPrefix>
+								</manifest>
+							</archive>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.5.3</version>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/gui.xml</descriptor>
+							</descriptors>
+							<archive>
+								<manifest>
+									<mainClass>${gui.mainClass}</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

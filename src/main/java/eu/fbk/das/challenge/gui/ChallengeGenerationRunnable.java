@@ -3,6 +3,8 @@ package eu.fbk.das.challenge.gui;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Throwables;
+
 import eu.trentorise.game.challenges.ChallengeGeneratorTool;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 
@@ -35,12 +37,20 @@ public class ChallengeGenerationRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		String log = ChallengeGeneratorTool.generate(host, gameId, challenges,
-				templateDir, output, username, password);
-		controller.setStatusBar("Challenge generation completed", false);
-		controller.addLog(log);
-		controller.enableUpload(true);
-		logger.info("Challenge generation completed");
-		controller.updateChart("generated-rules-report.csv");
+		String log = "";
+		try {
+			log = ChallengeGeneratorTool.generate(host, gameId, challenges,
+					templateDir, output, username, password);
+			controller.setStatusBar("Challenge generation completed", false);
+			controller.addLog(log);
+			controller.enableUpload(true);
+			logger.info("Challenge generation completed");
+			controller.updateChart("generated-rules-report.csv");
+		} catch (Exception e) {
+			controller.setStatusBar("Challenge generation error", true);
+			log = Throwables.getStackTraceAsString(e);
+			controller.addLog(log);
+			logger.error(e.getMessage(), e);
+		}
 	}
 }

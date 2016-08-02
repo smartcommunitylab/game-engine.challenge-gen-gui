@@ -45,6 +45,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -215,6 +217,22 @@ public class ChallengeGeneratorGui {
 		hostTextField.setPreferredSize(new Dimension(200, 20));
 		configurationPanel.add(hostTextField);
 		hostTextField.setColumns(25);
+		hostTextField.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				checkHostGameIdField();
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				checkHostGameIdField();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+		});
 
 		JLabel userLabel = new JLabel("Username");
 		userLabel.setMinimumSize(new Dimension(200, 14));
@@ -236,16 +254,7 @@ public class ChallengeGeneratorGui {
 
 		btnCheckConnection = new JButton("check connection");
 		btnCheckConnection.setEnabled(false);
-		btnCheckConnection.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				controller.checkConnection(hostTextField.getText(),
-						userTextField.getText(),
-						passwordTextField.getPassword());
-			}
-
-		});
+		btnCheckConnection.addActionListener(new CheckConnectionAction());
 
 		JLabel gameIdLabel = new JLabel("GameID");
 		gameIdLabel.setMinimumSize(new Dimension(200, 14));
@@ -254,6 +263,22 @@ public class ChallengeGeneratorGui {
 		gameIdField = new JTextField();
 		gameIdField.setMinimumSize(new Dimension(200, 20));
 		gameIdField.setColumns(15);
+		gameIdField.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				checkHostGameIdField();
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				checkHostGameIdField();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+		});
 		configurationPanel.add(gameIdField);
 		configurationPanel.add(btnCheckConnection);
 
@@ -701,6 +726,32 @@ public class ChallengeGeneratorGui {
 
 		analytics.add(chartPanel, BorderLayout.CENTER);
 		refresh();
+	}
+
+	private void checkHostGameIdField() {
+		if (hostTextField.getText().length() == 0
+				|| gameIdField.getText().length() == 0) {
+			btnCheckConnection.setEnabled(false);
+		} else if (hostTextField.getText().length() != 0
+				&& gameIdField.getText().length() != 0) {
+			btnCheckConnection.setEnabled(true);
+		}
+	}
+
+	private class CheckConnectionAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1732760821158054790L;
+
+		public CheckConnectionAction() {
+			putValue(NAME, "CheckConnection");
+			putValue(SHORT_DESCRIPTION, "CheckConnection");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			controller.checkConnection(hostTextField.getText(),
+					userTextField.getText(), passwordTextField.getPassword(),
+					gameIdField.getText());
+		}
 	}
 
 }

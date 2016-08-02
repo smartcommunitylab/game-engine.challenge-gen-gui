@@ -32,7 +32,7 @@ public class ChallengeGuiController {
 	private ChallengeGeneratorGui window;
 
 	private String templateDir;
-	private String output;
+	private final static String OUTPUT = "output.json";
 
 	public ChallengeGuiController() {
 	}
@@ -89,21 +89,21 @@ public class ChallengeGuiController {
 		String gameId = PropertiesUtil.get(PropertiesUtil.GAMEID);
 		window.setGameId(gameId);
 		templateDir = PropertiesUtil.get(PropertiesUtil.TEMPLATE_DIR);
-		output = "output.json";
 	}
 
-	public void checkConnection(String host, String user, char[] password) {
+	public void checkConnection(String host, String user, char[] password,
+			String gameId) {
 		String msg = "";
 		String psw = String.valueOf(password);
 		boolean result = false;
 		if (!host.isEmpty() && user.isEmpty() && psw.isEmpty()) {
-			result = checkConnection(host, user, psw, false);
+			result = checkConnection(host, user, psw, false, gameId);
 		} else if (host != null && user != null && psw != null
 				&& !host.isEmpty() && !user.isEmpty() && !psw.isEmpty()) {
 			msg = "Trying to connect with host " + host + " with user " + user;
 			logger.debug(msg);
 			addLog(msg);
-			result = checkConnection(host, user, psw, true);
+			result = checkConnection(host, user, psw, true, gameId);
 		} else {
 			result = false;
 			msg = "Gamification engine connection parameters are invalid";
@@ -125,7 +125,7 @@ public class ChallengeGuiController {
 	}
 
 	private boolean checkConnection(String host, String user, String psw,
-			boolean auth) {
+			boolean auth, String gameId) {
 		try {
 			URL url = new URL(host);
 			URLConnection conn = url.openConnection();
@@ -147,7 +147,7 @@ public class ChallengeGuiController {
 		String password = window.getPassword();
 		window.setStatusBar("Challenge generation in progress", false);
 		SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this, host,
-				gameId, window.getChallenges(), templateDir, output, username,
+				gameId, window.getChallenges(), templateDir, OUTPUT, username,
 				password));
 	}
 

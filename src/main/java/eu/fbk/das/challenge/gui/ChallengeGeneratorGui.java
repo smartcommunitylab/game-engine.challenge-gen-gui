@@ -349,7 +349,7 @@ public class ChallengeGeneratorGui {
 					public void approveSelection() {
 						File f = getSelectedFile();
 						if (f != null && f.exists()) {
-							logger.info("Selected challenges definition file"
+							logger.info("Selected challenges definition file "
 									+ f.getAbsolutePath());
 							super.approveSelection();
 							controller.openChallenges(f);

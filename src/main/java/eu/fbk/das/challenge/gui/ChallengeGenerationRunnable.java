@@ -1,5 +1,7 @@
 package eu.fbk.das.challenge.gui;
 
+import java.util.Date;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,10 +23,13 @@ public class ChallengeGenerationRunnable implements Runnable {
 	private String username;
 	private String password;
 	private ChallengeRules challenges;
+	private Date startDate;
+	private Date endDate;
 
 	public ChallengeGenerationRunnable(ChallengeGuiController controller,
 			String host, String gameId, ChallengeRules challenges,
-			String templateDir, String output, String username, String password) {
+			String templateDir, String output, String username,
+			String password, Date startDate, Date endDate) {
 		this.controller = controller;
 		this.host = host;
 		this.gameId = gameId;
@@ -33,14 +38,17 @@ public class ChallengeGenerationRunnable implements Runnable {
 		this.output = output;
 		this.username = username;
 		this.password = password;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
 	@Override
 	public void run() {
 		String log = "";
 		try {
-			log = ChallengeGeneratorTool.generate(host, gameId, challenges,
-					templateDir, output, username, password);
+			log = ChallengeGeneratorTool
+					.generate(host, gameId, challenges, templateDir, output,
+							username, password, startDate, endDate);
 			controller.setStatusBar("Challenge generation completed", false);
 			controller.addLog(log);
 			controller.enableUpload(true);

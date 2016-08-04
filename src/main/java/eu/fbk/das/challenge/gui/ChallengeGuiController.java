@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +38,8 @@ public class ChallengeGuiController {
 	private String templateDir;
 	private final static String OUTPUT = "output.json";
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
 	public ChallengeGuiController() {
 	}
 
@@ -55,6 +61,12 @@ public class ChallengeGuiController {
 		loadPropertiesFromFile();
 		// unlock check connection button
 		window.enableCheckConnection(true);
+		// set default start date as today and end to one week
+		Calendar c = Calendar.getInstance();
+		Date now = c.getTime();
+		window.setStartDate(now);
+		c.add(Calendar.DAY_OF_MONTH, 7);
+		window.setEndDate(c.getTime());
 		// open challenges file
 		ChallengeRules temp = null;
 		try {
@@ -145,10 +157,20 @@ public class ChallengeGuiController {
 		String gameId = window.getGameId();
 		String username = window.getUser();
 		String password = window.getPassword();
+		String startDate = window.getStartDate();
+		String endDate = window.getEndDate();
 		window.setStatusBar("Challenge generation in progress", false);
-		SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this, host,
-				gameId, window.getChallenges(), templateDir, OUTPUT, username,
-				password));
+		try {
+			SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this,
+					host, gameId, window.getChallenges(), templateDir, OUTPUT,
+					username, password, sdf.parse(startDate), sdf
+							.parse(endDate)));
+		} catch (ParseException e) {
+			String msg = "Error in parsing start or end date";
+			logger.error(msg);
+			window.addLog(msg);
+			window.setStatusBar(msg, true);
+		}
 	}
 
 	public void setStatusBar(String text, boolean b) {

@@ -8,13 +8,20 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -45,6 +52,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -71,46 +79,39 @@ public class ChallengeGeneratorGui {
 	private static final Logger logger = LogManager
 			.getLogger(ChallengeGeneratorGui.class);
 
-	private static ChallengeGuiController controller;
-	private static ChallengeGeneratorGui window;
-
-	private JTextField hostTextField;
-	private JTextField userTextField;
-	private JPasswordField passwordTextField;
-
-	private JTable challengeTable;
-
-	private static JFrame app;
-
-	private JButton btnCheckConnection;
-
-	private JLabel statusBar;
-
 	private static final String[] challengeColNames = { "Name", "Type",
 			"Goal Type", "Target", "Bonus", "Point type", "Difficulty",
 			"Baseline variable", "Selection criteria Custom data",
 			"Selectin criteria points", "Selection criteria badges" };
+
+	private static JFrame app;
+	private static ChallengeGuiController controller;
+	private static ChallengeGeneratorGui window;
+	private JTextField hostTextField;
+	private JTextField userTextField;
+	private JPasswordField passwordTextField;
+	private JTable challengeTable;
+	private JButton btnCheckConnection;
+	private JLabel statusBar;
 	private JTextField gameIdField;
-
 	private JMenuItem mntmUpload;
-
 	private JMenuItem mntmGenerate;
-
 	private JList<String> logList;
 	private final Action insertAction = new InsertAction();
 	private final Action deleteAction = new DeleteAction();
-
 	private JScrollPane scrollPane;
 	private final Action saveAction = new SaveLogAction();
 	private final Action aboutAction = new AboutAction();
-
 	private AboutDialog about = new AboutDialog();
-
 	private ChartPanel chartPanel;
-
 	private JFreeChart chart;
-
 	private JPanel analytics;
+
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+	private JTextField startField;
+
+	private JTextField endField;
 
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
@@ -135,6 +136,10 @@ public class ChallengeGeneratorGui {
 		centerPanel.setLayout(gbl_centerPanel);
 
 		JPanel configurationPanel = new JPanel();
+		configurationPanel.setBorder(new TitledBorder(UIManager
+				.getBorder("TitledBorder.border"), "Configuration",
+				TitledBorder.LEADING, TitledBorder.TOP, null,
+				new Color(0, 0, 0)));
 		analytics = new JPanel();
 		analytics.setMinimumSize(new Dimension(250, 0));
 		// Object[][] data = {
@@ -198,13 +203,14 @@ public class ChallengeGeneratorGui {
 		GridBagConstraints gbc_configurationPanel = new GridBagConstraints();
 		gbc_configurationPanel.insets = new Insets(5, 5, 5, 0);
 		gbc_configurationPanel.anchor = GridBagConstraints.NORTH;
-		gbc_configurationPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_configurationPanel.fill = GridBagConstraints.BOTH;
 		gbc_configurationPanel.gridx = 0;
 		gbc_configurationPanel.gridy = 0;
 		gbc_configurationPanel.weightx = 1.0;
 		gbc_configurationPanel.weighty = 0.05;
 
 		centerPanel.add(configurationPanel, gbc_configurationPanel);
+		configurationPanel.setLayout(new GridLayout(0, 5, 10, 5));
 
 		JLabel hostLabel = new JLabel("Gamification engine host");
 		hostLabel.setMinimumSize(new Dimension(200, 14));
@@ -234,28 +240,6 @@ public class ChallengeGeneratorGui {
 			}
 		});
 
-		JLabel userLabel = new JLabel("Username");
-		userLabel.setMinimumSize(new Dimension(200, 14));
-		configurationPanel.add(userLabel);
-
-		userTextField = new JTextField();
-		userTextField.setMinimumSize(new Dimension(200, 20));
-		userLabel.setLabelFor(userTextField);
-		configurationPanel.add(userTextField);
-		userTextField.setColumns(15);
-
-		JLabel passwordLabel = new JLabel("Password");
-		passwordLabel.setMinimumSize(new Dimension(200, 14));
-		configurationPanel.add(passwordLabel);
-
-		passwordTextField = new JPasswordField();
-		configurationPanel.add(passwordTextField);
-		passwordTextField.setColumns(15);
-
-		btnCheckConnection = new JButton("check connection");
-		btnCheckConnection.setEnabled(false);
-		btnCheckConnection.addActionListener(new CheckConnectionAction());
-
 		JLabel gameIdLabel = new JLabel("GameID");
 		gameIdLabel.setMinimumSize(new Dimension(200, 14));
 		configurationPanel.add(gameIdLabel);
@@ -280,7 +264,69 @@ public class ChallengeGeneratorGui {
 			}
 		});
 		configurationPanel.add(gameIdField);
+
+		JLabel lblNewLabel = new JLabel("");
+		configurationPanel.add(lblNewLabel);
+
+		JLabel userLabel = new JLabel("Username");
+		userLabel.setMinimumSize(new Dimension(200, 14));
+		configurationPanel.add(userLabel);
+		userLabel.setLabelFor(userTextField);
+
+		userTextField = new JTextField();
+		userTextField.setMinimumSize(new Dimension(200, 20));
+		configurationPanel.add(userTextField);
+		userTextField.setColumns(15);
+
+		JLabel passwordLabel = new JLabel("Password");
+		passwordLabel.setMinimumSize(new Dimension(200, 14));
+		configurationPanel.add(passwordLabel);
+
+		passwordTextField = new JPasswordField();
+		configurationPanel.add(passwordTextField);
+		passwordTextField.setColumns(15);
+
+		btnCheckConnection = new JButton("check connection");
+		btnCheckConnection.setEnabled(false);
+		btnCheckConnection.addActionListener(new CheckConnectionAction());
 		configurationPanel.add(btnCheckConnection);
+
+		Label startLabel = new Label(
+				"Challenge date start (dd/MM/YYYY HH:mm:ss)");
+		configurationPanel.add(startLabel);
+
+		startField = new JTextField();
+		startField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				JTextField s = (JTextField) e.getSource();
+				if (invalidDate(s)) {
+					s.setBackground(Color.red);
+				} else {
+					s.setBackground(Color.white);
+				}
+			}
+		});
+		startField.setColumns(15);
+		configurationPanel.add(startField);
+
+		Label endLabel = new Label("Challenge date end (dd/MM/YYYY HH:mm:ss)");
+		configurationPanel.add(endLabel);
+
+		endField = new JTextField();
+		endField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				JTextField s = (JTextField) e.getSource();
+				if (invalidDate(s)) {
+					s.setBackground(Color.red);
+				} else {
+					s.setBackground(Color.white);
+				}
+			}
+		});
+		endField.setColumns(15);
+		configurationPanel.add(endField);
 
 		GridBagConstraints gbcsplit = new GridBagConstraints();
 		gbcsplit.insets = new Insets(0, 5, 5, 0);
@@ -303,6 +349,7 @@ public class ChallengeGeneratorGui {
 		scrollPane = new JScrollPane();
 
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
 		gbc_scrollPane.weighty = 0.1;
 		gbc_scrollPane.anchor = GridBagConstraints.SOUTH;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
@@ -442,7 +489,17 @@ public class ChallengeGeneratorGui {
 
 		about = new AboutDialog();
 		about.setVisible(false);
+	}
 
+	private boolean invalidDate(JTextField source) {
+		try {
+			if (sdf.parse(source.getText()) != null) {
+				return false;
+			}
+		} catch (IllegalArgumentException | ParseException e) {
+
+		}
+		return true;
 	}
 
 	public static void main(String[] args) {
@@ -752,6 +809,22 @@ public class ChallengeGeneratorGui {
 					userTextField.getText(), passwordTextField.getPassword(),
 					gameIdField.getText());
 		}
+	}
+
+	public void setStartDate(Date date) {
+		startField.setText(sdf.format(date));
+	}
+
+	public void setEndDate(Date date) {
+		endField.setText(sdf.format(date));
+	}
+
+	public String getStartDate() {
+		return startField.getText();
+	}
+
+	public String getEndDate() {
+		return endField.getText();
 	}
 
 }

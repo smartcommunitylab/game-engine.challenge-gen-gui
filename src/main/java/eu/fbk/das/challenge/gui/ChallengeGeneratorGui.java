@@ -217,6 +217,7 @@ public class ChallengeGeneratorGui {
 		configurationPanel.add(hostLabel);
 
 		hostTextField = new JTextField();
+		hostTextField.setMargin(new Insets(2, 5, 2, 2));
 		hostTextField.setToolTipText("gamification engine host");
 		hostTextField.setMinimumSize(new Dimension(200, 20));
 		hostLabel.setLabelFor(hostTextField);
@@ -245,6 +246,7 @@ public class ChallengeGeneratorGui {
 		configurationPanel.add(gameIdLabel);
 
 		gameIdField = new JTextField();
+		gameIdField.setMargin(new Insets(2, 5, 2, 2));
 		gameIdField.setMinimumSize(new Dimension(200, 20));
 		gameIdField.setColumns(15);
 		gameIdField.getDocument().addDocumentListener(new DocumentListener() {
@@ -274,6 +276,7 @@ public class ChallengeGeneratorGui {
 		userLabel.setLabelFor(userTextField);
 
 		userTextField = new JTextField();
+		userTextField.setMargin(new Insets(2, 5, 2, 2));
 		userTextField.setMinimumSize(new Dimension(200, 20));
 		configurationPanel.add(userTextField);
 		userTextField.setColumns(15);
@@ -283,6 +286,7 @@ public class ChallengeGeneratorGui {
 		configurationPanel.add(passwordLabel);
 
 		passwordTextField = new JPasswordField();
+		passwordTextField.setMargin(new Insets(2, 5, 2, 2));
 		configurationPanel.add(passwordTextField);
 		passwordTextField.setColumns(15);
 
@@ -296,6 +300,7 @@ public class ChallengeGeneratorGui {
 		configurationPanel.add(startLabel);
 
 		startField = new JTextField();
+		startField.setMargin(new Insets(2, 5, 2, 2));
 		startField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -314,6 +319,7 @@ public class ChallengeGeneratorGui {
 		configurationPanel.add(endLabel);
 
 		endField = new JTextField();
+		endField.setMargin(new Insets(2, 5, 2, 2));
 		endField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {

@@ -19,7 +19,7 @@ public class ConvertUtil {
 	public static Vector<Object> convertChallenge(ChallengeRuleRow crr) {
 		Vector<Object> result = new Vector<Object>();
 		result.add(crr.getName());
-		result.add(crr.getType());
+		result.add(crr.getModelName());
 		result.add(crr.getGoalType());
 		result.add(crr.getTarget());
 		result.add(crr.getBonus());
@@ -44,9 +44,9 @@ public class ConvertUtil {
 				crr.setName("");
 			}
 			if (v.get(1) != null) {
-				crr.setType((String) v.get(1));
+				crr.setModelName((String) v.get(1));
 			} else {
-				crr.setType("");
+				crr.setModelName("");
 			}
 			if (v.get(2) != null) {
 				crr.setGoalType((String) v.get(2));

@@ -79,7 +79,7 @@ public class ChallengeGeneratorGui {
 	private static final Logger logger = LogManager
 			.getLogger(ChallengeGeneratorGui.class);
 
-	private static final String[] challengeColNames = { "Name", "Type",
+	private static final String[] challengeColNames = { "Name", "Model Name",
 			"Goal Type", "Target", "Bonus", "Point type", "Difficulty",
 			"Baseline variable", "Selection criteria Custom data",
 			"Selectin criteria points", "Selection criteria badges" };

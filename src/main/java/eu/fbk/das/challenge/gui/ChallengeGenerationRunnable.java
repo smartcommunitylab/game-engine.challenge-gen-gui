@@ -34,8 +34,6 @@ public class ChallengeGenerationRunnable implements Runnable {
 		this.host = host;
 		this.gameId = gameId;
 		this.challenges = challenges;
-		this.templateDir = templateDir;
-		this.output = output;
 		this.username = username;
 		this.password = password;
 		this.startDate = startDate;
@@ -46,9 +44,8 @@ public class ChallengeGenerationRunnable implements Runnable {
 	public void run() {
 		String log = "";
 		try {
-			log = ChallengeGeneratorTool
-					.generate(host, gameId, challenges, templateDir, output,
-							username, password, startDate, endDate);
+			log = ChallengeGeneratorTool.generate(host, gameId, challenges,
+					username, password, startDate, endDate);
 			controller.setStatusBar("Challenge generation completed", false);
 			controller.addLog(log);
 			controller.enableUpload(true);

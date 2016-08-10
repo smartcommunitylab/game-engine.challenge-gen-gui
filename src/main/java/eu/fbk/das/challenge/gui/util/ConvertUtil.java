@@ -26,7 +26,6 @@ public class ConvertUtil {
 		result.add(crr.getPointType());
 		result.add("");
 		result.add(crr.getBaselineVar());
-		result.add(crr.getSelectionCriteriaCustomData());
 		result.add(crr.getSelectionCriteriaBadges());
 		result.add(crr.getSelectionCriteriaPoints());
 		return result;
@@ -75,19 +74,14 @@ public class ConvertUtil {
 				crr.setBaselineVar("");
 			}
 			if (v.get(8) != null) {
-				crr.setSelectionCriteriaCustomData((String) v.get(8));
+				crr.setSelectionCriteriaPoints((String) v.get(8));
 			} else {
-				crr.setSelectionCriteriaCustomData("");
+				crr.setSelectionCriteriaPoints("");
 			}
 			if (v.get(9) != null) {
 				crr.setSelectionCriteriaBadges((String) v.get(9));
 			} else {
 				crr.setSelectionCriteriaBadges("");
-			}
-			if (v.get(10) != null) {
-				crr.setSelectionCriteriaPoints((String) v.get(10));
-			} else {
-				crr.setSelectionCriteriaPoints("");
 			}
 			result.getChallenges().add(crr);
 		}

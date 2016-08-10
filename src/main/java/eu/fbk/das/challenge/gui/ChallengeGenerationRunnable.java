@@ -18,7 +18,6 @@ public class ChallengeGenerationRunnable implements Runnable {
 	private ChallengeGuiController controller;
 	private String host;
 	private String gameId;
-	private String templateDir;
 	private String output;
 	private String username;
 	private String password;
@@ -28,12 +27,13 @@ public class ChallengeGenerationRunnable implements Runnable {
 
 	public ChallengeGenerationRunnable(ChallengeGuiController controller,
 			String host, String gameId, ChallengeRules challenges,
-			String templateDir, String output, String username,
-			String password, Date startDate, Date endDate) {
+			String username, String password, String output, Date startDate,
+			Date endDate) {
 		this.controller = controller;
 		this.host = host;
 		this.gameId = gameId;
 		this.challenges = challenges;
+		this.output = output;
 		this.username = username;
 		this.password = password;
 		this.startDate = startDate;
@@ -45,7 +45,7 @@ public class ChallengeGenerationRunnable implements Runnable {
 		String log = "";
 		try {
 			log = ChallengeGeneratorTool.generate(host, gameId, challenges,
-					username, password, startDate, endDate);
+					username, password, output, startDate, endDate);
 			controller.setStatusBar("Challenge generation completed", false);
 			controller.addLog(log);
 			controller.enableUpload(true);

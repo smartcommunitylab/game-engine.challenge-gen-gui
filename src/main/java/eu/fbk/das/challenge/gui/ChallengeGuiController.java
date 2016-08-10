@@ -35,7 +35,6 @@ public class ChallengeGuiController {
 
 	private ChallengeGeneratorGui window;
 
-	private String templateDir;
 	private final static String OUTPUT = "output.json";
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -100,7 +99,6 @@ public class ChallengeGuiController {
 		window.setPassword(psw);
 		String gameId = PropertiesUtil.get(PropertiesUtil.GAMEID);
 		window.setGameId(gameId);
-		templateDir = PropertiesUtil.get(PropertiesUtil.TEMPLATE_DIR);
 	}
 
 	public void checkConnection(String host, String user, char[] password,
@@ -162,9 +160,8 @@ public class ChallengeGuiController {
 		window.setStatusBar("Challenge generation in progress", false);
 		try {
 			SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this,
-					host, gameId, window.getChallenges(), templateDir, OUTPUT,
-					username, password, sdf.parse(startDate), sdf
-							.parse(endDate)));
+					host, gameId, window.getChallenges(), username, password,
+					OUTPUT, sdf.parse(startDate), sdf.parse(endDate)));
 		} catch (ParseException e) {
 			String msg = "Error in parsing start or end date";
 			logger.error(msg);

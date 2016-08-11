@@ -26,8 +26,8 @@ public class ConvertUtil {
 		result.add(crr.getPointType());
 		result.add("");
 		result.add(crr.getBaselineVar());
-		result.add(crr.getSelectionCriteriaBadges());
 		result.add(crr.getSelectionCriteriaPoints());
+		result.add(crr.getSelectionCriteriaBadges());
 		return result;
 	}
 

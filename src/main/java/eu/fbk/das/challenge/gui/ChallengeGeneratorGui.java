@@ -81,8 +81,8 @@ public class ChallengeGeneratorGui {
 
 	private static final String[] challengeColNames = { "Name", "Model Name",
 			"Goal Type", "Target", "Bonus", "Point type", "Difficulty",
-			"Baseline variable", "Selection criteria Custom data",
-			"Selectin criteria points", "Selection criteria badges" };
+			"Baseline variable", "Selectin criteria points",
+			"Selection criteria badges" };
 
 	private static JFrame app;
 	private static ChallengeGuiController controller;
@@ -156,11 +156,8 @@ public class ChallengeGeneratorGui {
 				challengeTable));
 		challengeTable.setRowHeight(20);
 		challengeTable.setModel(new DefaultTableModel(new Object[][] { { "",
-				"", "", "", "", "", "", "", "", "", null }, }, new String[] {
-				"Name", "Type", "Goal Type", "Target", "Bonus", "Point type",
-				"Difficulty", "Baseline variable",
-				"Selection criteria Custom data", "Selectin criteria points",
-				"Selection criteria badges" }));
+				"", "", "", "", "", "", "", "", "", null }, },
+				challengeColNames));
 		challengeTable.getColumnModel().getColumn(0).setPreferredWidth(50);
 		challengeTable.getColumnModel().getColumn(0).setMinWidth(50);
 		challengeTable.getColumnModel().getColumn(1).setMinWidth(75);
@@ -174,8 +171,6 @@ public class ChallengeGeneratorGui {
 		challengeTable.getColumnModel().getColumn(8).setMinWidth(100);
 		challengeTable.getColumnModel().getColumn(9).setPreferredWidth(100);
 		challengeTable.getColumnModel().getColumn(9).setMinWidth(100);
-		challengeTable.getColumnModel().getColumn(10).setPreferredWidth(100);
-		challengeTable.getColumnModel().getColumn(10).setMinWidth(100);
 
 		challengeTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		challengeTable.setFillsViewportHeight(true);

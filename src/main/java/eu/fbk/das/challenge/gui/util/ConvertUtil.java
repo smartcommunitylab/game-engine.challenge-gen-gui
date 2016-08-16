@@ -62,12 +62,13 @@ public class ConvertUtil {
 			} else {
 				crr.setBonus(0);
 			}
-			// v.get(5) is difficulty, for now blank
-			if (v.get(6) != null) {
-				crr.setPointType((String) v.get(6));
+
+			if (v.get(5) != null) {
+				crr.setPointType((String) v.get(5));
 			} else {
 				crr.setPointType("");
 			}
+			// v.get(6) is difficulty, for now blank
 			if (v.get(7) != null) {
 				crr.setBaselineVar((String) v.get(7));
 			} else {

@@ -761,7 +761,7 @@ public class ChallengeGeneratorGui {
 		infoPanel.add(totalLabel, BorderLayout.NORTH);
 
 		// add info about challenges for player
-		JLabel challengeNumberLabel = new JLabel("Challenges for player : "
+		JLabel challengeNumberLabel = new JLabel("Challenges per player : "
 				+ values.toString());
 		challengeNumberLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 		challengeNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);

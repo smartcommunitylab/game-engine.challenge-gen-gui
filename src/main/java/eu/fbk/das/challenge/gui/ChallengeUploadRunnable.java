@@ -35,6 +35,6 @@ public class ChallengeUploadRunnable implements Runnable {
 		controller.setStatusBar("Challenge upload completed", false);
 		controller.addLog(log);
 		controller.enableUpload(true);
-		logger.info("Challenge generation completed");
+		logger.info("Challenge upload completed");
 	}
 }

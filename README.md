@@ -1,9 +1,9 @@
 # Challenge generation gui
 
-A simple gui (graphical user interface) for gamification engine challenge generation
+A simple gui (graphical user interface) for gamification engine challenge generation from [DAS](https://github.com/das-fbk)
 
 
-![Challenge generation gui and similation](img/img02.png)
+![Challenge generation gui and similation](img/img03.png)
 
 ## Description
 
@@ -14,11 +14,18 @@ Challenge generator GUI is a Swing based Graphical User Interface for [https://g
 * Java 1.7 or higher
 * Maven 3.2 or higher
 * Gamification engine, [setup guide here](https://github.com/smartcommunitylab/smartcampus.gamification/wiki/Setup) version [2.0.0](https://github.com/smartcommunitylab/smartcampus.gamification/tree/r2.0.0)
+* Gamification engine challenge generator, [see here](https://github.com/das-fbk/game-engine.challenge-gen/tree/long-game-trento)
 
 ## How to build
 
-1. Clone repository with git
-2. Compile with maven using mvn install
+1. setup prerequisites
+2. Clone repository with git
+3. Compile with maven using mvn clean install -Pgui
+
+
+## How to use
+
+Launch using ChallengeGeneratorGui.java or unzip assembly target/challengeGenerator-gui.zip and launch challengeGenerator.jar using java -jar challengeGenerator.jar or double clickin on it 
 
 # Thanks to
 

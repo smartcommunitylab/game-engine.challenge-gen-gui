@@ -21,6 +21,8 @@ public class AboutDialog extends JDialog {
 	public AboutDialog() {
 		setBounds(100, 100, 378, 247);
 
+		setLocationRelativeTo(null);
+
 		JLabel lblCreatedByDas = new JLabel("Created by DAS Unit in FBK - 2016");
 		lblCreatedByDas.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblCreatedByDas.setHorizontalAlignment(SwingConstants.CENTER);

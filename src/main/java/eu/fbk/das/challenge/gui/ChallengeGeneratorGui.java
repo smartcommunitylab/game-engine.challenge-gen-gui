@@ -119,6 +119,7 @@ public class ChallengeGeneratorGui {
 		app.setMinimumSize(new Dimension(1024, 768));
 		app.setSize(new Dimension(800, 600));
 		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		app.setLocationRelativeTo(null);
 		try {
 			app.setIconImage(ImageIO.read(getClass().getResource(
 					"/images/1469713255_Bulb_On-40.png")));

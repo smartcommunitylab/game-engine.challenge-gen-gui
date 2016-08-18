@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -84,6 +85,8 @@ public class ChallengeGeneratorGui {
 			"Baseline variable", "Selectin criteria points",
 			"Selection criteria badges" };
 
+	protected static final String LAST_USED_FOLDER = "LAST_USED_FOLDER";
+
 	private static JFrame app;
 	private static ChallengeGuiController controller;
 	private static ChallengeGeneratorGui window;
@@ -106,11 +109,8 @@ public class ChallengeGeneratorGui {
 	private ChartPanel chartPanel;
 	private JFreeChart chart;
 	private JPanel analytics;
-
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
 	private JTextField startField;
-
 	private JTextField endField;
 
 	public ChallengeGeneratorGui() {
@@ -390,7 +390,10 @@ public class ChallengeGeneratorGui {
 		mntmOpenMenuItem.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				JFileChooser chooser = new JFileChooser() {
+				Preferences prefs = Preferences.userRoot().node(
+						getClass().getName());
+				JFileChooser chooser = new JFileChooser((prefs.get(
+						LAST_USED_FOLDER, new File(".").getAbsolutePath()))) {
 
 					private static final long serialVersionUID = 7489308134784417097L;
 
@@ -411,7 +414,11 @@ public class ChallengeGeneratorGui {
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"Comma separated file (.csv)", "csv");
 				chooser.setFileFilter(filter);
-				chooser.showOpenDialog(null);
+				int returnVal = chooser.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					prefs.put(LAST_USED_FOLDER, chooser.getSelectedFile()
+							.getParent());
+				}
 			}
 		});
 		mnNewMenu.add(mntmOpenMenuItem);

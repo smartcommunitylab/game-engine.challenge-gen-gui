@@ -82,7 +82,7 @@ public class ChallengeGeneratorGui {
 
 	private static final String[] challengeColNames = { "Name", "Model Name",
 			"Goal Type", "Target", "Bonus", "Point type", "Difficulty",
-			"Baseline variable", "Selectin criteria points",
+			"Baseline variable", "Selection criteria points",
 			"Selection criteria badges" };
 
 	protected static final String LAST_USED_FOLDER = "LAST_USED_FOLDER";

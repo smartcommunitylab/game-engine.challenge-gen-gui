@@ -227,7 +227,7 @@ public class ChallengeGuiController {
 			List<ChallengeReport> report = ConvertUtil
 					.convertChallengeReport(lines);
 			Map<String, List<ChallengeReport>> map = report.stream().collect(
-					Collectors.groupingBy(ChallengeReport::getChallengeType));
+					Collectors.groupingBy(ChallengeReport::getChallengeName));
 			// update chart data
 			DefaultPieDataset pieDataSet = new DefaultPieDataset();
 			for (String key : map.keySet()) {

@@ -778,8 +778,8 @@ public class ChallengeGeneratorGui {
 		// add info about total players
 
 		// create chart
-		chart = ChartFactory.createPieChart("Challenges type for users",
-				pieDataSet, true, true, false);
+		chart = ChartFactory.createPieChart("Challenges for users", pieDataSet,
+				true, true, false);
 
 		PiePlot plot = (PiePlot) chart.getPlot();
 		plot.setDirection(Rotation.CLOCKWISE);

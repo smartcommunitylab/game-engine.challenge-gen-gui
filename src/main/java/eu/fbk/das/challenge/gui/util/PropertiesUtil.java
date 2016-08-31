@@ -20,7 +20,6 @@ public final class PropertiesUtil {
 	public static final String USERNAME = "USERNAME";
 	public static final String PASSWORD = "PASSWORD";
 	public static final String RELEVANT_CUSTOM_DATA = "RELEVANT_CUSTOM_DATA";
-	public static final String TEMPLATE_DIR = "TEMPLATE_DIR";
 
 	private static Properties prop;
 

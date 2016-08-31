@@ -39,6 +39,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
@@ -694,7 +695,14 @@ public class ChallengeGeneratorGui {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			controller.upload();
+			int result = JOptionPane.showConfirmDialog(
+					(Component) e.getSource(),
+					"Do you wan to upload generated challenges ? ",
+					"Upload challenges", JOptionPane.YES_NO_OPTION);
+			if (result == JOptionPane.YES_OPTION) {
+				controller.upload();
+			}
+
 		}
 	}
 

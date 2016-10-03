@@ -58,8 +58,11 @@ public class ChallengeGuiController {
 	public void openChallenges(File f) {
 		// load basic properties from file
 		loadPropertiesFromFile();
-		// unlock check connection button
+		// set default window status
 		window.enableCheckConnection(true);
+		window.enableUpload(false);
+		window.enableGenerate(false);
+		window.resetAnalytics();
 		// set default start date as today and end to one week
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.DATE, c.get(Calendar.DATE) + 1);

@@ -802,6 +802,10 @@ public class ChallengeGeneratorGui {
 		refresh();
 	}
 
+	public void resetAnalytics() {
+		analytics.removeAll();
+	}
+
 	private void checkHostGameIdField() {
 		if (hostTextField.getText().length() == 0
 				|| gameIdField.getText().length() == 0) {

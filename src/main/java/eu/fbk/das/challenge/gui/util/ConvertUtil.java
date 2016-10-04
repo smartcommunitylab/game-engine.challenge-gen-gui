@@ -57,8 +57,12 @@ public class ConvertUtil {
 			} else {
 				crr.setTarget("");
 			}
-			if (v.get(4) != null && v.get(4) instanceof Integer) {
-				crr.setBonus((Integer) v.get(4));
+			if (v.get(4) != null) {
+				if (v.get(4) instanceof Integer) {
+					crr.setBonus((Integer) v.get(4));
+				} else {
+					crr.setBonus(Integer.valueOf((String) v.get(4)));
+				}
 			} else {
 				crr.setBonus(0);
 			}

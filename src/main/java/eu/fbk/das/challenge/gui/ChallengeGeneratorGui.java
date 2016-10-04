@@ -446,11 +446,19 @@ public class ChallengeGeneratorGui {
 						}
 						logger.info("Save challenges to " + f.getAbsolutePath());
 						super.approveSelection();
-						controller.saveChallenges(
-								f,
-								ConvertUtil
-										.convertTable((DefaultTableModel) challengeTable
-												.getModel()));
+						try {
+							ChallengeRules converted = ConvertUtil
+									.convertTable((DefaultTableModel) challengeTable
+											.getModel());
+							controller.saveChallenges(f, converted);
+						} catch (NumberFormatException nfe) {
+							logger.error(
+									"Error on conversion between table and data: "
+											+ nfe.getMessage(), nfe);
+							addLog("Error on conversion between table and data: "
+									+ nfe.getMessage());
+						}
+
 					}
 
 				};

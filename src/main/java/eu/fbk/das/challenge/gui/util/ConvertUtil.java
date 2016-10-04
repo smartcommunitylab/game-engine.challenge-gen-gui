@@ -31,7 +31,8 @@ public class ConvertUtil {
 		return result;
 	}
 
-	public static ChallengeRules convertTable(DefaultTableModel model) {
+	public static ChallengeRules convertTable(DefaultTableModel model)
+			throws NumberFormatException {
 		ChallengeRules result = new ChallengeRules();
 		Vector<Vector> vec = model.getDataVector();
 		for (Vector v : vec) {

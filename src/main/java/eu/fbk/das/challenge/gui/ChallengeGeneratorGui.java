@@ -78,6 +78,8 @@ import eu.trentorise.game.challenges.util.ChallengeRules;
 
 public class ChallengeGeneratorGui {
 
+	private static final String CSV = ".csv";
+
 	private static final Logger logger = LogManager
 			.getLogger(ChallengeGeneratorGui.class);
 
@@ -429,15 +431,18 @@ public class ChallengeGeneratorGui {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				JFileChooser chooser = new JFileChooser() {
+				Preferences prefs = Preferences.userRoot().node(
+						getClass().getName());
+				JFileChooser chooser = new JFileChooser((prefs.get(
+						LAST_USED_FOLDER, new File(".").getAbsolutePath()))) {
 
 					private static final long serialVersionUID = 7489308134784417097L;
 
 					@Override
 					public void approveSelection() {
 						File f = getSelectedFile();
-						if (!f.getAbsolutePath().toLowerCase().endsWith(".csv")) {
-							f = new File(f.getAbsolutePath() + ".csv");
+						if (!f.getAbsolutePath().toLowerCase().endsWith(CSV)) {
+							f = new File(f.getAbsolutePath() + CSV);
 						}
 						logger.info("Save challenges to " + f.getAbsolutePath());
 						super.approveSelection();
@@ -452,7 +457,12 @@ public class ChallengeGeneratorGui {
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"Comma separated file (.csv)", "csv");
 				chooser.setFileFilter(filter);
-				chooser.showSaveDialog(null);
+				int returnVal = chooser.showSaveDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					prefs.put(LAST_USED_FOLDER, chooser.getSelectedFile()
+							.getParent());
+				}
+
 			}
 		});
 		mnNewMenu.add(mntmSaveMenuItem);
@@ -715,7 +725,10 @@ public class ChallengeGeneratorGui {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser chooser = new JFileChooser() {
+			Preferences prefs = Preferences.userRoot().node(
+					getClass().getName());
+			JFileChooser chooser = new JFileChooser((prefs.get(
+					LAST_USED_FOLDER, new File(".").getAbsolutePath()))) {
 
 				private static final long serialVersionUID = -7993854134304731166L;
 
@@ -744,7 +757,11 @@ public class ChallengeGeneratorGui {
 				}
 
 			};
-			chooser.showSaveDialog(null);
+			int returnVal = chooser.showSaveDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				prefs.put(LAST_USED_FOLDER, chooser.getSelectedFile()
+						.getParent());
+			}
 		}
 	}
 

@@ -713,10 +713,12 @@ public class ChallengeGeneratorGui {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			String msg = String.format(
+					"Do you wan to upload generated challenges on %s ? ",
+					getHost());
 			int result = JOptionPane.showConfirmDialog(
-					(Component) e.getSource(),
-					"Do you wan to upload generated challenges ? ",
-					"Upload challenges", JOptionPane.YES_NO_OPTION);
+					(Component) e.getSource(), msg, "Upload challenges",
+					JOptionPane.YES_NO_OPTION);
 			if (result == JOptionPane.YES_OPTION) {
 				controller.upload();
 			}

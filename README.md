@@ -7,7 +7,7 @@ A simple gui (graphical user interface) for gamification engine challenge genera
 
 ## Description
 
-Challenge generator GUI is a Swing based Graphical User Interface for [https://github.com/das-fbk/game-engine.challenge-gen](Gamification engine challenge generator)
+Challenge generator GUI is a Swing based Graphical User Interface for [Gamification engine challenge generator](https://github.com/das-fbk/game-engine.challenge-gen)
 
 ## Prerequisites 
 

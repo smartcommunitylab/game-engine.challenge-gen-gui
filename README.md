@@ -13,7 +13,7 @@ Challenge generator GUI is a Swing based Graphical User Interface for [Gamificat
 
 * Java 1.7 or higher
 * Maven 3.2 or higher
-* Gamification engine, [setup guide here](https://github.com/smartcommunitylab/smartcampus.gamification/wiki/Setup) version [2.0.0](https://github.com/smartcommunitylab/smartcampus.gamification/tree/r2.0.0)
+* Gamification engine, [setup guide here](https://github.com/smartcommunitylab/smartcampus.gamification/wiki/Setup) version [2.1.0](https://github.com/smartcommunitylab/smartcampus.gamification/tree/r2.1.0)
 * Gamification engine challenge generator, [see here](https://github.com/das-fbk/game-engine.challenge-gen/tree/long-game-trento)
 
 ## How to build
@@ -25,7 +25,10 @@ Challenge generator GUI is a Swing based Graphical User Interface for [Gamificat
 
 ## How to use
 
-Launch using ChallengeGeneratorGui.java or unzip assembly target/challengeGenerator-gui.zip and launch challengeGenerator.jar using java -jar challengeGenerator.jar or double clickin on it 
+Launch using:
+ 
+* directly from your IDE ChallengeGeneratorGui.java 
+* unzip assembly target/challengeGenerator-gui.zip and launch challengeGenerator.jar using java -jar challengeGenerator.jar or double clickin on it 
 
 # Thanks to
 

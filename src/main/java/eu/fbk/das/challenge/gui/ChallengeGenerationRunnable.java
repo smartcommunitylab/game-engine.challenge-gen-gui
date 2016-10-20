@@ -48,9 +48,19 @@ public class ChallengeGenerationRunnable implements Runnable {
 					username, password, output, startDate, endDate);
 			controller.setStatusBar("Challenge generation completed", false);
 			controller.addLog(log);
-			controller.enableUpload(true);
-			logger.info("Challenge generation completed");
-			controller.updateChart("generated-rules-report.csv");
+			if (!log.contains("Error") && !log.contains("exception")) {
+				controller.enableUpload(true);
+				controller.updateChart("generated-rules-report.csv");
+				logger.info("Challenge generation completed");
+			} else {
+				controller.enableUpload(false);
+				controller
+						.setStatusBar(
+								"Error during challenge generation, please see the log",
+								true);
+				logger.error("Error during challenge generation");
+			}
+
 		} catch (Exception e) {
 			controller.setStatusBar("Challenge generation error", true);
 			log = Throwables.getStackTraceAsString(e);

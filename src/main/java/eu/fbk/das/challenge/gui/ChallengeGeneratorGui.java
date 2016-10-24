@@ -633,8 +633,10 @@ public class ChallengeGeneratorGui {
 		DefaultListModel<String> model = (DefaultListModel<String>) logList
 				.getModel();
 		String[] listData = StringUtils.split(log, "\n");
-		for (String e : listData) {
-			model.addElement(e);
+		if (listData != null) {
+			for (String e : listData) {
+				model.addElement(e);
+			}
 		}
 
 		// scroll to the bottom

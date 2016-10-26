@@ -630,6 +630,9 @@ public class ChallengeGeneratorGui {
 	}
 
 	public void addLog(String log) {
+		if (log == null) {
+			return;
+		}
 		DefaultListModel<String> model = (DefaultListModel<String>) logList
 				.getModel();
 		String[] listData = StringUtils.split(log, "\n");

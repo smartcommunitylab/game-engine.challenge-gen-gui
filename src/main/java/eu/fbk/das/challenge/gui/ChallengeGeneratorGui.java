@@ -479,6 +479,7 @@ public class ChallengeGeneratorGui {
 		mntmNewMenuItem_3.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				logger.info("Exit");
 				System.exit(0);
 			}
 		});

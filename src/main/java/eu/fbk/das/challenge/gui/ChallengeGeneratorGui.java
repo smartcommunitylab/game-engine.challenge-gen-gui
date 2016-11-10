@@ -32,6 +32,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -115,6 +116,8 @@ public class ChallengeGeneratorGui {
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	private JTextField startField;
 	private JTextField endField;
+
+	private JCheckBox useRsCheckBox;
 
 	public ChallengeGeneratorGui() {
 		logger.info("Gui creation");
@@ -332,6 +335,11 @@ public class ChallengeGeneratorGui {
 		});
 		endField.setColumns(15);
 		configurationPanel.add(endField);
+
+		useRsCheckBox = new JCheckBox("Use recommendation system");
+		useRsCheckBox.setEnabled(false);
+		useRsCheckBox.setSelected(true);
+		configurationPanel.add(useRsCheckBox);
 
 		GridBagConstraints gbcsplit = new GridBagConstraints();
 		gbcsplit.insets = new Insets(0, 5, 5, 0);
@@ -609,6 +617,7 @@ public class ChallengeGeneratorGui {
 	}
 
 	public void enableGenerate(boolean b) {
+		useRsCheckBox.setEnabled(b);
 		mntmGenerate.setEnabled(b);
 	}
 
@@ -879,6 +888,10 @@ public class ChallengeGeneratorGui {
 
 	public String getEndDate() {
 		return endField.getText();
+	}
+
+	public Boolean getUseRs() {
+		return useRsCheckBox.isSelected();
 	}
 
 }

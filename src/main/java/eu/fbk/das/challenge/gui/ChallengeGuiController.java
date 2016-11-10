@@ -165,11 +165,14 @@ public class ChallengeGuiController {
 		String password = window.getPassword();
 		String startDate = window.getStartDate();
 		String endDate = window.getEndDate();
+		String filterIds = PropertiesUtil.get(PropertiesUtil.FILTERING);
+		Boolean useRs = window.getUseRs();
 		window.setStatusBar("Challenge generation in progress", false);
 		try {
 			SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this,
 					host, gameId, window.getChallenges(), username, password,
-					OUTPUT, sdf.parse(startDate), sdf.parse(endDate)));
+					OUTPUT, sdf.parse(startDate), sdf.parse(endDate),
+					filterIds, useRs));
 		} catch (ParseException e) {
 			String msg = "Error in parsing start or end date";
 			logger.error(msg);

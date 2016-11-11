@@ -15,7 +15,6 @@ public class ConvertUtil {
 	private ConvertUtil() {
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Vector<Object> convertChallenge(ChallengeRuleRow crr) {
 		Vector<Object> result = new Vector<Object>();
 		result.add(crr.getName());

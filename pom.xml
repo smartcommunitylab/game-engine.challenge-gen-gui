@@ -8,6 +8,7 @@
 	<description>challenge generator gui</description>
 	
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<gui.mainClass>eu.fbk.das.challenge.gui.ChallengeGeneratorGui</gui.mainClass>
 	</properties>
 	

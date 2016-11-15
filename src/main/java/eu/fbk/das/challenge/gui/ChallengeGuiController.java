@@ -49,6 +49,11 @@ public class ChallengeGuiController {
 		ChallengeRules challenges = new ChallengeRules();
 		challenges.getChallenges().add(new ChallengeRuleRow());
 		window.setChallenges(challenges);
+		window.resetAnalytics();
+		window.enableCheckConnection(false);
+		window.enableGenerate(false);
+		window.enableUpload(false);
+		window.enableUseRecommendationsystem(false);
 	}
 
 	public void setWindow(ChallengeGeneratorGui window) {

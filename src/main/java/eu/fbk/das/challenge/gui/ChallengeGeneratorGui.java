@@ -894,4 +894,8 @@ public class ChallengeGeneratorGui {
 		return useRsCheckBox.isSelected();
 	}
 
+	public void enableUseRecommendationsystem(boolean b) {
+		useRsCheckBox.setEnabled(b);
+	}
+
 }

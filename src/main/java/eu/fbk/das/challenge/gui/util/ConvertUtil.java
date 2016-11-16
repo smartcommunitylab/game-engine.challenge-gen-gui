@@ -35,7 +35,6 @@ public class ConvertUtil {
 		ChallengeRules result = new ChallengeRules();
 		Vector<Vector> vec = model.getDataVector();
 		for (Vector v : vec) {
-			int i = 0;
 			ChallengeRuleRow crr = new ChallengeRuleRow();
 			if (v.get(0) != null) {
 				crr.setName((String) v.get(0));
@@ -58,13 +57,13 @@ public class ConvertUtil {
 				crr.setTarget("");
 			}
 			if (v.get(4) != null) {
-				if (v.get(4) instanceof Integer) {
-					crr.setBonus((Integer) v.get(4));
+				if (v.get(4) instanceof Double) {
+					crr.setBonus((Double) v.get(4));
 				} else {
-					crr.setBonus(Integer.valueOf((String) v.get(4)));
+					crr.setBonus(Double.valueOf((String) v.get(4)));
 				}
 			} else {
-				crr.setBonus(0);
+				crr.setBonus(0.0);
 			}
 
 			if (v.get(5) != null) {

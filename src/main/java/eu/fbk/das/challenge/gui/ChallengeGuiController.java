@@ -54,6 +54,9 @@ public class ChallengeGuiController {
 		window.enableGenerate(false);
 		window.enableUpload(false);
 		window.enableUseRecommendationsystem(false);
+		window.setStatusBar(
+				"To start, create a new challenge definition using the table or open a new challenge definition file using File -> Open",
+				false);
 	}
 
 	public void setWindow(ChallengeGeneratorGui window) {

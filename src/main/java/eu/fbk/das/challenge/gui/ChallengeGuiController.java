@@ -175,12 +175,14 @@ public class ChallengeGuiController {
 		String endDate = window.getEndDate();
 		String filterIds = PropertiesUtil.get(PropertiesUtil.FILTERING);
 		Boolean useRs = window.getUseRs();
+		Boolean useFiltering = Boolean.valueOf(PropertiesUtil
+				.get(PropertiesUtil.FILTERING_ENABLED));
 		window.setStatusBar("Challenge generation in progress", false);
 		try {
 			SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this,
 					host, gameId, window.getChallenges(), username, password,
 					OUTPUT, sdf.parse(startDate), sdf.parse(endDate),
-					filterIds, useRs));
+					filterIds, useRs, useFiltering));
 		} catch (ParseException e) {
 			String msg = "Error in parsing start or end date";
 			logger.error(msg);
@@ -267,6 +269,10 @@ public class ChallengeGuiController {
 		} catch (IOException e) {
 			logger.error(e);
 		}
+	}
+
+	public List<ChallengeRuleRow> getChallenges() {
+		return window.getChallenges().getChallenges();
 	}
 
 }

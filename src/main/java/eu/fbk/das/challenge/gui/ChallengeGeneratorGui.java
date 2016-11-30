@@ -704,6 +704,13 @@ public class ChallengeGeneratorGui {
 		public void actionPerformed(ActionEvent e) {
 			if (challengeTable.getSelectedRow() != -1) {
 				controller.removeChallenge(challengeTable.getSelectedRow());
+				if (controller.getChallenges().isEmpty()) {
+					window.enableCheckConnection(true);
+					controller
+							.setStatusBar(
+									"All challenges definition removed, it's possibile to check connecion and generate using only recommendation system ",
+									false);
+				}
 			}
 		}
 	}

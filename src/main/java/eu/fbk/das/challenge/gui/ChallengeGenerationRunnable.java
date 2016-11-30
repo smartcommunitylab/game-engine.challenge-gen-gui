@@ -26,11 +26,13 @@ public class ChallengeGenerationRunnable implements Runnable {
 	private Date endDate;
 	private String filterIds;
 	private Boolean useRecommendationSystem;
+	private Boolean useFiltering;
 
 	public ChallengeGenerationRunnable(ChallengeGuiController controller,
 			String host, String gameId, ChallengeRules challenges,
 			String username, String password, String output, Date startDate,
-			Date endDate, String filterIds, Boolean useRecommendationSystem) {
+			Date endDate, String filterIds, Boolean useRecommendationSystem,
+			Boolean useFiltering) {
 		this.controller = controller;
 		this.host = host;
 		this.gameId = gameId;
@@ -42,6 +44,7 @@ public class ChallengeGenerationRunnable implements Runnable {
 		this.endDate = endDate;
 		this.filterIds = filterIds;
 		this.useRecommendationSystem = useRecommendationSystem;
+		this.useFiltering = useFiltering;
 	}
 
 	@Override
@@ -50,7 +53,7 @@ public class ChallengeGenerationRunnable implements Runnable {
 		try {
 			log = ChallengeGeneratorTool.generate(host, gameId, challenges,
 					username, password, output, startDate, endDate, filterIds,
-					useRecommendationSystem);
+					useRecommendationSystem, useFiltering);
 			controller.setStatusBar("Challenge generation completed", false);
 			controller.addLog(log);
 			if (!log.contains("Error") && !log.contains("exception")) {

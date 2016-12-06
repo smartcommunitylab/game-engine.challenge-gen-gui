@@ -5,6 +5,9 @@ import org.apache.logging.log4j.Logger;
 
 import eu.trentorise.game.challenges.UploaderTool;
 
+/**
+ * {@link Runnable} class for challenge upload into GamificationEngine
+ */
 public class ChallengeUploadRunnable implements Runnable {
 
 	private static final Logger logger = LogManager

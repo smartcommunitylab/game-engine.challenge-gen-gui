@@ -22,6 +22,10 @@ Challenge generator GUI is a Swing based Graphical User Interface for [Gamificat
 2. Clone repository with git
 3. Compile with maven using mvn clean install -Pgui
 
+## How to configure
+
+1. Open test.properties file and configure gamification engine connection settings: GAMEID, HOST and optionally configure filtering properties FILTERING_ENABLED, FILTERING
+2. configure logs using log4j2.xml
 
 ## How to use
 

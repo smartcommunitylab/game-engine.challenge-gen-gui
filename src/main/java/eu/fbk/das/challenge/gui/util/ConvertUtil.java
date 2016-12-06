@@ -10,6 +10,9 @@ import eu.fbk.das.challenge.gui.ChallengeReport;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 
+/**
+ * Utility class for conversion between formats
+ */
 public class ConvertUtil {
 
 	private ConvertUtil() {

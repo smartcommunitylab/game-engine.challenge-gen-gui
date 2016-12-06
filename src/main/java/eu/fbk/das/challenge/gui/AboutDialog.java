@@ -11,6 +11,9 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+/**
+ * Dialog class for about
+ */
 public class AboutDialog extends JDialog {
 
 	private static final long serialVersionUID = -6244602179383845535L;

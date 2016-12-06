@@ -11,6 +11,11 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
 
+import eu.fbk.das.challenge.gui.util.TableUtil;
+
+/**
+ * Handler for moving row inside {@link JTable}
+ */
 public class TableRowTransferHandler extends TransferHandler {
 
 	private static final long serialVersionUID = -5005950304881134370L;
@@ -69,13 +74,9 @@ public class TableRowTransferHandler extends TransferHandler {
 				}
 				index -= dist;
 
-				// **TableUtil** is a simple class that just copy, remove and
-				// select rows.
-
 				Vector<Object> list = TableUtil.getSelectedList(table, rowFrom);
 				TableUtil.removeSelected(table);
 				TableUtil.addRowAt(table, list, index);
-				// TableUtil.selectMultipleRow(table, sels);
 
 				return true;
 			}

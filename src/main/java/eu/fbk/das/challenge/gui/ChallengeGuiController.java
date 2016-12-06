@@ -28,6 +28,9 @@ import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 import eu.trentorise.game.challenges.util.ChallengeRulesLoader;
 
+/**
+ * Controller class for {@link ChallengeGeneratorGui}
+ */
 public class ChallengeGuiController {
 
 	private static final Logger logger = LogManager

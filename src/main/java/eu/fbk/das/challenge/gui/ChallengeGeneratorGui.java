@@ -77,6 +77,9 @@ import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 
+/**
+ * Main class for ChallengeGeneration Gui
+ */
 public class ChallengeGeneratorGui {
 
 	private static final String CSV = ".csv";

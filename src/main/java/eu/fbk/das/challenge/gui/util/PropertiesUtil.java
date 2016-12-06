@@ -6,6 +6,9 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Loading specified properties file
+ */
 public final class PropertiesUtil {
 
 	private static final Logger logger = LogManager

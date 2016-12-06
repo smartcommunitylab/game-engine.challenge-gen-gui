@@ -10,6 +10,9 @@ import com.google.common.base.Throwables;
 import eu.trentorise.game.challenges.ChallengeGeneratorTool;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 
+/**
+ * {@link Runnable} class for running challenge generation
+ */
 public class ChallengeGenerationRunnable implements Runnable {
 
 	private static final Logger logger = LogManager

@@ -1,5 +1,8 @@
 package eu.fbk.das.challenge.gui;
 
+/**
+ * Dto class for challenge representation
+ */
 public class ChallengeReport {
 
 	private String player;

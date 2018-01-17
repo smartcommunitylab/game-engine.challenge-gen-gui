@@ -86,9 +86,9 @@ public class ChallengeGeneratorGui {
 
     private static final Logger logger = LogManager.getLogger(ChallengeGeneratorGui.class);
 
-    private static final String[] challengeColNames =
-            {"Name", "Model Name", "Goal Type", "Target", "Bonus", "Point type", "Difficulty",
-                    "Baseline variable", "Selection criteria points", "Selection criteria badges"};
+    private static final String[] challengeColNames = {"Name", "Model Name", "Goal Type", "Target",
+            "Bonus", "Point type", "Period name", "Period target", "Difficulty",
+            "Baseline variable", "Selection criteria points", "Selection criteria badges"};
 
     protected static final String LAST_USED_FOLDER = "LAST_USED_FOLDER";
 
@@ -154,7 +154,7 @@ public class ChallengeGeneratorGui {
         challengeTable.setTransferHandler(new TableRowTransferHandler(challengeTable));
         challengeTable.setRowHeight(20);
         challengeTable.setModel(new DefaultTableModel(
-                new Object[][] {{"", "", "", "", "", "", "", "", "", "", null},},
+                new Object[][] {{"", "", "", "", "", "", "", "", "", "", "", "", null},},
                 challengeColNames));
         challengeTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         challengeTable.getColumnModel().getColumn(0).setMinWidth(50);

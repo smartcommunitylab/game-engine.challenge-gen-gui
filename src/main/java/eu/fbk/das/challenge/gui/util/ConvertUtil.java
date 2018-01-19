@@ -25,8 +25,8 @@ public class ConvertUtil {
         result.add(crr.getTarget());
         result.add(crr.getBonus());
         result.add(crr.getPointType());
-        result.add("");
-        result.add("");
+        result.add(crr.getPeriodName());
+        result.add(crr.getPeriodTarget());
         result.add("");
         result.add(crr.getBaselineVar());
         result.add(crr.getSelectionCriteriaPoints());

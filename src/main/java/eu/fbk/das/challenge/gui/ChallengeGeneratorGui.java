@@ -325,7 +325,7 @@ public class ChallengeGeneratorGui {
 
         useRsCheckBox = new JCheckBox("Use recommendation system");
         useRsCheckBox.setEnabled(false);
-        useRsCheckBox.setSelected(true);
+        useRsCheckBox.setSelected(false);
         configurationPanel.add(useRsCheckBox);
 
         GridBagConstraints gbcsplit = new GridBagConstraints();

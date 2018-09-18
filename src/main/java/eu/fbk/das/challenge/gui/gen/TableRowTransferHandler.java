@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui;
+package eu.fbk.das.challenge.gui.gen;
 
 import java.awt.Cursor;
 import java.awt.datatransfer.DataFlavor;

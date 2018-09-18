@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui;
+package eu.fbk.das.challenge.gui.gen;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,7 +56,6 @@ public class ChallengeGuiController {
 		window.enableCheckConnection(false);
 		window.enableGenerate(false);
 		window.enableUpload(false);
-		window.enableUseRecommendationsystem(false);
 		window.setStatusBar(
 				"To start, create a new challenge definition using the table or open a new challenge definition file using File -> Open",
 				false);
@@ -177,7 +176,7 @@ public class ChallengeGuiController {
 		String startDate = window.getStartDate();
 		String endDate = window.getEndDate();
 		String filterIds = PropertiesUtil.get(PropertiesUtil.FILTERING);
-		Boolean useRs = window.getUseRs();
+
 		Boolean useFiltering = Boolean.valueOf(PropertiesUtil
 				.get(PropertiesUtil.FILTERING_ENABLED));
 		window.setStatusBar("Challenge generation in progress", false);
@@ -185,7 +184,7 @@ public class ChallengeGuiController {
 			SwingUtilities.invokeLater(new ChallengeGenerationRunnable(this,
 					host, gameId, window.getChallenges(), username, password,
 					OUTPUT, sdf.parse(startDate), sdf.parse(endDate),
-					filterIds, useRs, useFiltering));
+					filterIds, useFiltering));
 		} catch (ParseException e) {
 			String msg = "Error in parsing start or end date";
 			logger.error(msg);

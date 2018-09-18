@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui;
+package eu.fbk.das.challenge.gui.gen;
 
 import java.util.Date;
 
@@ -28,13 +28,12 @@ public class ChallengeGenerationRunnable implements Runnable {
 	private Date startDate;
 	private Date endDate;
 	private String filterIds;
-	private Boolean useRecommendationSystem;
 	private Boolean useFiltering;
 
 	public ChallengeGenerationRunnable(ChallengeGuiController controller,
 			String host, String gameId, ChallengeRules challenges,
 			String username, String password, String output, Date startDate,
-			Date endDate, String filterIds, Boolean useRecommendationSystem,
+			Date endDate, String filterIds,
 			Boolean useFiltering) {
 		this.controller = controller;
 		this.host = host;
@@ -46,7 +45,6 @@ public class ChallengeGenerationRunnable implements Runnable {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.filterIds = filterIds;
-		this.useRecommendationSystem = useRecommendationSystem;
 		this.useFiltering = useFiltering;
 	}
 
@@ -55,8 +53,7 @@ public class ChallengeGenerationRunnable implements Runnable {
 		String log = "";
 		try {
 			log = ChallengeGeneratorTool.generate(host, gameId, challenges,
-					username, password, output, startDate, endDate, filterIds,
-					useRecommendationSystem, useFiltering);
+					username, password, output, startDate, endDate, filterIds, useFiltering);
 			controller.setStatusBar("Challenge generation completed", false);
 			controller.addLog(log);
 			if (!log.contains("Error") && !log.contains("exception")) {

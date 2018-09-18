@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui;
+package eu.fbk.das.challenge.gui.gen;
 
 /**
  * Dto class for challenge representation

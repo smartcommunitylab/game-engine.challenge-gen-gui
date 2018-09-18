@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui;
+package eu.fbk.das.challenge.gui.gen;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

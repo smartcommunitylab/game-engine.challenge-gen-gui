@@ -6,7 +6,7 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
-import eu.fbk.das.challenge.gui.ChallengeReport;
+import eu.fbk.das.challenge.gui.gen.ChallengeReport;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 

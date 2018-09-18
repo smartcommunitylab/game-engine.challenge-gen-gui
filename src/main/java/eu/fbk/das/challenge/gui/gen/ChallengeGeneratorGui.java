@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui;
+package eu.fbk.das.challenge.gui.gen;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -61,6 +61,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import eu.fbk.das.challenge.gui.AboutDialog;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -117,8 +118,6 @@ public class ChallengeGeneratorGui {
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private JTextField startField;
     private JTextField endField;
-
-    private JCheckBox useRsCheckBox;
 
     public ChallengeGeneratorGui() {
         logger.info("Gui creation");
@@ -322,11 +321,6 @@ public class ChallengeGeneratorGui {
         });
         endField.setColumns(15);
         configurationPanel.add(endField);
-
-        useRsCheckBox = new JCheckBox("Use recommendation system");
-        useRsCheckBox.setEnabled(false);
-        useRsCheckBox.setSelected(false);
-        configurationPanel.add(useRsCheckBox);
 
         GridBagConstraints gbcsplit = new GridBagConstraints();
         gbcsplit.insets = new Insets(0, 5, 5, 0);
@@ -595,7 +589,6 @@ public class ChallengeGeneratorGui {
     }
 
     public void enableGenerate(boolean b) {
-        useRsCheckBox.setEnabled(b);
         mntmGenerate.setEnabled(b);
     }
 
@@ -857,14 +850,6 @@ public class ChallengeGeneratorGui {
 
     public String getEndDate() {
         return endField.getText();
-    }
-
-    public Boolean getUseRs() {
-        return useRsCheckBox.isSelected();
-    }
-
-    public void enableUseRecommendationsystem(boolean b) {
-        useRsCheckBox.setEnabled(b);
     }
 
 }

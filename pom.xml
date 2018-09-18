@@ -9,7 +9,7 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<gui.mainClass>eu.fbk.das.challenge.gui.ChallengeGeneratorGui</gui.mainClass>
+		<gui.mainClass>eu.fbk.das.challenge.gui.gen.ChallengeGeneratorGui</gui.mainClass>
 	</properties>
 	
 	<dependencies>

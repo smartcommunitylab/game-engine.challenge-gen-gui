@@ -2,6 +2,7 @@ package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.fbk.das.rs.challengeGeneration.RecommendationSystem;
+import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 import eu.trentorise.game.challenges.util.ChallengeRulesLoader;
@@ -248,4 +249,8 @@ public class RecommenderSystemController {
         return window.getChallenges().getChallenges();
     }
 
+
+    public void updateList(Map<String, List<ChallengeDataDTO>> res) {
+        window.setChallenges(res);
+    }
 }

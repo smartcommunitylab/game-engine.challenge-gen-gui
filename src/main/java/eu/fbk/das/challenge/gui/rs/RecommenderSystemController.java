@@ -1,31 +1,25 @@
 package eu.fbk.das.challenge.gui.rs;
 
-import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.fbk.das.rs.challengeGeneration.RecommendationSystem;
-import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 import eu.trentorise.game.challenges.util.ChallengeRulesLoader;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Controller class for RecommenderSystemGui
- * */
+ */
 public class RecommenderSystemController {
 
     private static final Logger logger = LogManager
@@ -50,7 +44,7 @@ public class RecommenderSystemController {
         ChallengeRules challenges = new ChallengeRules();
         challenges.getChallenges().add(new ChallengeRuleRow());
         window.setChallenges(challenges);
-        window.resetAnalytics();
+//        window.resetAnalytics();
         window.enableCheckConnection(false);
         window.enableGenerate(false);
         window.enableUpload(false);

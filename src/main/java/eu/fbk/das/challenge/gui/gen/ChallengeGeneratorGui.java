@@ -1,67 +1,9 @@
 package eu.fbk.das.challenge.gui.gen;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.prefs.Preferences;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.DropMode;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
-
 import eu.fbk.das.challenge.gui.AboutDialog;
+import eu.fbk.das.challenge.gui.util.ConvertUtil;
+import eu.trentorise.game.challenges.util.ChallengeRuleRow;
+import eu.trentorise.game.challenges.util.ChallengeRules;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -74,9 +16,25 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.util.Rotation;
 
-import eu.fbk.das.challenge.gui.util.ConvertUtil;
-import eu.trentorise.game.challenges.util.ChallengeRuleRow;
-import eu.trentorise.game.challenges.util.ChallengeRules;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 /**
  * Main class for ChallengeGeneration Gui
@@ -138,8 +96,8 @@ public class ChallengeGeneratorGui {
         panel.setLayout(new BorderLayout(5, 5));
         JPanel centerPanel = new JPanel();
         GridBagLayout gbl_centerPanel = new GridBagLayout();
-        gbl_centerPanel.rowWeights = new double[] {0.0, 0.0, 0.0};
-        gbl_centerPanel.columnWeights = new double[] {1.0};
+        gbl_centerPanel.rowWeights = new double[]{0.0, 0.0, 0.0};
+        gbl_centerPanel.columnWeights = new double[]{1.0};
         centerPanel.setLayout(gbl_centerPanel);
 
         JPanel configurationPanel = new JPanel();
@@ -153,7 +111,7 @@ public class ChallengeGeneratorGui {
         challengeTable.setTransferHandler(new TableRowTransferHandler(challengeTable));
         challengeTable.setRowHeight(20);
         challengeTable.setModel(new DefaultTableModel(
-                new Object[][] {{"", "", "", "", "", "", "", "", "", "", "", "", null},},
+                new Object[][]{{"", "", "", "", "", "", "", "", "", "", "", "", null},},
                 challengeColNames));
         challengeTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         challengeTable.getColumnModel().getColumn(0).setMinWidth(50);
@@ -228,7 +186,8 @@ public class ChallengeGeneratorGui {
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e) {}
+            public void changedUpdate(DocumentEvent e) {
+            }
         });
 
         JLabel gameIdLabel = new JLabel("GameID");
@@ -252,7 +211,8 @@ public class ChallengeGeneratorGui {
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e) {}
+            public void changedUpdate(DocumentEvent e) {
+            }
         });
         configurationPanel.add(gameIdField);
 

@@ -59,6 +59,7 @@ public class RecommenderSystemGui {
     private static RecommenderSystemController controller;
     private static RecommenderSystemGui window;
     private final JTextField playerIdsField;
+    private final JButton btnGenerate;
     private JTextField hostTextField;
     private JTextField userTextField;
     private JPasswordField passwordTextField;
@@ -110,8 +111,8 @@ public class RecommenderSystemGui {
         JPanel configurationPanel = new JPanel();
         configurationPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
                 "Configuration", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        analytics = new JPanel();
-        analytics.setMinimumSize(new Dimension(250, 0));
+        // analytics = new JPanel();
+        // analytics.setMinimumSize(new Dimension(250, 0));
         challengeTable = new JTable(null, challengeColNames);
         challengeTable.setDragEnabled(true);
         challengeTable.setDropMode(DropMode.INSERT_ROWS);
@@ -138,23 +139,24 @@ public class RecommenderSystemGui {
         challengeTable.setFillsViewportHeight(true);
 
         JScrollPane scrollpane = new JScrollPane(challengeTable);
-
-        JPopupMenu popupMenu = new JPopupMenu();
-        addPopup(challengeTable, popupMenu);
-
-        JMenuItem mntmInsert = new JMenuItem("Insert");
-        mntmInsert.setAction(insertAction);
-        popupMenu.add(mntmInsert);
-
-        JMenuItem mntmDelete = new JMenuItem("Delete");
-        mntmDelete.setAction(deleteAction);
-        popupMenu.add(mntmDelete);
         scrollpane.setPreferredSize(new Dimension(652, 402));
-        JSplitPane jsplitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollpane, analytics);
-        analytics.setLayout(new BorderLayout(0, 50));
-        jsplitpane.setOpaque(false);
-        jsplitpane.setOneTouchExpandable(true);
-        jsplitpane.setPreferredSize(new Dimension(669, 500));
+
+//        JPopupMenu popupMenu = new JPopupMenu();
+//        addPopup(challengeTable, popupMenu);
+//
+//        JMenuItem mntmInsert = new JMenuItem("Insert");
+//        mntmInsert.setAction(insertAction);
+//        popupMenu.add(mntmInsert);
+//
+//        JMenuItem mntmDelete = new JMenuItem("Delete");
+//        mntmDelete.setAction(deleteAction);
+//        popupMenu.add(mntmDelete);
+//
+//        JSplitPane jsplitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollpane, analytics);
+//        analytics.setLayout(new BorderLayout(0, 50));
+//        jsplitpane.setOpaque(false);
+//        jsplitpane.setOneTouchExpandable(true);
+//        jsplitpane.setPreferredSize(new Dimension(669, 500));
 
         GridBagConstraints gbc_configurationPanel = new GridBagConstraints();
         gbc_configurationPanel.insets = new Insets(5, 5, 5, 0);
@@ -169,17 +171,17 @@ public class RecommenderSystemGui {
         configurationPanel.setLayout(new GridLayout(0, 5, 10, 5));
 
         JLabel hostLabel = new JLabel("Gamification host");
-        hostLabel.setPreferredSize(new Dimension(50, 10));
+        // hostLabel.setPreferredSize(new Dimension(50, 10));
         configurationPanel.add(hostLabel);
 
         hostTextField = new JTextField();
-        hostTextField.setMargin(new Insets(2, 5, 2, 2));
+        // hostTextField.setMargin(new Insets(2, 5, 2, 2));
         hostTextField.setToolTipText("gamification engine host");
-        hostTextField.setMinimumSize(new Dimension(300, 20));
+        // hostTextField.setMinimumSize(new Dimension(300, 20));
         hostLabel.setLabelFor(hostTextField);
-        hostTextField.setPreferredSize(new Dimension(300, 20));
+        // hostTextField.setPreferredSize(new Dimension(300, 20));
         configurationPanel.add(hostTextField);
-        hostTextField.setColumns(25);
+        // hostTextField.setColumns(25);
         hostTextField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
@@ -198,13 +200,13 @@ public class RecommenderSystemGui {
         });
 
         JLabel gameIdLabel = new JLabel("GameID");
-        gameIdLabel.setPreferredSize(new Dimension(50, 10));
+        // gameIdLabel.setPreferredSize(new Dimension(50, 10));
         configurationPanel.add(gameIdLabel);
 
         gameIdField = new JTextField();
-        gameIdField.setMargin(new Insets(2, 5, 2, 2));
-        gameIdField.setMinimumSize(new Dimension(300, 20));
-        gameIdField.setColumns(15);
+        // gameIdField.setMargin(new Insets(2, 5, 2, 2));
+        // gameIdField.setMinimumSize(new Dimension(300, 20));
+        // gameIdField.setColumns(15);
         gameIdField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
@@ -223,39 +225,41 @@ public class RecommenderSystemGui {
         });
         configurationPanel.add(gameIdField);
 
-        JLabel lblNewLabel = new JLabel("");
-        configurationPanel.add(lblNewLabel);
-
-        JLabel userLabel = new JLabel("Username");
-        userLabel.setPreferredSize(new Dimension(50, 10));
-        configurationPanel.add(userLabel);
-        userLabel.setLabelFor(userTextField);
-
-        userTextField = new JTextField();
-        userTextField.setMargin(new Insets(2, 5, 2, 2));
-        userTextField.setMinimumSize(new Dimension(300, 20));
-        configurationPanel.add(userTextField);
-        userTextField.setColumns(15);
-
-        JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setPreferredSize(new Dimension(50, 10));
-        configurationPanel.add(passwordLabel);
-
-        passwordTextField = new JPasswordField();
-        passwordTextField.setMargin(new Insets(2, 5, 2, 2));
-        configurationPanel.add(passwordTextField);
-        passwordTextField.setColumns(15);
-
         btnCheckConnection = new JButton("check connection");
         btnCheckConnection.setEnabled(false);
         btnCheckConnection.addActionListener(new CheckConnectionAction());
         configurationPanel.add(btnCheckConnection);
 
+        JLabel userLabel = new JLabel("Username");
+        // userLabel.setPreferredSize(new Dimension(50, 10));
+        configurationPanel.add(userLabel);
+        userLabel.setLabelFor(userTextField);
+
+        userTextField = new JTextField();
+        // userTextField.setMargin(new Insets(2, 5, 2, 2));
+        // userTextField.setMinimumSize(new Dimension(300, 20));
+        configurationPanel.add(userTextField);
+        // userTextField.setColumns(15);
+
+        JLabel passwordLabel = new JLabel("Password");
+        // passwordLabel.setPreferredSize(new Dimension(50, 10));
+        configurationPanel.add(passwordLabel);
+
+        passwordTextField = new JPasswordField();
+        // passwordTextField.setMargin(new Insets(2, 5, 2, 2));
+        configurationPanel.add(passwordTextField);
+        // passwordTextField.setColumns(15);
+
+        btnGenerate = new JButton("Generate");
+        btnGenerate.setEnabled(true);
+        btnGenerate.addActionListener(new GenerateAction());
+        configurationPanel.add(btnGenerate);
+
         Label startLabel = new Label("Date exeuction");
         configurationPanel.add(startLabel);
 
         dateField = new JTextField();
-        dateField.setMargin(new Insets(2, 5, 2, 2));
+        // dateField.setMargin(new Insets(2, 5, 2, 2));
         dateField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -267,15 +271,15 @@ public class RecommenderSystemGui {
                 }
             }
         });
-        dateField.setColumns(15);
+        // dateField.setColumns(15);
         configurationPanel.add(dateField);
 
         Label playerIdsLabel = new Label("Player Ids");
         configurationPanel.add(playerIdsLabel);
 
         playerIdsField = new JTextField();
-        playerIdsField.setMargin(new Insets(2, 5, 2, 2));
-        playerIdsField.setColumns(30);
+        // playerIdsField.setMargin(new Insets(2, 5, 2, 2));
+        // playerIdsField.setColumns(30);
         configurationPanel.add(playerIdsField);
 
 
@@ -316,7 +320,8 @@ public class RecommenderSystemGui {
         gbcsplit.gridy = 1;
         gbcsplit.weighty = 0.7;
 
-        centerPanel.add(jsplitpane, gbcsplit);
+        // centerPanel.add(jsplitpane, gbcsplit);
+        centerPanel.add(scrollpane, gbcsplit);
 
         panel.add(centerPanel, BorderLayout.CENTER);
 
@@ -541,8 +546,8 @@ public class RecommenderSystemGui {
 
     public void setChallenges(Map<String, List<ChallengeDataDTO>> res) {
         DefaultTableModel model = new DefaultTableModel(null, challengeColNames);
-        for (String player: res.keySet()) {
-            for (ChallengeDataDTO crr: res.get(player)) {
+        for (String player : res.keySet()) {
+            for (ChallengeDataDTO crr : res.get(player)) {
                 Vector<Object> result = new Vector<Object>();
                 result.add(player);
                 result.add(crr.getModelName());
@@ -910,6 +915,5 @@ public class RecommenderSystemGui {
 
         */
 
-    
 
 }

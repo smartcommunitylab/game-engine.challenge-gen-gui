@@ -1,21 +1,21 @@
 package eu.fbk.das.challenge.gui.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.table.DefaultTableModel;
-
 import eu.fbk.das.challenge.gui.gen.ChallengeReport;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
+
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Utility class for conversion between formats
  */
 public class ConvertUtil {
 
-    private ConvertUtil() {}
+    private ConvertUtil() {
+    }
 
     public static Vector<Object> convertChallenge(ChallengeRuleRow crr) {
         Vector<Object> result = new Vector<Object>();

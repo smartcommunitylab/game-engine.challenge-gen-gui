@@ -41,9 +41,9 @@ public class RSGenerateRunnable implements Runnable {
             if (!log.contains("Error") && !log.contains("exception")) {
 
                 // TODO
-//                controller.enableUpload(true);
+//                 controller.enableUpload(true);
 //                controller.updateChart("generated-rules-report.csv");
-//                controller.updateList(res);
+               controller.updateList(res);
                 logger.info("Challenge generation completed");
             } else {
 
@@ -74,7 +74,7 @@ public class RSGenerateRunnable implements Runnable {
             rs.writeToFile(res);
 
         } catch (IOException e) {
-            err (logger, "Error in saving challenges. Exception: %s", e.getMessage());
+            err(logger, "Error in saving challenges. Exception: %s", e.getMessage());
             return null;
         }
 

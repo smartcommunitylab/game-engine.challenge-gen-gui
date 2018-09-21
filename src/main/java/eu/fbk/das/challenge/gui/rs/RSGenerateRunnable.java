@@ -2,6 +2,7 @@ package eu.fbk.das.challenge.gui.rs;
 
 import com.google.common.base.Throwables;
 import eu.fbk.das.rs.challengeGeneration.RecommendationSystem;
+import eu.fbk.das.rs.challengeGeneration.RecommendationSystemConfig;
 import eu.trentorise.game.challenges.ChallengeInstanceFactory;
 import eu.trentorise.game.challenges.ChallengesRulesGenerator;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
@@ -63,6 +64,7 @@ public class RSGenerateRunnable implements Runnable {
     }
 
     public Map<String, List<ChallengeDataDTO>> generate(Map<String, String> conf, RecommendationSystem rs) {
+
         Map<String, List<ChallengeDataDTO>> res = rs.recommendation(conf);
 
         ChallengesRulesGenerator crg;

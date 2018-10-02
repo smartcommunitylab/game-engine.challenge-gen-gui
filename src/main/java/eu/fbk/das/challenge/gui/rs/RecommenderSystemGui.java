@@ -1,7 +1,7 @@
 package eu.fbk.das.challenge.gui.rs;
 
-import eu.fbk.das.challenge.gui.AboutDialog;
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
+import eu.fbk.das.rs.Utils;
 import eu.fbk.das.rs.challengeGeneration.RecommendationSystemConfig;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
@@ -10,13 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.util.Rotation;
+import org.joda.time.DateTime;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -27,6 +21,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -34,12 +30,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 import java.util.prefs.Preferences;
 
-import static eu.fbk.das.rs.Utils.p;
+import static eu.fbk.das.rs.Utils.*;
 
 public class RecommenderSystemGui {
 
@@ -51,45 +46,51 @@ public class RecommenderSystemGui {
             "Bonus", "Point type", "Period name", "Period target", "Difficulty",
             "Baseline variable", "Selection criteria points", "Selection criteria badges"}; */
 
-    private static final String[] challengeColNames = {"Player", "Model", "Counter", "Baseline", "Target", "Difficulty", "Bonus"};
+    protected static final String[] challengeColNames = {"Player", "Level", "Model", "Counter", "Baseline", "Target", "Difficulty", "Bonus", "State", "Priority", "Start", "End"};
 
-    protected static final String LAST_USED_FOLDER = "LAST_USED_FOLDER";
+    private static final String LAST_USED_FOLDER = "LAST_USED_FOLDER";
 
-    private static JFrame app;
+    protected static JFrame app;
     private static RecommenderSystemController controller;
     private static RecommenderSystemGui window;
     private final JTextField playerIdsField;
+    private final JMenuItem mntmPlayerList;
+    private final JButton btnUpload;
     private final JButton btnGenerate;
     private JTextField hostTextField;
     private JTextField userTextField;
     private JPasswordField passwordTextField;
-    private JTable challengeTable;
+    // analytics = new JPanel();
+
+    // analytics.setMinimumSize(new Dimension(250, 0));
+    private JTable challengeTable = new JTable(new Object[][] {}, challengeColNames);
     private JButton btnCheckConnection;
     private JLabel statusBar;
     private JTextField gameIdField;
     private JMenuItem mntmUpload;
     private JMenuItem mntmGenerate;
     private JList<String> logList;
-    private final Action insertAction = new InsertAction();
-    private final Action deleteAction = new DeleteAction();
+
     private JScrollPane scrollPane;
-    private final Action saveAction = new SaveLogAction();
-    private final Action aboutAction = new AboutAction();
-    private AboutDialog about = new AboutDialog();
-    private ChartPanel chartPanel;
-    private JFreeChart chart;
-    private JPanel analytics;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+    // private AboutDialog about = new AboutDialog();
+    // private ChartPanel chartPanel;
+    // private JFreeChart chart;
+    // private JPanel analytics;
+
+    // private final Action insertAction = new InsertAction();
+    // private final Action deleteAction = new DeleteAction();
+
     private JTextField dateField;
-    private JTextField endField;
 
-    private JCheckBox useRsCheckBox;
+    protected List<Vector<Object>> challengeVector;
 
-    public RecommenderSystemGui() {
+
+    private RecommenderSystemGui() {
         logger.info("Gui creation");
         app = new JFrame("RecommenderSystemGui");
         app.setMinimumSize(new Dimension(1024, 768));
-        app.setSize(new Dimension(800, 600));
+        app.setSize(new Dimension(1024, 768));
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setLocationRelativeTo(null);
         try {
@@ -111,9 +112,7 @@ public class RecommenderSystemGui {
         JPanel configurationPanel = new JPanel();
         configurationPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
                 "Configuration", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        // analytics = new JPanel();
-        // analytics.setMinimumSize(new Dimension(250, 0));
-        challengeTable = new JTable(null, challengeColNames);
+
         challengeTable.setDragEnabled(true);
         challengeTable.setDropMode(DropMode.INSERT_ROWS);
         challengeTable.setTransferHandler(new TableRowTransferHandler(challengeTable));
@@ -121,13 +120,13 @@ public class RecommenderSystemGui {
         challengeTable.setModel(new DefaultTableModel(
                 new Object[][]{{"", "", "", "", "", "", ""},},
                 challengeColNames));
-        challengeTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        challengeTable.getColumnModel().getColumn(0).setMinWidth(50);
-        challengeTable.getColumnModel().getColumn(1).setMinWidth(75);
-        challengeTable.getColumnModel().getColumn(2).setMinWidth(50);
-        challengeTable.getColumnModel().getColumn(3).setMinWidth(20);
-        challengeTable.getColumnModel().getColumn(4).setMinWidth(20);
-        challengeTable.getColumnModel().getColumn(5).setMinWidth(50);
+//        challengeTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+//        challengeTable.getColumnModel().getColumn(0).setMinWidth(50);
+//        challengeTable.getColumnModel().getColumn(1).setMinWidth(75);
+//        challengeTable.getColumnModel().getColumn(2).setMinWidth(50);
+//        challengeTable.getColumnModel().getColumn(3).setMinWidth(20);
+//        challengeTable.getColumnModel().getColumn(4).setMinWidth(20);
+//        challengeTable.getColumnModel().getColumn(5).setMinWidth(50);
         /* challengeTable.getColumnModel().getColumn(6).setMinWidth(5);
         challengeTable.getColumnModel().getColumn(7).setMinWidth(20);
         challengeTable.getColumnModel().getColumn(8).setPreferredWidth(100);
@@ -251,11 +250,11 @@ public class RecommenderSystemGui {
         // passwordTextField.setColumns(15);
 
         btnGenerate = new JButton("Generate");
-        btnGenerate.setEnabled(true);
         btnGenerate.addActionListener(new GenerateAction());
+        btnGenerate.setEnabled(false);
         configurationPanel.add(btnGenerate);
 
-        Label startLabel = new Label("Date exeuction");
+        Label startLabel = new Label("Date execution");
         configurationPanel.add(startLabel);
 
         dateField = new JTextField();
@@ -282,8 +281,13 @@ public class RecommenderSystemGui {
         // playerIdsField.setColumns(30);
         configurationPanel.add(playerIdsField);
 
+        btnUpload = new JButton("Upload");
+        btnUpload.addActionListener(new UploadAction());
+        btnUpload.setEnabled(false);
+        configurationPanel.add(btnUpload);
 
-        /** TODO to remove
+
+        /* TODO to remove
          Label endLabel = new Label("Challenge date end (dd/MM/YYYY HH:mm:ss)");
          configurationPanel.add(endLabel);
 
@@ -316,16 +320,12 @@ public class RecommenderSystemGui {
         gbcsplit.weightx = 1.0;
         gbcsplit.weighty = 0.6;
 
-        gbcsplit.fill = GridBagConstraints.BOTH;
-        gbcsplit.gridy = 1;
-        gbcsplit.weighty = 0.7;
-
         // centerPanel.add(jsplitpane, gbcsplit);
         centerPanel.add(scrollpane, gbcsplit);
 
         panel.add(centerPanel, BorderLayout.CENTER);
 
-        DefaultListModel<String> model = new DefaultListModel<String>();
+        DefaultListModel<String> model = new DefaultListModel<>();
 
         scrollPane = new JScrollPane();
 
@@ -337,7 +337,7 @@ public class RecommenderSystemGui {
         gbc_scrollPane.gridx = 0;
         gbc_scrollPane.gridy = 2;
         centerPanel.add(scrollPane, gbc_scrollPane);
-        logList = new JList<String>(model);
+        logList = new JList<>(model);
         scrollPane.setViewportView(logList);
         logList.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 
@@ -345,6 +345,7 @@ public class RecommenderSystemGui {
         addPopup(logList, popupMenu_1);
 
         JMenuItem mntmSaveLog = new JMenuItem("save log");
+        Action saveAction = new SaveLogAction();
         mntmSaveLog.setAction(saveAction);
         popupMenu_1.add(mntmSaveLog);
 
@@ -369,80 +370,18 @@ public class RecommenderSystemGui {
         mntmOpenMenuItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                Preferences prefs = Preferences.userRoot().node(getClass().getName());
-                JFileChooser chooser = new JFileChooser(
-                        (prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath()))) {
-
-                    private static final long serialVersionUID = 7489308134784417097L;
-
-                    @Override
-                    public void approveSelection() {
-                        File f = getSelectedFile();
-                        if (f != null && f.exists()) {
-                            logger.info(
-                                    "Selected challenges definition file " + f.getAbsolutePath());
-                            super.approveSelection();
-                            controller.openChallenges(f);
-                        } else {
-                            logger.error("Selected challenges definition file is not found");
-                        }
-                    }
-
-                };
-                FileNameExtensionFilter filter =
-                        new FileNameExtensionFilter("Comma separated file (.csv)", "csv");
-                chooser.setFileFilter(filter);
-                int returnVal = chooser.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    prefs.put(LAST_USED_FOLDER, chooser.getSelectedFile().getParent());
-                }
+                OpenEvent();
             }
         });
         mnNewMenu.add(mntmOpenMenuItem);
 
         JMenuItem mntmSaveMenuItem = new JMenuItem("Save");
         mntmSaveMenuItem.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                Preferences prefs = Preferences.userRoot().node(getClass().getName());
-                JFileChooser chooser = new JFileChooser(
-                        (prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath()))) {
-
-                    private static final long serialVersionUID = 7489308134784417097L;
-
                     @Override
-                    public void approveSelection() {
-                        File f = getSelectedFile();
-                        if (!f.getAbsolutePath().toLowerCase().endsWith(CSV)) {
-                            f = new File(f.getAbsolutePath() + CSV);
-                        }
-                        logger.info("Save challenges to " + f.getAbsolutePath());
-                        super.approveSelection();
-                        try {
-                            ChallengeRules converted = ConvertUtil
-                                    .convertTable((DefaultTableModel) challengeTable.getModel());
-                            controller.saveChallenges(f, converted);
-                        } catch (NumberFormatException nfe) {
-                            logger.error("Error on conversion between table and data: "
-                                    + nfe.getMessage(), nfe);
-                            addLog("Error on conversion between table and data: "
-                                    + nfe.getMessage());
-                        }
-
+                    public void mousePressed(MouseEvent e) {
+                        SaveEvent();
                     }
-
-                };
-                FileNameExtensionFilter filter =
-                        new FileNameExtensionFilter("Comma separated file (.csv)", "csv");
-                chooser.setFileFilter(filter);
-                int returnVal = chooser.showSaveDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    prefs.put(LAST_USED_FOLDER, chooser.getSelectedFile().getParent());
-                }
-
-            }
-        });
+                });
         mnNewMenu.add(mntmSaveMenuItem);
 
         JMenuItem mntmNewMenuItem_3 = new JMenuItem("Exit");
@@ -471,9 +410,22 @@ public class RecommenderSystemGui {
         JMenu mnHelp = new JMenu("Help");
         menuBar.add(mnHelp);
 
+        mntmPlayerList = new JMenuItem("Player List");
+        mntmPlayerList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                PlayerListEvent();
+            }
+        });
+        mntmPlayerList.setEnabled(false);
+        mnHelp.add(mntmPlayerList);
+
+        /*
         JMenuItem mntmAbout = new JMenuItem("About");
+        Action aboutAction = new AboutAction();
         mntmAbout.setAction(aboutAction);
         mnHelp.add(mntmAbout);
+        */
 
         JPanel statusBarPanel = new JPanel();
         statusBarPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
@@ -485,8 +437,85 @@ public class RecommenderSystemGui {
         statusBarPanel.add(statusBar);
         app.setVisible(true);
 
-        about = new AboutDialog();
-        about.setVisible(false);
+        // about = new AboutDialog();
+        // about.setVisible(false);
+    }
+
+    private void PlayerListEvent() {
+        Set<String> pIds = controller.getPlayerList();
+        String msg = f("List of player ids: %s", String.join(", ", pIds));
+        JOptionPane.showMessageDialog(app, msg);
+
+    }
+
+    private void SaveEvent() {
+        Preferences prefs = Preferences.userRoot().node(getClass().getName());
+        JFileChooser chooser = new JFileChooser(
+                (prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath()))) {
+
+            private static final long serialVersionUID = 7489308134784417097L;
+
+            @Override
+            public void approveSelection() {
+                File f = getSelectedFile();
+                if (!f.getAbsolutePath().toLowerCase().endsWith(CSV)) {
+                    f = new File(f.getAbsolutePath() + CSV);
+                }
+                logger.info("Save challenges to " + f.getAbsolutePath());
+                super.approveSelection();
+                try {
+                    ChallengeRules converted = ConvertUtil
+                            .convertTable((DefaultTableModel) challengeTable.getModel());
+                    controller.saveChallenges(f, converted);
+                } catch (NumberFormatException nfe) {
+                    logger.error("Error on conversion between table and data: "
+                            + nfe.getMessage(), nfe);
+                    addLog("Error on conversion between table and data: "
+                            + nfe.getMessage());
+                }
+
+            }
+
+        };
+        FileNameExtensionFilter filter =
+                new FileNameExtensionFilter("Comma separated file (.csv)", "csv");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showSaveDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            prefs.put(LAST_USED_FOLDER, chooser.getSelectedFile().getParent());
+        }
+
+
+    }
+
+    private void OpenEvent() {
+        Preferences prefs = Preferences.userRoot().node(getClass().getName());
+        JFileChooser chooser = new JFileChooser(
+                (prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath()))) {
+
+            private static final long serialVersionUID = 7489308134784417097L;
+
+            @Override
+            public void approveSelection() {
+                File f = getSelectedFile();
+                if (f != null && f.exists()) {
+                    logger.info(
+                            "Selected challenges definition file " + f.getAbsolutePath());
+                    super.approveSelection();
+                    controller.openChallenges(f);
+                } else {
+                    logger.error("Selected challenges definition file is not found");
+                }
+            }
+
+        };
+        FileNameExtensionFilter filter =
+                new FileNameExtensionFilter("Comma separated file (.csv)", "csv");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            prefs.put(LAST_USED_FOLDER, chooser.getSelectedFile().getParent());
+        }
     }
 
     private void loadConf() {
@@ -497,43 +526,44 @@ public class RecommenderSystemGui {
         gameIdField.setText(cfg.get("GAME_ID"));
         userTextField.setText(cfg.get("USERNAME"));
         passwordTextField.setText(cfg.get("PASSWORD"));
-        dateField.setText(cfg.get("DATE"));
+
+        String date = cfg.get("DATE");
+        if (date.equals(""))
+            date = controller.getSimpledate().print(new DateTime());
+        dateField.setText(date);
+
         playerIdsField.setText(cfg.get("PLAYER_IDS"));
         window.enableCheckConnection(true);
-        window.enableGenerate(true);
-        // window.enableUpload(true);
+        window.enableGenerate(false);
+        window.enableUpload(false);
     }
 
     private boolean invalidDate(JTextField source) {
         try {
-            if (sdf.parse(source.getText()) != null) {
+            if (getDate() != null) {
                 return false;
             }
-        } catch (IllegalArgumentException | ParseException e) {
+        } catch (IllegalArgumentException ignored) {}
 
-        }
         return true;
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (Exception e) {
-                    logger.warn("Unable to set System look and Feel", e);
-                }
-                controller = new RecommenderSystemController();
-                window = new RecommenderSystemGui();
-                controller.setWindow(window);
-                controller.newSession();
-                window.loadConf();
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                logger.warn("Unable to set System look and Feel", e);
             }
+            controller = new RecommenderSystemController();
+            window = new RecommenderSystemGui();
+            controller.setWindow(window);
+            controller.newSession();
+            window.loadConf();
         });
     }
 
-    public void setChallenges(ChallengeRules challenges) {
+    void setChallenges(ChallengeRules challenges) {
         if (challenges != null) {
             DefaultTableModel model = new DefaultTableModel(null, challengeColNames);
             for (ChallengeRuleRow crr : challenges.getChallenges()) {
@@ -544,18 +574,31 @@ public class RecommenderSystemGui {
         refresh();
     }
 
-    public void setChallenges(Map<String, List<ChallengeDataDTO>> res) {
+    void setChallenges(Map<String, List<ChallengeDataDTO>> res) {
+
+        challengeVector = new ArrayList<Vector<Object>>();
+
         DefaultTableModel model = new DefaultTableModel(null, challengeColNames);
         for (String player : res.keySet()) {
-            for (ChallengeDataDTO crr : res.get(player)) {
-                Vector<Object> result = new Vector<Object>();
+            List<ChallengeDataDTO> cha = res.get(player);
+            if (cha == null || cha.isEmpty())
+                continue;
+
+            for (ChallengeDataDTO crr : cha) {
+                Vector<Object> result = new Vector<>();
                 result.add(player);
+                result.add(crr.getInfo("playerLevel"));
                 result.add(crr.getModelName());
                 result.add(crr.getData().get("counterName"));
-                result.add(crr.getData().get("baseline"));
-                result.add(crr.getData().get("target"));
-                result.add(crr.getData().get("difficulty"));
+                result.add(m(crr.getData().get("baseline")));
+                result.add(m(crr.getData().get("target")));
+                result.add(m( crr.getData().get("difficulty")));
                 result.add(crr.getData().get("bonusScore"));
+                result.add(crr.getState());
+                result.add(crr.getPriority());
+
+                result.add(formatDateTime(new DateTime(crr.getStart())));
+                result.add(formatDateTime(new DateTime(crr.getEnd())));
                 /*                result.add(crr.no());
                 result.add(crr.getTarget());
                 result.add(crr.getBonus());
@@ -568,20 +611,52 @@ public class RecommenderSystemGui {
                 result.add(crr.getSelectionCriteriaBadges());
                 */
                 model.addRow(result);
+
+                challengeVector.add(result);
             }
         }
 
         challengeTable.setModel(model);
+
+        resizeColumnWidth(challengeTable);
+
+        btnUpload.setEnabled(true);
+
         refresh();
 
     }
 
-    public void refresh() {
+        private void resizeColumnWidth(JTable table) {
+            final TableColumnModel columnModel = table.getColumnModel();
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                int width = 15; // Min width
+                for (int row = 0; row < table.getRowCount(); row++) {
+                    TableCellRenderer renderer = table.getCellRenderer(row, column);
+                    Component comp = table.prepareRenderer(renderer, row, column);
+                    width = Math.max(comp.getPreferredSize().width +1 , width);
+                }
+                if(width > 300)
+                    width=300;
+                columnModel.getColumn(column).setPreferredWidth(width);
+            }
+        }
+
+
+    private String m(Object o) {
+        try {
+            String s = f("%.2f", o);
+            return s.replace("nu", "");
+        } catch (IllegalFormatConversionException ignored) {}
+
+        return f("%d", o);
+    }
+
+    private void refresh() {
         app.getContentPane().validate();
         app.getContentPane().repaint();
     }
 
-    public void setStatusBar(String text, boolean error) {
+    void setStatusBar(String text, boolean error) {
         if (error) {
             statusBar.setForeground(Color.red);
         } else {
@@ -595,11 +670,11 @@ public class RecommenderSystemGui {
         hostTextField.setText(host);
     }
 
-    public void setUser(String user) {
+    void setUser(String user) {
         userTextField.setText(user);
     }
 
-    public void setPassword(String psw) {
+    void setPassword(String psw) {
         passwordTextField.setText(psw);
     }
 
@@ -607,35 +682,37 @@ public class RecommenderSystemGui {
         return hostTextField.getText();
     }
 
-    public String getUser() {
+    String getUser() {
         return userTextField.getText();
     }
 
-    public String getPassword() {
+    String getPassword() {
         return String.valueOf(passwordTextField.getPassword());
     }
 
-    public void enableCheckConnection(boolean b) {
+    void enableCheckConnection(boolean b) {
         btnCheckConnection.setEnabled(b);
     }
 
-    public void setGameId(String gameId) {
+    void setGameId(String gameId) {
         gameIdField.setText(gameId);
     }
 
-    public void enableGenerate(boolean b) {
+    void enableGenerate(boolean b) {
         // useRsCheckBox.setEnabled(b);
         mntmGenerate.setEnabled(b);
+        btnGenerate.setEnabled(b);
     }
 
-    public String getPlayerIds() {
+    String getPlayerIds() {
         return playerIdsField.getText();
     }
 
     private class GenerateAction extends AbstractAction {
         private static final long serialVersionUID = 7562917295725963136L;
 
-        public GenerateAction() {
+
+        GenerateAction() {
             putValue(NAME, "Generate");
             putValue(SHORT_DESCRIPTION, "Challenge generation");
             setEnabled(false);
@@ -646,11 +723,11 @@ public class RecommenderSystemGui {
         }
     }
 
-    public String getGameId() {
+    String getGameId() {
         return gameIdField.getText();
     }
 
-    public void addLog(String log) {
+    void addLog(String log) {
         if (log == null) {
             return;
         }
@@ -688,6 +765,7 @@ public class RecommenderSystemGui {
         });
     }
 
+    /*
     private class InsertAction extends AbstractAction {
         private static final long serialVersionUID = 7597057801468846067L;
 
@@ -701,8 +779,9 @@ public class RecommenderSystemGui {
                 controller.addChallenge(challengeTable.getSelectedRow());
             }
         }
-    }
+    }      */
 
+    /*
     private class DeleteAction extends AbstractAction {
         private static final long serialVersionUID = 4637589614176994853L;
 
@@ -722,21 +801,17 @@ public class RecommenderSystemGui {
                 }
             }
         }
-    }
+    }      */
 
-    public ChallengeRules getChallenges() {
+    ChallengeRules getChallenges() {
         return ConvertUtil.convertTable((DefaultTableModel) challengeTable.getModel());
-    }
-
-    public void enableUpload(boolean b) {
-        mntmUpload.setEnabled(b);
     }
 
     private class UploadAction extends AbstractAction {
 
         private static final long serialVersionUID = 1L;
 
-        public UploadAction() {
+        UploadAction() {
             putValue(NAME, "Upload");
             putValue(SHORT_DESCRIPTION, "Challenge generation upload");
             setEnabled(false);
@@ -757,7 +832,7 @@ public class RecommenderSystemGui {
     private class SaveLogAction extends AbstractAction {
         private static final long serialVersionUID = 8184822790331262798L;
 
-        public SaveLogAction() {
+        SaveLogAction() {
             putValue(NAME, "Save log");
             putValue(SHORT_DESCRIPTION, "save log");
         }
@@ -778,10 +853,10 @@ public class RecommenderSystemGui {
                     logger.info("Save log to " + f.getAbsolutePath());
                     super.approveSelection();
                     try {
-                        StringBuffer sb = new StringBuffer();
+                        StringBuilder sb = new StringBuilder();
                         for (int i = 0; i < logList.getModel().getSize(); i++) {
                             Object item = logList.getModel().getElementAt(i);
-                            sb.append(item + "\n");
+                            sb.append(item).append("\n");
                         }
                         IOUtils.write(sb.toString(), new FileOutputStream(f));
                         setStatusBar("Log saved " + f.getAbsolutePath(), false);
@@ -799,10 +874,11 @@ public class RecommenderSystemGui {
         }
     }
 
+    /*
     private class AboutAction extends AbstractAction {
         private static final long serialVersionUID = 6922499789788835040L;
 
-        public AboutAction() {
+        AboutAction() {
             putValue(NAME, "About");
             putValue(SHORT_DESCRIPTION, "About");
         }
@@ -810,8 +886,9 @@ public class RecommenderSystemGui {
         public void actionPerformed(ActionEvent e) {
             about.setVisible(true);
         }
-    }
+    }   */
 
+    /*
     public void updateChart(DefaultPieDataset pieDataSet, List<Integer> values, int totalPlayers) {
         // clean panel
         analytics.removeAll();
@@ -845,13 +922,13 @@ public class RecommenderSystemGui {
         chartPanel = new ChartPanel(chart, true);
         chartPanel.setVisible(true);
 
-        analytics.add(chartPanel, BorderLayout.CENTER);
+        // analytics.add(chartPanel, BorderLayout.CENTER);
         refresh();
     }
 
     public void resetAnalytics() {
         analytics.removeAll();
-    }
+    }*/
 
     private void checkHostGameIdField() {
         if (hostTextField.getText().length() == 0 || gameIdField.getText().length() == 0) {
@@ -863,23 +940,50 @@ public class RecommenderSystemGui {
 
     private class CheckConnectionAction extends AbstractAction {
 
-        private static final long serialVersionUID = 1732760821158054790L;
-
-        public CheckConnectionAction() {
+        CheckConnectionAction() {
             putValue(NAME, "CheckConnection");
             putValue(SHORT_DESCRIPTION, "CheckConnection");
         }
 
         public void actionPerformed(ActionEvent e) {
-            controller.checkConnection(hostTextField.getText(), userTextField.getText(),
+
+            boolean valid = controller.checkFacade(hostTextField.getText(), userTextField.getText(),
                     passwordTextField.getPassword(), gameIdField.getText());
+
+            /*
+            boolean valid = controller.checkHost(hostTextField.getText(), userTextField.getText(),
+            passwordTextField.getPassword(), gameIdField.getText());
+             */
+
+
+                    window.enableGenerate(valid);
+                    // window.enableUpload(valid);
+            mntmPlayerList.setEnabled(valid);
+
+            refresh();
+
         }
     }
 
+    protected void enableUpload(boolean valid) {
+        mntmUpload.setEnabled(valid);
+        btnUpload.setEnabled(valid);
+    }
 
-    public String getDate() {
+
+    DateTime getDate()  {
+            return controller.sdf.parseDateTime(dateField.getText());
+    }
+
+    public String getTextDate() {
         return dateField.getText();
     }
+
+    private void err(Exception e) {
+        p(e.getMessage());
+        addLog(e.getMessage());
+    }
+
 
         /*
 

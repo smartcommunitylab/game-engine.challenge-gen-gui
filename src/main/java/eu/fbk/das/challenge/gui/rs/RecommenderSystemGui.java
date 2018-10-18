@@ -83,9 +83,6 @@ public class RecommenderSystemGui {
 
     private JTextField dateField;
 
-    protected List<Vector<Object>> challengeVector;
-
-
     private RecommenderSystemGui() {
         logger.info("Gui creation");
         app = new JFrame("RecommenderSystemGui");
@@ -576,8 +573,6 @@ public class RecommenderSystemGui {
 
     void setChallenges(Map<String, List<ChallengeDataDTO>> res) {
 
-        challengeVector = new ArrayList<Vector<Object>>();
-
         DefaultTableModel model = new DefaultTableModel(null, challengeColNames);
         for (String player : res.keySet()) {
             List<ChallengeDataDTO> cha = res.get(player);
@@ -585,20 +580,7 @@ public class RecommenderSystemGui {
                 continue;
 
             for (ChallengeDataDTO crr : cha) {
-                Vector<Object> result = new Vector<>();
-                result.add(player);
-                result.add(crr.getInfo("playerLevel"));
-                result.add(crr.getModelName());
-                result.add(crr.getData().get("counterName"));
-                result.add(m(crr.getData().get("baseline")));
-                result.add(m(crr.getData().get("target")));
-                result.add(m( crr.getData().get("difficulty")));
-                result.add(crr.getData().get("bonusScore"));
-                result.add(crr.getState());
-                result.add(crr.getPriority());
 
-                result.add(formatDateTime(new DateTime(crr.getStart())));
-                result.add(formatDateTime(new DateTime(crr.getEnd())));
                 /*                result.add(crr.no());
                 result.add(crr.getTarget());
                 result.add(crr.getBonus());
@@ -610,9 +592,7 @@ public class RecommenderSystemGui {
                 result.add(crr.getSelectionCriteriaPoints());
                 result.add(crr.getSelectionCriteriaBadges());
                 */
-                model.addRow(result);
-
-                challengeVector.add(result);
+                model.addRow(crr.getDisplayData());
             }
         }
 
@@ -640,16 +620,6 @@ public class RecommenderSystemGui {
                 columnModel.getColumn(column).setPreferredWidth(width);
             }
         }
-
-
-    private String m(Object o) {
-        try {
-            String s = f("%.2f", o);
-            return s.replace("nu", "");
-        } catch (IllegalFormatConversionException ignored) {}
-
-        return f("%d", o);
-    }
 
     private void refresh() {
         app.getContentPane().validate();

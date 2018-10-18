@@ -36,14 +36,17 @@ public class RSGenerate implements Runnable {
 
             Map<String, List<ChallengeDataDTO>> res = controller.rs.recommendation(conf);
 
-            /*
             for (String s: res.keySet()) {
-                for (ChallengeDataDTO cha : res.get(s)) {
-                    cha.setStart(controller.getDateFormat().parseDateTime("28/09/2018 00:00"));
-                    cha.setEnd(controller.getDateFormat().parseDateTime("29/09/2018 23:59"));
-                }
-            } */
+                List<ChallengeDataDTO> lcha = res.get(s);
+                if (lcha == null || lcha.isEmpty())
+                    continue;
 
+/*
+                for (ChallengeDataDTO cha : lcha) {
+                    cha.setStart(controller.getDateFormat().parseDateTime("20/10/2018 00:00"));
+                    cha.setEnd(controller.getDateFormat().parseDateTime("26/10/2018 23:59"));
+                } */
+            }
 
             //  saveChallanges(res);
 

@@ -66,7 +66,7 @@ public class RSUploader implements Runnable {
         }
 
         // Write challenges to disk
-        if (!writeChallenges())  {
+        if (!writeChallenges(challenges))  {
             String s = "COULD NOT WRITE CHALLENGES TO DISK";
             addLog(s);
             controller.newError(s);
@@ -84,7 +84,7 @@ public class RSUploader implements Runnable {
         }
     }
 
-    private boolean writeChallenges() {
+    private boolean writeChallenges(Map<String, List<ChallengeDataDTO>> challenges) {
 
         fileName = f("challenges-%s.csv", slug(formatDateTime(new DateTime()).replace("/", "-").replace(":", "-")));
 
@@ -93,9 +93,18 @@ public class RSUploader implements Runnable {
             RecommenderSystemGui wi = controller.getWindow();
             wf(w, "%s\n", joinArray(wi.challengeColNames));
             w.flush();
-            for (Vector<Object> v: wi.challengeVector) {
-                wf(w, "%s\n", v.toString().replace("[", "").replace("]", ""));
-                w.flush();
+
+            for (String playerId : challenges.keySet()) {
+
+                List<ChallengeDataDTO> lcha = challenges.get(playerId);
+
+                if (lcha == null || lcha.isEmpty())
+                    continue;
+
+                for (ChallengeDataDTO cha : lcha) {
+                    wf(w, "%s\n", cha.getWriteData().toString().replace("[", "").replace("]", ""));
+                    w.flush();
+                }
             }
 
             w.close();
@@ -118,6 +127,12 @@ public class RSUploader implements Runnable {
 
         for (String playerId : challenges.keySet()) {
 
+            List<ChallengeDataDTO> lcha = challenges.get(playerId);
+
+            if (lcha == null || lcha.isEmpty())
+                continue;
+
+
             if (existsPlayerChallenge(gameId, playerId, date)) {
                 addLog("ERROR: this user already has challenges this week");
 
@@ -127,7 +142,7 @@ public class RSUploader implements Runnable {
                     continue;
             }
 
-            for (ChallengeDataDTO cha : challenges.get(playerId)) {
+            for (ChallengeDataDTO cha : lcha) {
 
                 // upload every challenge
 

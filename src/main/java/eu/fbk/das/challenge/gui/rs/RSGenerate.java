@@ -1,82 +1,160 @@
 package eu.fbk.das.challenge.gui.rs;
 
-import com.google.common.base.Throwables;
+import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
 import eu.trentorise.game.challenges.ChallengeInstanceFactory;
 import eu.trentorise.game.challenges.ChallengesRulesGenerator;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
+import eu.trentorise.game.challenges.rest.GamificationEngineRestFacade;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 
+import javax.swing.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static eu.fbk.das.rs.Utils.err;
+import static eu.fbk.das.rs.Utils.*;
 
 /**
  * {@link Runnable} class for running challenge generation
  */
-public class RSGenerate implements Runnable {
+public class RSGenerate  extends SwingWorker<String, Object> {
+
+    private final ChallengeDataGuru cdg;
+
+    private String fileName;
 
     private static final Logger logger = LogManager.getLogger(RSGenerate.class);
+    private final GamificationEngineRestFacade facade;
 
     private RecommenderSystemController controller;
     private Map<String, String> conf;
     private String log = "";
 
+    private int currentPlayer;
+    private DateTime monday;
+
     RSGenerate(RecommenderSystemController controller, Map<String, String> conf) {
         this.controller = controller;
         this.conf = conf;
+
+        this.facade = controller.getFacade();
+
+        cdg = new ChallengeDataGuru(controller.rs.cfg);
     }
 
     @Override
-    public void run() {
+    public String doInBackground() {
 
         try {
 
-            Map<String, List<ChallengeDataDTO>> res = controller.rs.recommendation(conf);
+            if (!generate())
+                return "";
 
-            for (String s: res.keySet()) {
-                List<ChallengeDataDTO> lcha = res.get(s);
-                if (lcha == null || lcha.isEmpty())
-                    continue;
+            if (!writeChallengesSimple())
+                return "";
 
-/*
-                for (ChallengeDataDTO cha : lcha) {
-                    cha.setStart(controller.getDateFormat().parseDateTime("20/10/2018 00:00"));
-                    cha.setEnd(controller.getDateFormat().parseDateTime("26/10/2018 23:59"));
-                } */
-            }
+            if (!writeChallengesComplete())
+                return "";
 
-            //  saveChallanges(res);
+            String s = f("Challenges succesfully written to disk; %s \n", fileName );
+            controller.newMessage(s);
 
-            controller.challanges = res;
-
-            controller.setStatusBar("Challenge generation completed", false);
-            controller.addLog(log);
-            if (!log.contains("Error") && !log.contains("exception")) {
-
-                // TODO remove
-//                 controller.enableUpload(true);
-//                controller.updateChart("generated-rules-report.csv");
-               controller.updateList(res);
-                logger.info("Challenge generation completed");
-            } else {
-
-                controller
-                        .setStatusBar(
-                                "Error during challenge generation, please see the log",
-                                true);
-                logger.error("Error during challenge generation");
-            }
 
         } catch (Exception e) {
-            controller.setStatusBar("Challenge generation error", true);
-            log = Throwables.getStackTraceAsString(e);
-            controller.addLog(log);
-            logger.error(e.getMessage(), e);
+e.printStackTrace();
+            p(e.getMessage());
+            controller.newError("Error during challenge generation: %s", e.getMessage());
         }
+
+        return "done";
     }
+
+    private boolean generate() {
+        recommendation();
+
+                /*
+        for (String s: res.keySet()) {
+            List<ChallengeDataDTO> lcha = res.get(s);
+            if (lcha == null || lcha.isEmpty())
+                continue;
+
+                for (ChallengeDataDTO cha : lcha) {
+                    cha.setStart(Utils.parseDateTime("26/10/2018 00:00"));
+                    cha.setEnd(Utils.parseDateTime("28/10/2018 23:59"));
+                }
+        }*/
+
+        //  saveChallanges(res);
+
+        controller.setStatusBar(false, "Challenge generation completed");
+        controller.addLog(log);
+        if (log.contains("Error") || log.contains("exception")) {
+            controller.newError("Error during challenge generation, please see the log");
+            return false;
+        }
+
+            logger.info("Challenge generation completed");
+        return true;
+
+    }
+
+    private Map<String, List<ChallengeDataDTO>> recommendation() {
+
+            dbg(logger, "Reading players from game");
+
+            DateTime date = stringToDate(conf.get("DATE"));
+            if (date == null) {
+                err(logger, "Invalid date! %s", conf.get("DATE"));
+            }
+
+            monday = jumpToMonday(date);
+
+            controller.rs.prepare(facade, date);
+
+            Map<String, List<ChallengeDataDTO>> challenges = new HashMap<>();
+
+            currentPlayer = 1;
+
+            controller.resetChallenges();
+
+            String playerIds = conf.get("PLAYER_IDS");
+            if ("".equals(playerIds)) {
+                controller.totPlayers = controller.playerIds.size();
+                // generate for all player ids!
+                for (String pId : controller.playerIds) {
+                    addChallenge(date, pId);
+                }
+            } else {
+                // check if given ids exists
+                String[] splited = playerIds.split("\\s+");
+                controller.totPlayers = splited.length;
+                for (String pId : splited)
+                    if (!controller.playerIds.contains(pId))
+                        throw new IllegalArgumentException(f("Given player id %s is nowhere to be found in the game", pId));
+
+                for (String pId : splited) {
+                    addChallenge(date, pId);
+                }
+            }
+
+            return challenges;
+        }
+
+    private void addChallenge(DateTime date, String pId) {
+
+        List<ChallengeDataDTO> res = controller.rs.recommend(pId, date);
+        if (res != null && !res.isEmpty()) {
+            controller.addChallenges(pId, res);
+        }
+
+        controller.setStatusBar(false, "Player considered: %d / %d", currentPlayer++, controller.totPlayers);
+    }
+
 
     private void saveChallanges(Map<String, List<ChallengeDataDTO>> res) {
 
@@ -98,6 +176,54 @@ public class RSGenerate implements Runnable {
         }
 
 
+    }
+
+    private boolean writeChallengesComplete() {
+        fileName = f("challenges-%s-complete", formatDateTimeFileName(new DateTime()));
+
+        try {
+            cdg.generate(fileName, controller.challenges, facade, monday, ChallengeModel.challengeColNames);
+        } catch (IOException e) {
+            controller.newError(f("COULD NOT WRITE GURU CHALLENGES TO DISK: %s", e.getMessage()));
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private boolean writeChallengesSimple() {
+
+        fileName = f("challenges-%s.csv", formatDateTimeFileName(new DateTime()));
+
+        Map<String, List<ChallengeDataDTO>> challenges = controller.challenges;
+
+        try {
+            BufferedWriter w = new BufferedWriter(new FileWriter(fileName));
+            wf(w, ",%s\n", joinArray(ChallengeModel.challengeColNames));
+            w.flush();
+
+            for (String playerId : challenges.keySet()) {
+
+                List<ChallengeDataDTO> lcha = challenges.get(playerId);
+
+                if (lcha == null || lcha.isEmpty())
+                    continue;
+
+                for (ChallengeDataDTO cha : lcha) {
+                    wf(w, "%s\n", cha.printData());
+                    w.flush();
+                }
+            }
+
+            w.close();
+
+        }  catch (IOException e) {
+            controller.newError(f("COULD NOT WRITE CHALLENGES TO DISK: %s", e.getMessage()));
+            return false;
+        }
+
+        return true;
     }
 
 }

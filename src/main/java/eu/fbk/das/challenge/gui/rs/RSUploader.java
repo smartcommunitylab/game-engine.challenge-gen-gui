@@ -2,7 +2,9 @@ package eu.fbk.das.challenge.gui.rs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import eu.trentorise.game.challenges.api.Constants;
+import eu.fbk.das.rs.Utils;
+import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
+import eu.trentorise.game.challenges.model.Challenge;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 import eu.trentorise.game.challenges.model.ChallengeDataInternalDto;
 import eu.trentorise.game.challenges.rest.GamificationEngineRestFacade;
@@ -10,9 +12,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
-import java.io.*;
+import javax.swing.*;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 import static eu.fbk.das.rs.Utils.*;
@@ -20,108 +25,83 @@ import static eu.fbk.das.rs.Utils.*;
 /**
  * {@link Runnable} class for challenge upload into GamificationEngine
  */
-public class RSUploader implements Runnable {
+public class RSUploader extends SwingWorker<String, Object> {
 
     private static final Logger logger = LogManager
             .getLogger(RSUploader.class);
 
-    private final DateTime date;
+    private final Map<String, String> conf;
 
     private RecommenderSystemController controller;
-    private String gameId;
     private String output;
     private GamificationEngineRestFacade facade;
 
-    private String fileName;
+    Map<String, List<ChallengeDataDTO>> challenges;
 
-    RSUploader(RecommenderSystemController controller, String gameId, DateTime date, String output) {
+    private String gameId;
+
+    private DateTime monday;
+
+    RSUploader(RecommenderSystemController controller,  Map<String, String> conf, String output) {
         this.controller = controller;
-        this.gameId = gameId;
+        this.conf = conf;
         this.output = output;
-        this.date = date;
+
+        this.facade  = controller.getFacade();
     }
+
 
     @Override
-    public void run() {
+    public String doInBackground() {
 
-        if (output == null) {
-            addLog("output file cannot be null");
-            return;
+        challenges = controller.challenges;
+
+        gameId = conf.get("GAME_ID");
+        DateTime date = stringToDate(conf.get("DATE"));
+        if (date == null) {
+            err(logger, "Invalid date! %s", conf.get("DATE"));
         }
 
-        facade = controller.rs.getFacade();
-        if (facade == null) {
-            addLog("ERROR! output file cannot be null");
-            return;
-        }
+        monday = jumpToMonday(date);
 
-        // TODO fixare lettura da disco
-        // List<ChallengeDataInternalDto> challenges = readChallenges();
-        // List<ChallengeDataInternalDto> challenges = prepareChallenges();
+        if (!check())
+            return "";
 
-        Map<String, List<ChallengeDataDTO>> challenges = controller.challanges;
-        if (challenges == null) {
-            addLog("ERROR! challenges cannot be null");
-            return;
-        }
+        if (!upload())
+            return "";
 
-        // Write challenges to disk
-        if (!writeChallenges(challenges))  {
-            String s = "COULD NOT WRITE CHALLENGES TO DISK";
-            addLog(s);
-            controller.newError(s);
-            return;
-        } else {
-            String s = f("Challenges succesfully written to disk; %s \n", fileName );
-            addLog(s);
-            controller.newMessage(s);
-        }
+            controller.setStatusBar(true,"Challenge upload completed");
 
-
-        if (upload(facade, challenges)) {
-            controller.setStatusBar("Challenge upload completed", false);
-            addLog("Challenge upload completed");
-        }
+            return "done";
     }
 
-    private boolean writeChallenges(Map<String, List<ChallengeDataDTO>> challenges) {
 
-        fileName = f("challenges-%s.csv", slug(formatDateTime(new DateTime()).replace("/", "-").replace(":", "-")));
 
-        try {
-            BufferedWriter w = new BufferedWriter(new FileWriter(fileName));
-            RecommenderSystemGui wi = controller.getWindow();
-            wf(w, "%s\n", joinArray(wi.challengeColNames));
-            w.flush();
+    private boolean check() {
 
-            for (String playerId : challenges.keySet()) {
+        if (facade == null) {
+            controller.addLog("ERROR! facade cannot be null");
+            return false;
+        }
 
-                List<ChallengeDataDTO> lcha = challenges.get(playerId);
+        if (output == null) {
+            controller.addLog("output file cannot be null");
+            return false;
+        }
 
-                if (lcha == null || lcha.isEmpty())
-                    continue;
-
-                for (ChallengeDataDTO cha : lcha) {
-                    wf(w, "%s\n", cha.getWriteData().toString().replace("[", "").replace("]", ""));
-                    w.flush();
-                }
-            }
-
-            w.close();
-
-        }  catch (IOException e) {
-            addLog("Error in writing challenges: %s", e.getMessage());
+        if (controller.challenges == null) {
+            controller.addLog("ERROR! challenges cannot be null");
             return false;
         }
 
         return true;
     }
 
-    private boolean upload(GamificationEngineRestFacade facade, Map<String, List<ChallengeDataDTO>> challenges) {
+    private boolean upload() {
 
         // int tot = 0;
 
-        addLog("Read challenges: %d", challenges.size());
+        controller.addLog("Read challenges: %d", controller.challenges.size());
 
         boolean success;
 
@@ -132,15 +112,18 @@ public class RSUploader implements Runnable {
             if (lcha == null || lcha.isEmpty())
                 continue;
 
+            String already = existsPlayerChallenge(gameId, playerId, lcha.get(0));
+            if (!"".equals(already)) {
+                controller.addLog("ERROR: this user already has challenges this week: %s", already);
 
-            if (existsPlayerChallenge(gameId, playerId, date)) {
-                addLog("ERROR: this user already has challenges this week");
-
-                int result = controller.newDialog(f("User '%s' has already at least one challenge ending this week. Do you wish to add another?", playerId));
+                int result = controller.newDialog(f("User '%s' has already the following challenges in this week. Do you wish to add another? \n \n %s",  playerId, already));
 
                 if (result != 0)
                     continue;
             }
+
+            int tot = lcha.size();
+            int ix = 0;
 
             for (ChallengeDataDTO cha : lcha) {
 
@@ -148,46 +131,45 @@ public class RSUploader implements Runnable {
 
                 cha.setOrigin("rs");
 
-                addLog("Inserting challenge: %s\n", cha.getInstanceName());
+                controller.setStatusBar(false, "Inserting challenge: %d / %d - %s\n", ++ix, tot, cha.getInstanceName());
+
                 success = facade.assignChallengeToPlayer(cha, gameId, playerId);
 
                 if (!success) {
-                    addLog("ERROR", cha.getInstanceName());
+                    controller.addLog("ERROR", cha.getInstanceName());
                     return false;
                 }
             }
         }
 
-        addLog("Challenges upload completed!");
+        controller.addLog("Challenges upload completed!");
         return true;
     }
 
-    private boolean existsPlayerChallenge(String gameId, String playerId, DateTime date) {
+    private String existsPlayerChallenge(String gameId, String playerId, ChallengeDataDTO old) {
 
-        DateTime monday = jumpToMonday(date);
+        DateTime currentChaEnd = jumpToMonday(new DateTime(old.getEnd()));
 
-        // TODO controlla non abbia già challenges
+        List<String> already = new ArrayList<>();
         List<LinkedHashMap<String, Object>> currentChallenges = facade.getChallengesPlayer(gameId, playerId);
         for (LinkedHashMap<String, Object> cha: currentChallenges) {
-            DateTime newMonday = new DateTime(cha.get("end"));
+            DateTime existingChaEnd = jumpToMonday(new DateTime(cha.get("end")));
 
-            newMonday = jumpToMonday(newMonday);
-            int v = Math.abs(daysApart(monday, newMonday));
+            int v = Math.abs(daysApart(currentChaEnd, existingChaEnd));
             if (v < 1) {
-                pf("There is already a challenge ending this week! Name: %s\n", cha.get("name"));
-                return true;
+                already.add((String) cha.get("name"));
             }
         }
 
-        return false;
+        return String.join("\n", already);
     }
 
 
     private List<ChallengeDataInternalDto> prepareChallenges() {
         List<ChallengeDataInternalDto> challenges = new ArrayList<>();
 
-        for (String user : controller.challanges.keySet())
-            for (ChallengeDataDTO cha : controller.challanges.get(user)) {
+        for (String user : controller.challenges.keySet())
+            for (ChallengeDataDTO cha : controller.challenges.get(user)) {
                 ChallengeDataInternalDto chaInt = new ChallengeDataInternalDto();
                 chaInt.setPlayerId(user);
                 chaInt.setGameId(gameId);
@@ -196,12 +178,6 @@ public class RSUploader implements Runnable {
                 challenges.add(chaInt);
             }
         return challenges;
-    }
-
-    private void addLog(String format, Object... args) {
-        String msg = String.format(format, args);
-        controller.addLog(msg);
-        p(msg);
     }
 
     private List<ChallengeDataInternalDto> readChallenges() {
@@ -217,7 +193,7 @@ public class RSUploader implements Runnable {
                             ChallengeDataInternalDto.class));
 
         } catch (IOException e1) {
-            addLog("Error in reading output file for uploader " + output);
+            controller.addLog("Error in reading output file for uploader " + output);
             return null;
         }
 

@@ -1,26 +1,20 @@
 package eu.fbk.das.challenge.gui.rs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import eu.fbk.das.rs.Utils;
-import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
-import eu.trentorise.game.challenges.model.Challenge;
+
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 import eu.trentorise.game.challenges.model.ChallengeDataInternalDto;
 import eu.trentorise.game.challenges.rest.GamificationEngineRestFacade;
-import org.apache.commons.io.IOUtils;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.joda.time.DateTime;
 
 import javax.swing.*;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
-import static eu.fbk.das.rs.Utils.*;
+import static eu.fbk.das.rs.utils.Utils.*;
+
 
 /**
  * {@link Runnable} class for challenge upload into GamificationEngine
@@ -155,9 +149,13 @@ public class RSUploader extends SwingWorker<String, Object> {
         for (LinkedHashMap<String, Object> cha: currentChallenges) {
             DateTime existingChaEnd = jumpToMonday(new DateTime(cha.get("end")));
 
+            String s = (String) cha.get("name");
+            if (s.contains("survey") || s.contains("initial"))
+                continue;
+
             int v = Math.abs(daysApart(currentChaEnd, existingChaEnd));
             if (v < 1) {
-                already.add((String) cha.get("name"));
+                already.add(s);
             }
         }
 
@@ -180,6 +178,7 @@ public class RSUploader extends SwingWorker<String, Object> {
         return challenges;
     }
 
+    /*
     private List<ChallengeDataInternalDto> readChallenges() {
         // read output file
         ObjectMapper mapper = new ObjectMapper();
@@ -198,5 +197,5 @@ public class RSUploader extends SwingWorker<String, Object> {
         }
 
         return challenges;
-    }
+    } */
 }

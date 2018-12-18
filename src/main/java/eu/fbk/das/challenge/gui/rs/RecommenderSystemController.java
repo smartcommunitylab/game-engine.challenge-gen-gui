@@ -3,26 +3,23 @@ package eu.fbk.das.challenge.gui.rs;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
-import eu.trentorise.game.challenges.rest.ChallengeConcept;
-import eu.trentorise.game.challenges.rest.Content;
+
+import eu.trentorise.game.challenges.rest.Player;
 import eu.trentorise.game.challenges.rest.GamificationEngineRestFacade;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 import eu.trentorise.game.challenges.util.ChallengeRulesLoader;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.joda.time.DateTime;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static eu.fbk.das.rs.Utils.f;
-import static eu.fbk.das.rs.Utils.p;
+import static eu.fbk.das.rs.utils.Utils.*;
+import static eu.fbk.das.rs.challenges.evaluation.ChallengeAnalyzer.an;
 
 /**
  * Controller class for RecommenderSystemGui
@@ -31,6 +28,7 @@ class RecommenderSystemController {
 
     private static final Logger logger = LogManager
             .getLogger(RecommenderSystemController.class);
+    protected final RecommenderSystemAnalyzer rsa;
 
     public int totPlayers;
 
@@ -50,6 +48,7 @@ class RecommenderSystemController {
 
     RecommenderSystemController() {
         rs = new RecommendationSystem();
+        rsa = new RecommenderSystemAnalyzer(rs);
     }
 
     /**
@@ -326,7 +325,7 @@ class RecommenderSystemController {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> {
                 window.setStatusBar(text, b);
-                addLog(text);
+                // addLog(text);
             });
         }
 
@@ -355,76 +354,51 @@ class RecommenderSystemController {
         }
     }
 
-    public Content getPlayer(String pId) {
+    public Player getPlayer(String pId) {
         return facade.getPlayerState(window.getGameId(), pId);
     }
 
-    public XYDataset createWeeklyDataset(ChallengeDataDTO cha, Content player) {
+    public String checkImprovement() {
+         Map<String, List<Double>> incrByCounter = new HashMap<>();
+         ArrayList<List<Double>> incrByLvl = new ArrayList<>();
+         ArrayList<Double> incrTot = new ArrayList<>();
 
-        String mode = (String) cha.getData().get("counterName");
+         for (String pId: challenges.keySet())
+             for (ChallengeDataDTO ch: challenges.get(pId)) {
+                 double impr = Double.valueOf(ch.getInfo("improvement"));
+                 String counter = (String) ch.getData().get("counterName");
+                 int lvl = Integer.valueOf(ch.getInfo("playerLevel"));
 
-        DateTime start = new DateTime(cha.getStart());
-        int week = rs.getChallengeWeek(start);
+                 incrTot.add(impr);
 
-        XYSeries series = new XYSeries("challenge");
-        double co = (double) (cha.getData().get("target"));
-        series.add(week, co);
+                 while (incrByLvl.size() <= lvl)
+                     incrByLvl.add(new ArrayList<>());
+                 incrByLvl.get(lvl).add(impr);
 
-        XYSeries w_series = new XYSeries("weekly");
-        DateTime aux = start.minusDays(7);
-        for (int ix = week; ix >= 0; ix--) {
-            co = rs.getWeeklyContentMode(player, mode, aux);
-            aux = aux.minusDays(7);
-            w_series.add(ix, co);
+                 if (!incrByCounter.containsKey(counter))
+                     incrByCounter.put(counter, new ArrayList<>());
+                 incrByCounter.get(counter).add(impr);
+         }
+
+         StringBuilder s = new StringBuilder();
+
+        sf(s, "\n\n# General improvement: %s", an(incrTot));
+
+        sf(s,"\n\n");
+        for (int i = 0; i < incrByLvl.size(); i++) {
+            sf(s,"# Level %d: %s\n", i, an(incrByLvl.get(i)));
         }
 
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(w_series);
-        dataset.addSeries(series);
-
-        XYSeries success_series = new XYSeries("successfull challenges");
-        XYSeries failed_series = new XYSeries("failed challenges");
-        for (ChallengeConcept chal : player.getState().getChallengeConcept()) {
-            Map<String, Object> res = chal.getFields();
-            if (!res.containsKey("counterName"))
-                continue;
-            String cm = res.get("counterName").toString().toLowerCase().replace("_", " ");
-            if (cm.equals(mode)) {
-                int wk = rs.getChallengeWeek(new DateTime(chal.getEnd()));
-                double cnt = Double.valueOf(res.get("target").toString());
-                if (chal.getCompleted()) {
-                    success_series.add(wk, cnt);
-                } else {
-                    failed_series.add(wk, cnt);
-                }
-            }
+        sf(s,"\n\n");
+        for (String c: incrByCounter.keySet()) {
+            sf(s,"# Counter %s: %s\n", c, an(incrByCounter.get(c)));
         }
 
-        dataset.addSeries(success_series);
-        dataset.addSeries(failed_series);
-
-        return dataset;
+        return s.toString();
     }
 
-    public XYDataset createDailyDataset(ChallengeDataDTO cha, Content player) {
-
-        String mode = (String) cha.getData().get("counterName");
-
-        DateTime start = new DateTime(cha.getStart());
-        int day = rs.getChallengeDay(start);
-        DateTime aux = new DateTime();
-        XYSeries series = new XYSeries("daily");
-        for (int ix = day; ix >= 0 && ix >= day -7; ix--) {
-            Double co = rs.getDailyContentMode(player, mode, aux);
-            series.add(ix, co);
-            aux = aux.minusDays(1);
-        }
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series);
-
-        return dataset;
-
+    private void sf(StringBuilder s, String format, Object... args) {
+        s.append( String.format(format, args));
     }
 }
 

@@ -1,18 +1,21 @@
 package eu.fbk.das.challenge.gui.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Properties;
+
 
 /**
  * Loading specified properties file
  */
 public final class PropertiesUtil {
 
-    private static final Logger logger = LogManager
-            .getLogger(PropertiesUtil.class);
+    private static final Logger logger = LogManager.getLogger(PropertiesUtil.class);
 
     public static final String TEST_PROPERTIES = "test.properties";
     public static final String SAVE_ITINERARY = "SAVE_ITINERARY";

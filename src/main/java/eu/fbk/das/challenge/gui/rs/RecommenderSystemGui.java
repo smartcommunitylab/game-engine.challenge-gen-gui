@@ -1,14 +1,17 @@
 package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
-import eu.fbk.das.rs.Utils;
+import eu.fbk.das.rs.utils.Pair;
+import eu.fbk.das.rs.utils.Utils;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
+
 import eu.trentorise.game.challenges.rest.ChallengeConcept;
-import eu.trentorise.game.challenges.rest.Content;
+import eu.trentorise.game.challenges.rest.Player;
 import eu.trentorise.game.challenges.rest.PlayerLevel;
 import eu.trentorise.game.challenges.util.ChallengeRules;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +20,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.ValueMarker;
@@ -25,8 +27,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import org.joda.time.DateTime;
 
 import javax.imageio.ImageIO;
@@ -47,7 +47,7 @@ import java.util.*;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import static eu.fbk.das.rs.Utils.*;
+import static eu.fbk.das.rs.utils.Utils.*;
 
 public class RecommenderSystemGui {
 
@@ -231,21 +231,114 @@ public class RecommenderSystemGui {
                 showModeGraph(row);
             }
         }));
+
+        orderingPanel.add(new JButton(new AbstractAction("Predict") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int row = challengeTable.getSelectedRow();
+                if (row == -1)
+                    return;
+
+                showPredictCounter(row);
+            }
+        }));
+
+
+
+        orderingPanel.add(new JLabel("Global: "));
+
+        orderingPanel.add(new JButton(new AbstractAction("Check Impr") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(app, controller.checkImprovement());
+            }
+        }));
+
+
+        orderingPanel.add(new JButton(new AbstractAction("Check") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                showCheckPrediction();
+            }
+        }));
+
+    }
+
+    private void showPredictCounter(int row) {
+
+        Pair<ChallengeDataDTO, Player> res = getChallengePlayer(row);
+        if (res == null)
+            return;
+        ChallengeDataDTO found = res.getFirst();
+        Player player = res.getSecond();
+
+        JFrame frame = new JFrame(found.getInstanceName());
+        Container contentPane = frame.getContentPane();
+        contentPane.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+
+        c.gridx = 0;
+        c.gridy = 0;
+
+        for (int ix = 0; ix< 4; ix++) {
+            addPredictPanel(found, player, ix, contentPane, c);
+        }
+
+        frame.pack();
+        frame.setVisible(true);
+
+    }
+
+    private void showCheckPrediction() {
+
+        JFrame frame = new JFrame("check");
+        Container contentPane = frame.getContentPane();
+        contentPane.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+
+        c.gridx = 0;
+        c.gridy = 0;
+
+        c.weighty = 0.3;
+        c.weightx = 0.3;
+
+        for (int ix = 0; ix< 9; ix++) {
+            addPredictPanel2(ix, contentPane, c);
+        }
+
+        frame.pack();
+        frame.setVisible(true);
+
+    }
+
+    private void addPredictPanel2(int ix, Container contentPane, GridBagConstraints c) {
+
+        XYDataset dataset = controller.rsa.createCheckPrediction(ix);
+        ChartPanel predictPanel = createPredictChart(dataset, f("predict-%d", ix));
+
+        c.gridx = ix % 3;
+        c.gridy = ix / 3;
+        contentPane.add(predictPanel, c);
+    }
+
+    private void addPredictPanel(ChallengeDataDTO found, Player player, int ix, Container contentPane, GridBagConstraints c) {
+
+        XYDataset dataset = controller.rsa.createPredictDataset(found, player, ix);
+        ChartPanel predictPanel = createPredictChart(dataset, (String) found.getData().get("counterName"));
+
+        c.gridx = ix % 2;
+        c.gridy = ix / 2;
+        contentPane.add(predictPanel, c);
     }
 
     private void showModeGraph(int row) {
-        String pId = String.valueOf(challengeTable.getValueAt(row, 0));
-        String cId = String.valueOf(challengeTable.getValueAt(row, 2));
-
-        ChallengeDataDTO found  = null;
-        for (ChallengeDataDTO cha: controller.challenges.get(pId))
-        if (cha.getInfo("id").equals(cId))
-            found = cha;
-
-        if (found == null)
+        Pair<ChallengeDataDTO, Player> res = getChallengePlayer(row);
+        if (res == null)
             return;
-
-        Content player = controller.getPlayer(found.getInfo("player"));
+        ChallengeDataDTO found = res.getFirst();
+        Player player = res.getSecond();
 
         ChartPanel weeklyPanel = createWeeklyChart(found, player);
         ChartPanel dailyPanel = createDailyChart(found, player);
@@ -254,7 +347,7 @@ public class RecommenderSystemGui {
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.BOTH;
 
         c.gridx = 0;
         c.gridy = 0;
@@ -282,7 +375,23 @@ public class RecommenderSystemGui {
 
     }
 
-    private Component challengesPanel(Content player) {
+    private Pair<ChallengeDataDTO, Player> getChallengePlayer(int row) {
+        String pId = String.valueOf(challengeTable.getValueAt(row, 0));
+        String cId = String.valueOf(challengeTable.getValueAt(row, 2));
+
+        ChallengeDataDTO found  = null;
+        for (ChallengeDataDTO cha: controller.challenges.get(pId))
+            if (cha.getInfo("id").equals(cId))
+                found = cha;
+
+        if (found == null)
+            return null;
+
+        Player player = controller.getPlayer(found.getInfo("player"));
+        return new Pair<ChallengeDataDTO, Player>(found, player);
+    }
+
+    private Component challengesPanel(Player player) {
         JPanel ip = new JPanel();
         ip.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
                 "Player info", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -294,8 +403,12 @@ public class RecommenderSystemGui {
 
         TreeMap<Integer, List<String>> info = new TreeMap<>();
         for (ChallengeConcept chal : player.getState().getChallengeConcept()) {
+            String nm = chal.getName();
             Map<String, Object> res = chal.getFields();
             if (!res.containsKey("counterName"))
+                continue;
+
+            if (nm.contains("recommendation"))
                 continue;
 
             List<String> r = new ArrayList<>();
@@ -305,7 +418,7 @@ public class RecommenderSystemGui {
             r.add(res.get("target").toString());
             r.add(printDate(new DateTime(chal.getStart() )));
             r.add(printDate(new DateTime(chal.getEnd() )));
-            r.add(chal.getCompleted() ? "Succ" : "Fail");
+            r.add(chal.isCompleted() ? "Succ" : "Fail");
 
             int wk = controller.rs.getChallengeWeek(new DateTime(chal.getEnd()));
             info.put(wk, r);
@@ -326,7 +439,7 @@ public class RecommenderSystemGui {
         return ip;
     }
 
-    private Component playerInfoPanel(Content player) {
+    private Component playerInfoPanel(Player player) {
         JPanel ip = new JPanel();
         ip.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
                 "Player info", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -334,7 +447,7 @@ public class RecommenderSystemGui {
         GridLayout gLayout = new GridLayout(0,2);
         ip.setLayout(gLayout);
 
-        p(player.getCustomData());
+        // p(player.getCustomData());
 
         addRecap(ip, f("Name: %s", player.getPlayerId()));
 
@@ -349,9 +462,9 @@ public class RecommenderSystemGui {
         jp.add(new JLabel(s));
     }
 
-    private ChartPanel createDailyChart(ChallengeDataDTO cha, Content player) {
+    private ChartPanel createDailyChart(ChallengeDataDTO cha, Player player) {
 
-        XYDataset dataset = controller.createDailyDataset(cha, player);
+        XYDataset dataset = controller.rsa.createDailyDataset(cha, player);
 
         String mode = (String) cha.getData().get("counterName");
 
@@ -400,11 +513,65 @@ public class RecommenderSystemGui {
 
     }
 
-    private ChartPanel createWeeklyChart(ChallengeDataDTO cha, Content player) {
+    private ChartPanel createPredictChart(XYDataset dataset, String title) {
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                title,
+                "Counter",
+                "Week",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+
+        XYPlot plot = chart.getXYPlot();
+
+        NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
+        xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        xAxis.setAutoRange(true);
+
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesPaint(0, Color.BLACK);
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f));
+
+        renderer.setSeriesPaint(1, Color.ORANGE);
+        renderer.setSeriesLinesVisible(1, false);
+
+        renderer.setSeriesPaint(2, Color.GREEN);
+        renderer.setSeriesLinesVisible(1, false);
+
+        renderer.setSeriesPaint(3, Color.RED);
+        renderer.setSeriesStroke(3, new BasicStroke(2.0f));
+
+        plot.setRenderer(renderer);
+        plot.setBackgroundPaint(Color.white);
+
+        plot.setRangeGridlinesVisible(true);
+        plot.setRangeGridlinePaint(Color.BLACK);
+
+        chart.getLegend().setFrame(BlockBorder.NONE);
+
+        chart.setTitle(new TextTitle(title,
+                        new Font("Serif", java.awt.Font.BOLD, 18)
+                )
+        );
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        chartPanel.setBackground(Color.white);
+        chartPanel.setSize(200, 100);
+
+        return chartPanel;
+
+    }
+
+    private ChartPanel createWeeklyChart(ChallengeDataDTO cha, Player player) {
 
         String mode = (String) cha.getData().get("counterName");
 
-        XYDataset dataset = controller.createWeeklyDataset(cha, player);
+        XYDataset dataset = controller.rsa.createWeeklyDataset(cha, player);
 
         RecommendationSystemStatistics stats = controller.rs.getStats();
 
@@ -423,16 +590,16 @@ public class RecommenderSystemGui {
 
         XYPlot plot = chart.getXYPlot();
 
-        NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
-        xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        xAxis.setAutoRange(true);
-
-
         for (int ix = 1; ix < 11; ix++) {
             Color c = blend(ix/10.0, Color.BLUE, Color.GREEN);
             ValueMarker mark = new ValueMarker(qua.get(ix), c, new BasicStroke(2), c, null, 1.0f);
             plot.addRangeMarker(mark);
         }
+
+
+        NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
+        xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        xAxis.setAutoRange(true);
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setSeriesPaint(0, Color.BLACK);
@@ -452,9 +619,6 @@ public class RecommenderSystemGui {
 
         plot.setRangeGridlinesVisible(true);
         plot.setRangeGridlinePaint(Color.BLACK);
-
-        plot.setDomainGridlinesVisible(true);
-        plot.setDomainGridlinePaint(Color.BLACK);
 
         chart.getLegend().setFrame(BlockBorder.NONE);
 
@@ -1353,7 +1517,7 @@ public class RecommenderSystemGui {
         // recommandationsystem integration
         if (useRecommendationSystem) {
             RecommendationSystem rs = new RecommendationSystem(
-                    new RecommendationSystemConfig(useFiltering, filterIds));
+                    new ChallengesConfig(useFiltering, filterIds));
             Map<String, List<ChallengeDataDTO>> rsChallenges = rs
                     .recommendation(users, CalendarUtil.getStart().getTime(),
                             CalendarUtil.getEnd().getTime());

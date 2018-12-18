@@ -4,6 +4,8 @@ import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
 import eu.trentorise.game.challenges.ChallengeInstanceFactory;
 import eu.trentorise.game.challenges.ChallengesRulesGenerator;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
+import eu.trentorise.game.challenges.rest.ChallengeConcept;
+import eu.trentorise.game.challenges.rest.Player;
 import eu.trentorise.game.challenges.rest.GamificationEngineRestFacade;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,11 +15,9 @@ import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static eu.fbk.das.rs.Utils.*;
+import static eu.fbk.das.rs.utils.Utils.*;
 
 /**
  * {@link Runnable} class for running challenge generation
@@ -55,6 +55,9 @@ public class RSGenerate  extends SwingWorker<String, Object> {
             if (!generate())
                 return "";
 
+            if (!writeCompleted())
+                return "";
+
             if (!writeChallengesSimple())
                 return "";
 
@@ -73,6 +76,41 @@ e.printStackTrace();
 
         return "done";
     }
+
+    private boolean writeCompleted() throws IOException {
+        fileName = f("completed.csv");
+        BufferedWriter w = new BufferedWriter(new FileWriter(fileName));
+
+        Map<String, Integer> completed =  new HashMap<>();
+
+        for (String pId : controller.playerIds) {
+            Player player = facade.getPlayerState(conf.get("GAME_ID"), pId);
+
+            p(player.getState());
+
+            p(player.getState().getChallengeConcept());
+
+            for (ChallengeConcept cha: player.getState().getChallengeConcept()) {
+                String s = cha.getName();
+                if (s.contains("survey") || s.contains("initial"))
+                    continue;
+
+                completed.put(cha.getName(), cha.isCompleted() ? 1 : 0);
+
+            }
+        }
+
+        SortedSet<Map.Entry<String, Integer>> ordered = entriesSortedByKey(completed);
+
+        for (Map.Entry<String, Integer> e: ordered) {
+                wf(w, "%s,%d\n", e.getKey(), e.getValue());
+                w.flush();
+        }
+        w.close();
+
+        return true;
+    }
+
 
     private boolean generate() {
         recommendation();
@@ -152,7 +190,7 @@ e.printStackTrace();
             controller.addChallenges(pId, res);
         }
 
-        controller.setStatusBar(false, "Player considered: %d / %d", currentPlayer++, controller.totPlayers);
+        controller.setStatusBar(false, "\rPlayer considered: %d / %d", currentPlayer++, controller.totPlayers);
     }
 
 

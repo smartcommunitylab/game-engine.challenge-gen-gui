@@ -2,6 +2,7 @@ package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
+import eu.fbk.das.rs.utils.ArrayUtils;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 
 import eu.trentorise.game.challenges.rest.Player;
@@ -46,9 +47,13 @@ class RecommenderSystemController {
 
     protected GamificationEngineRestFacade fac_copy;
 
+    int[] order = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+
     RecommenderSystemController() {
         rs = new RecommendationSystem();
         rsa = new RecommenderSystemAnalyzer(rs);
+
+        ArrayUtils.shuffleArray(order, new Random(System.currentTimeMillis()));
     }
 
     /**

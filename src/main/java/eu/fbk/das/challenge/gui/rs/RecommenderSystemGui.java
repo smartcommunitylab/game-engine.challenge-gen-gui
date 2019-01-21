@@ -26,6 +26,7 @@ import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 import org.joda.time.DateTime;
 
@@ -304,9 +305,13 @@ public class RecommenderSystemGui {
         c.weighty = 0.3;
         c.weightx = 0.3;
 
+        controller.rsa.initError();
+
         for (int ix = 0; ix< 9; ix++) {
             addPredictPanel2(ix, contentPane, c);
         }
+
+        controller.rsa.outputError();
 
         frame.pack();
         frame.setVisible(true);
@@ -315,8 +320,10 @@ public class RecommenderSystemGui {
 
     private void addPredictPanel2(int ix, Container contentPane, GridBagConstraints c) {
 
-        XYDataset dataset = controller.rsa.createCheckPrediction(ix);
-        ChartPanel predictPanel = createPredictChart(dataset, f("predict-%d", ix));
+        // int t = controller.order[ix];
+        int t = ix;
+        XYDataset dataset = controller.rsa.createCheckPrediction(t);
+        ChartPanel predictPanel = createPredictChart(dataset, f("predict-%d", t), 8);
 
         c.gridx = ix % 3;
         c.gridy = ix / 3;
@@ -326,7 +333,8 @@ public class RecommenderSystemGui {
     private void addPredictPanel(ChallengeDataDTO found, Player player, int ix, Container contentPane, GridBagConstraints c) {
 
         XYDataset dataset = controller.rsa.createPredictDataset(found, player, ix);
-        ChartPanel predictPanel = createPredictChart(dataset, (String) found.getData().get("counterName"));
+        int week = controller.rs.getChallengeWeek(new DateTime(found.getStart()));
+        ChartPanel predictPanel = createPredictChart(dataset, (String) found.getData().get("counterName"), week);
 
         c.gridx = ix % 2;
         c.gridy = ix / 2;
@@ -513,7 +521,7 @@ public class RecommenderSystemGui {
 
     }
 
-    private ChartPanel createPredictChart(XYDataset dataset, String title) {
+    private ChartPanel createPredictChart(XYDataset dataset, String title, int week) {
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                 title,
@@ -530,7 +538,7 @@ public class RecommenderSystemGui {
 
         NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
         xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        xAxis.setAutoRange(true);
+        xAxis.setRange(new Range(0, week));
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setSeriesPaint(0, Color.BLACK);

@@ -11,11 +11,13 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import static eu.fbk.das.rs.challenges.generation.RecommendationSystem.fixMode;
-import static eu.fbk.das.rs.utils.Utils.p;
+import static eu.fbk.das.rs.utils.Utils.*;
 
 public class RecommenderSystemAnalyzer {
 
@@ -32,17 +34,19 @@ public class RecommenderSystemAnalyzer {
     private XYSeriesCollection dataset;
 
     double[][] dataTest = new double[][] {
-            {0, 0.1, 13.0, 21.0, 18.0, 30.0, 25.0, 28.0},
-            {0, 0.1, 0.1, 72.06, 95.47, 0.1, 100.420, 112.748},
-            {0, 0.1, 9.30, 16.5, 15.786, 28.06, 35.31, 30},
-            {0, 0.1, 173.0, 35.0, 192.0, 297.0, 63.0, 60.0},
-            {0, 0.1, 0.1, 0.1, 28.00, 0.1, 12.95, 25.25},
-            {0, 0.1, 13.36, 18.82, 53.42, 13.76, 20.14, 8.73},
-            {0, 0.1, 22.57, 39.18, 21.83, 11.84, 0.1, 0.1},
-            {0, 0.1, 8.0, 24.0, 28.0, 22.0, 18.0, 20.0},
-
-            {0, 0.1, 156.0, 453.0, 344.0, 844.0, 727.0, 555.0},
+            { 0.1, 13.0, 21.0, 18.0, 30.0, 25.0, 28.0, 32.21},
+            { 0.1, 0.1, 72.06, 95.47, 0.1, 100.420, 112.748, 107.21},
+            { 0.1, 9.30, 16.5, 15.786, 28.06, 58.23, 32, 44.68},
+            { 0.1, 173.0, 35.0, 192.0, 127.0, 63.0, 190.0, 190.42},
+            { 0.1, 0.1, 0.1, 28.00, 0.1, 12.95, 25.25, 28.84},
+            { 0.1, 13.36, 18.82, 53.42, 13.76, 20.14, 8.73, 24.05},
+            { 0.1, 22.57, 39.18, 21.83, 11.84, 0.1, 0.1, 10.63},
+            { 0.1, 8.0, 24.0, 28.0, 22.0, 18.0, 20.0, 24.63},
+            { 0.1, 156.0, 453.0, 344.0, 844.0, 727.0, 555.0, 661.57},
     };
+
+    private HashMap<String, Double> pred_error;
+
 
     public RecommenderSystemAnalyzer(RecommendationSystem rs) {
         this.rs = rs;
@@ -54,22 +58,21 @@ public class RecommenderSystemAnalyzer {
         addWeeklyDataset();
 
         if (select == 0)
-            predictWMA();
+            predictWMA(4, 1.3, -1);
         else if (select == 1)
             predictPF();
         else if (select == 2)
-            predictLinear();
+            predictLinear(-1);
 
         return dataset;
     }
 
     // Weighted moving average
-    public void predictWMA() {
+    public void predictWMA(int v, double booster, int w) {
 
         // Last 3 values?
         double den = 0;
         double num = 0;
-        int v = 3;
         for (int ix = 0; ix < v; ix++) {
             // weight * value
             int it = week - (ix +1);
@@ -77,11 +80,30 @@ public class RecommenderSystemAnalyzer {
             num += (v-ix);
         }
 
-        double booster = 1.3;
+        double pv = den * booster / num;
 
-        XYSeries series = new XYSeries("weight_move_avg");
-        series.add(week, den * booster / num);
+        // check last value
+
+        String s = f("wma-%d-%.2f", v, booster);
+
+
+        XYSeries series = new XYSeries(s);
+        series.add(week, pv);
         dataset.addSeries(series);
+
+        addError(s, pv, w);
+    }
+
+    private void addError(String s, double pv, int w) {
+        if (w < 0)
+            return;
+        if (!pred_error.containsKey(s))
+            pred_error.put(s, 0.0);
+
+        double tr = dataTest[w][week];
+
+        // MAPE
+        pred_error.put(s, pred_error.get(s) + Math.abs(pv - tr)/ tr * 1.0);
     }
 
     // Polynomial fit
@@ -106,7 +128,7 @@ public class RecommenderSystemAnalyzer {
         dataset.addSeries(series);
     }
 
-    public void predictLinear() {
+    public void predictLinear(int w) {
 
         // Last 3 values?
         int v = 4;
@@ -143,6 +165,8 @@ public class RecommenderSystemAnalyzer {
         XYSeries series = new XYSeries("linear fit");
         series.add(week, pv);
         dataset.addSeries(series);
+
+        addError("lf" + v, pv, w);
     }
 
 
@@ -244,14 +268,28 @@ public class RecommenderSystemAnalyzer {
 
         mode = null;
         start = new DateTime();
-        week = rs.getChallengeWeek(start);
+        week = 7;
 
         dataset = new XYSeriesCollection();
 
         weekValues = dataTest[ix];
         addWeeklyDataset();
-        predictLinear();
+        predictLinear(ix);
+        for (int i: new int[] {3, 4, 5})
+            for (double boo: new double[] {1.25, 1.3, 1.35})
+                    predictWMA(i, boo, ix);
+
 
         return dataset;
+    }
+
+    public void initError() {
+        pred_error = new HashMap<String, Double>();
+    }
+
+    public void outputError() {
+        for (String meth: pred_error.keySet()) {
+            pf("Error for method %s: %.2f \n", meth, pred_error.get(meth) / dataTest.length * 100.0);
+        }
     }
 }

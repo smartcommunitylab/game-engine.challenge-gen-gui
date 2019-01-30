@@ -86,9 +86,12 @@ e.printStackTrace();
         for (String pId : controller.playerIds) {
             Player player = facade.getPlayerState(conf.get("GAME_ID"), pId);
 
-            p(player.getState());
+            // p(player.getState());
 
-            p(player.getState().getChallengeConcept());
+            // p(player.getState().getChallengeConcept());
+
+            if (player.getState().getChallengeConcept() == null)
+                continue;
 
             for (ChallengeConcept cha: player.getState().getChallengeConcept()) {
                 String s = cha.getName();

@@ -598,7 +598,7 @@ public class RecommenderSystemGui {
 
         XYPlot plot = chart.getXYPlot();
 
-        for (int ix = 1; ix < 11; ix++) {
+        for (int ix = 0; ix < 10; ix++) {
             Color c = blend(ix/10.0, Color.BLUE, Color.GREEN);
             ValueMarker mark = new ValueMarker(qua.get(ix), c, new BasicStroke(2), c, null, 1.0f);
             plot.addRangeMarker(mark);

@@ -155,7 +155,7 @@ e.printStackTrace();
 
             monday = jumpToMonday(date);
 
-            controller.rs.prepare(facade, date);
+            controller.rs.prepare(facade, date, conf.get("HOST"));
 
             Map<String, List<ChallengeDataDTO>> challenges = new HashMap<>();
 

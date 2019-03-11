@@ -718,7 +718,7 @@ public class RecommenderSystemGui {
         gbc_configurationPanel.fill = GridBagConstraints.HORIZONTAL;
         gbc_configurationPanel.gridx = 0;
         gbc_configurationPanel.gridy = 0;
-        // gbc_configurationPanel.weighty = 0.05;
+        // gbc_configurationPanel.weighty = 0.2;
 
 
         JPanel configurationPanel = new JPanel();
@@ -734,21 +734,23 @@ public class RecommenderSystemGui {
         c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 0.5;
+        c.weighty = 0.3;
 
         JLabel hostLabel = new JLabel("Gamification host");
-        // hostLabel.setPreferredSize(new Dimension(50, 10));
+        hostLabel.setPreferredSize(new Dimension(50, 10));
         c.gridx = ix++;
         configurationPanel.add(hostLabel, c);
 
         hostTextField = new JTextField();
-        // hostTextField.setMargin(new Insets(2, 5, 2, 2));
+       //   hostTextField.setMargin(new Insets(2, 5, 2, 2));
         hostTextField.setToolTipText("gamification engine host");
-        // hostTextField.setMinimumSize(new Dimension(300, 20));
+         hostTextField.setMinimumSize(new Dimension(200, 50));
         hostLabel.setLabelFor(hostTextField);
         // hostTextField.setPreferredSize(new Dimension(300, 20));
         c.gridx = ix++;
         configurationPanel.add(hostTextField, c);
-        // hostTextField.setColumns(25);
+       // hostTextField.setColumns(25);
         hostTextField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
@@ -772,9 +774,9 @@ public class RecommenderSystemGui {
         configurationPanel.add(gameIdLabel, c);
 
         gameIdField = new JTextField();
-        // gameIdField.setMargin(new Insets(2, 5, 2, 2));
-        // gameIdField.setMinimumSize(new Dimension(300, 20));
-        // gameIdField.setColumns(15);
+//        gameIdField.setMargin(new Insets(2, 5, 2, 2));
+        gameIdField.setMinimumSize(new Dimension(200, 10));
+  //       gameIdField.setColumns(15);
         gameIdField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override

@@ -150,7 +150,7 @@ public class RSUploader extends SwingWorker<String, Object> {
             DateTime existingChaEnd = jumpToMonday(new DateTime(cha.get("end")));
 
             String s = (String) cha.get("name");
-            if (s.contains("survey") || s.contains("initial"))
+            if (s.contains("survey") || s.contains("initial") || s.contains("bonus"))
                 continue;
 
             int v = Math.abs(daysApart(currentChaEnd, existingChaEnd));

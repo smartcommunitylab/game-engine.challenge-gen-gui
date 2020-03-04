@@ -166,6 +166,7 @@ e.printStackTrace();
             String playerIds = conf.get("PLAYER_IDS");
             if ("".equals(playerIds)) {
                 controller.totPlayers = controller.playerIds.size();
+                preprocessChallenges(controller.playerIds);
                 // generate for all player ids!
                 for (String pId : controller.playerIds) {
                     addChallenge(date, pId);
@@ -185,6 +186,10 @@ e.printStackTrace();
 
             return challenges;
         }
+
+    private void preprocessChallenges(Set<String> playerIds) {
+        controller.rs.preprocess(playerIds);
+    }
 
     private void addChallenge(DateTime date, String pId) {
 

@@ -7,10 +7,10 @@ import java.util.Vector;
 class ChallengeModel extends DefaultTableModel {
 
     public static  String[] challengeColNames = {"Player", "Level", "Id", "Experiment", "Model", "Counter", "Baseline",
-            "Target", "Improvement", "Difficulty", "Bonus", "State", "Priority", "Start", "End"};
+            "Target", "Improvement", "Difficulty", "Bonus", "State", "Priority", "Start", "End", "Hide"};
 
     public static Class[] challengeColTypes = { Integer.class, Integer.class, Integer.class, String.class, String.class,
-            String.class, Double.class, Double.class, Double.class, Double.class, Integer.class, Integer.class, String.class, String.class, String.class};
+            String.class, Double.class, Double.class, Double.class, Double.class, Integer.class, Integer.class, String.class, String.class, String.class, String.class};
 
     public int getColumnCount() {
         return challengeColNames.length;

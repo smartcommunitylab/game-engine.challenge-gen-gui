@@ -65,13 +65,7 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>gov.nist.math</groupId>
-			<artifactId>jama</artifactId>
-			<version>1.0.3</version>
-			<scope>compile</scope>
 
-		</dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>

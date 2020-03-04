@@ -1,6 +1,6 @@
 package eu.fbk.das.challenge.gui.rs;
 
-import eu.fbk.das.challenge.gui.rs.Predictor.PolynomialRegression;
+import eu.fbk.das.rs.utils.PolynomialRegression;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 import eu.trentorise.game.challenges.rest.ChallengeConcept;
@@ -11,7 +11,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,15 +33,15 @@ public class RecommenderSystemAnalyzer {
     private XYSeriesCollection dataset;
 
     double[][] dataTest = new double[][] {
-            { 0.1, 13.0, 21.0, 18.0, 30.0, 25.0, 28.0, 32.21},
-            { 0.1, 0.1, 72.06, 95.47, 0.1, 100.420, 112.748, 107.21},
-            { 0.1, 9.30, 16.5, 15.786, 28.06, 58.23, 32, 44.68},
-            { 0.1, 173.0, 35.0, 192.0, 127.0, 63.0, 190.0, 190.42},
-            { 0.1, 0.1, 0.1, 28.00, 0.1, 12.95, 25.25, 28.84},
-            { 0.1, 13.36, 18.82, 53.42, 13.76, 20.14, 8.73, 24.05},
-            { 0.1, 22.57, 39.18, 21.83, 11.84, 0.1, 0.1, 10.63},
-            { 0.1, 8.0, 24.0, 28.0, 22.0, 18.0, 20.0, 24.63},
-            { 0.1, 156.0, 453.0, 344.0, 844.0, 727.0, 555.0, 661.57},
+            { 0.1, 13.0, 21.0, 18.0, 30.0, 25.0, 28.0, 29.23},
+            { 0.1, 0.1, 72.06, 95.47, 0.1, 100.420, 112.748, 165.76},
+            { 0.1, 9.30, 16.5, 15.786, 28.06, 58.23, 32, 37.179},
+            { 0.1, 173.0, 35.0, 192.0, 127.0, 63.0, 190.0, 126.40},
+            { 0.1, 0.1, 0.1, 28.00, 0.1, 12.95, 25.25, 22.20},
+            { 0.1, 13.36, 18.82, 53.42, 13.76, 20.14, 8.73, 27.49},
+            { 0.1, 22.57, 39.18, 21.83, 11.84, 0.1, 0.1, 19.86},
+            { 0.1, 8.0, 24.0, 28.0, 22.0, 18.0, 20.0, 22.91},
+            { 0.1, 156.0, 453.0, 344.0, 844.0, 727.0, 555.0, 545.86},
     };
 
     private HashMap<String, Double> pred_error;

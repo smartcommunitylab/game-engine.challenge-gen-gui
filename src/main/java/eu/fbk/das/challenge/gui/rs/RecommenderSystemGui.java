@@ -96,8 +96,8 @@ public class RecommenderSystemGui {
     private RecommenderSystemGui() {
         logger.info("Gui creation");
         app = new JFrame("RecommenderSystemGui");
-        app.setMinimumSize(new Dimension(1024, 768));
-        app.setSize(new Dimension(1024, 768));
+        app.setMinimumSize(new Dimension(1500, 768));
+        app.setSize(new Dimension(1500, 768));
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setLocationRelativeTo(null);
 

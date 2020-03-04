@@ -140,7 +140,7 @@ public class RSUploader extends SwingWorker<String, Object> {
         return true;
     }
 
-    private String existsPlayerChallenge(String gameId, String playerId, ChallengeDataDTO old) {
+    private String  existsPlayerChallenge(String gameId, String playerId, ChallengeDataDTO old) {
 
         DateTime currentChaEnd = jumpToMonday(new DateTime(old.getEnd()));
 
@@ -150,7 +150,7 @@ public class RSUploader extends SwingWorker<String, Object> {
             DateTime existingChaEnd = jumpToMonday(new DateTime(cha.get("end")));
 
             String s = (String) cha.get("name");
-            if (s.contains("survey") || s.contains("initial") || s.contains("bonus"))
+            if (s.contains("survey") || s.contains("initial") || s.contains("bonus") || s.contains("group") || s.contains("recommend"))
                 continue;
 
             int v = Math.abs(daysApart(currentChaEnd, existingChaEnd));

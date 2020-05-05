@@ -44,7 +44,7 @@ public class RSGenerate  extends SwingWorker<String, Object> {
 
         this.facade = controller.getFacade();
 
-        cdg = new ChallengeDataGuru(controller.rs.cfg);
+        cdg = new ChallengeDataGuru(controller.rs);
     }
 
     @Override
@@ -155,8 +155,6 @@ e.printStackTrace();
 
             monday = jumpToMonday(date);
 
-            controller.rs.prepare(facade, date, conf.get("HOST"));
-
             Map<String, List<ChallengeDataDTO>> challenges = new HashMap<>();
 
             currentPlayer = 1;
@@ -193,7 +191,7 @@ e.printStackTrace();
 
     private void addChallenge(DateTime date, String pId) {
 
-        List<ChallengeDataDTO> res = controller.rs.recommend(pId, date);
+        List<ChallengeDataDTO> res = controller.rs.recommend(pId, null, null);
         if (res != null && !res.isEmpty()) {
             controller.addChallenges(pId, res);
         }
@@ -228,7 +226,7 @@ e.printStackTrace();
         fileName = f("challenges-%s-complete", formatDateTimeFileName(new DateTime()));
 
         try {
-            cdg.generate(fileName, controller.challenges, facade, monday, ChallengeModel.challengeColNames);
+            cdg.generate(fileName, controller.challenges, monday, ChallengeModel.challengeColNames);
         } catch (IOException e) {
             controller.newError(f("COULD NOT WRITE GURU CHALLENGES TO DISK: %s", e.getMessage()));
             return false;

@@ -6,7 +6,7 @@ import eu.fbk.das.rs.utils.ArrayUtils;
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 
 import eu.trentorise.game.challenges.rest.Player;
-import eu.trentorise.game.challenges.rest.GamificationEngineRestFacade;
+import eu.fbk.das.GamificationEngineRestFacade;
 import eu.trentorise.game.challenges.util.ChallengeRuleRow;
 import eu.trentorise.game.challenges.util.ChallengeRules;
 import eu.trentorise.game.challenges.util.ChallengeRulesLoader;

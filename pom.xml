@@ -11,6 +11,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<gui.mainClass>eu.fbk.das.challenge.gui.gen.ChallengeGeneratorGui</gui.mainClass>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>SmartCommunityLab</id>
+			<url>http://repository.smartcommunitylab.it/content/groups/public</url>
+		</repository>
+	</repositories>
 	
 	<dependencies>
 

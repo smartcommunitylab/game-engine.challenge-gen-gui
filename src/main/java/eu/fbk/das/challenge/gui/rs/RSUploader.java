@@ -3,7 +3,7 @@ package eu.fbk.das.challenge.gui.rs;
 
 import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 import eu.trentorise.game.challenges.model.ChallengeDataInternalDto;
-import eu.trentorise.game.challenges.rest.GamificationEngineRestFacade;
+import eu.fbk.das.GamificationEngineRestFacade;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

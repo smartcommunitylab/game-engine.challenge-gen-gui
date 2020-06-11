@@ -5,6 +5,7 @@ import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
 
 import eu.fbk.das.GamificationEngineRestFacade;
 import it.smartcommunitylab.model.PlayerStateDTO;
+import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,16 +92,15 @@ e.printStackTrace();
 
             Set<GameConcept> scores =  player.getState().get("ChallengeConcept");
             if (scores == null) continue;
-            for (GameConcept cha : scores) {
-
-            /* TODO FIX
+            for (GameConcept gc : scores) {
+                ChallengeConcept cha = (ChallengeConcept) gc;
 
                 String s = cha.getName();
                 if (s.contains("survey") || s.contains("initial"))
                     continue;
 
                 completed.put(cha.getName(), cha.isCompleted() ? 1 : 0);
-*/
+
             }
         }
 

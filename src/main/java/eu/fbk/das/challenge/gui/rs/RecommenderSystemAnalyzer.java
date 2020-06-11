@@ -7,6 +7,7 @@ import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
 
 import eu.trentorise.game.model.Game;
 import it.smartcommunitylab.model.PlayerStateDTO;
+import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.jfree.data.xy.XYDataset;
@@ -186,8 +187,8 @@ public class RecommenderSystemAnalyzer {
 
         XYSeries success_series = new XYSeries("success");
         XYSeries failed_series = new XYSeries("failed");
-        for (GameConcept chal : player.getState().get("ChallengeConcept")) {
-            /* TODO FIX
+        for (GameConcept gc : player.getState().get("ChallengeConcept")) {
+                ChallengeConcept chal = (ChallengeConcept) gc;
 
             Map<String, Object> res = chal.getFields();
             if (!res.containsKey("counterName"))
@@ -203,7 +204,7 @@ public class RecommenderSystemAnalyzer {
                 }
             }
 
-             */
+
         }
 
         dataset.addSeries(success_series);

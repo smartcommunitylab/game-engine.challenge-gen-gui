@@ -1,10 +1,13 @@
 package eu.fbk.das.challenge.gui.rs;
 
+import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.rs.utils.PolynomialRegression;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
-import eu.trentorise.game.challenges.model.ChallengeDataDTO;
-import eu.trentorise.game.challenges.rest.ChallengeConcept;
-import eu.trentorise.game.challenges.rest.Player;
+
+
+import eu.trentorise.game.model.Game;
+import it.smartcommunitylab.model.PlayerStateDTO;
+import it.smartcommunitylab.model.ext.GameConcept;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -51,7 +54,7 @@ public class RecommenderSystemAnalyzer {
         this.rs = rs;
     }
 
-    public XYDataset createPredictDataset(ChallengeDataDTO cha, Player player, int select) {
+    public XYDataset createPredictDataset(ChallengeExpandedDTO cha, PlayerStateDTO player, int select) {
         prepare(cha, player);
 
         addWeeklyDataset();
@@ -170,20 +173,22 @@ public class RecommenderSystemAnalyzer {
 
 
 
-    public XYDataset createWeeklyDataset(ChallengeDataDTO cha, Player player) {
+    public XYDataset createWeeklyDataset(ChallengeExpandedDTO cha, PlayerStateDTO player) {
 
         prepare(cha, player);
 
         addWeeklyDataset();
 
         XYSeries series = new XYSeries("challenge");
-        double co = (double) (cha.getData().get("target"));
+        double co = (double) (cha.getData("target"));
         series.add(week, co);
         dataset.addSeries(series);
 
         XYSeries success_series = new XYSeries("success");
         XYSeries failed_series = new XYSeries("failed");
-        for (ChallengeConcept chal : player.getState().getChallengeConcept()) {
+        for (GameConcept chal : player.getState().get("ChallengeConcept")) {
+            /* TODO FIX
+
             Map<String, Object> res = chal.getFields();
             if (!res.containsKey("counterName"))
                 continue;
@@ -197,6 +202,8 @@ public class RecommenderSystemAnalyzer {
                     failed_series.add(wk, cnt);
                 }
             }
+
+             */
         }
 
         dataset.addSeries(success_series);
@@ -205,8 +212,8 @@ public class RecommenderSystemAnalyzer {
         return dataset;
     }
 
-    private void prepare(ChallengeDataDTO cha, Player player) {
-        mode = (String) cha.getData().get("counterName");
+    private void prepare(ChallengeExpandedDTO cha, PlayerStateDTO player) {
+        mode = (String) cha.getData("counterName");
         start = new DateTime(cha.getStart());
         week = rs.getChallengeWeek(start);
 
@@ -227,7 +234,7 @@ public class RecommenderSystemAnalyzer {
         return dataset;
     }
 
-    private void getWeeklyData(Player player) {
+    private void getWeeklyData(PlayerStateDTO player) {
         weekValues = new double[week +1];
 
         double co;
@@ -241,9 +248,9 @@ public class RecommenderSystemAnalyzer {
         p(Arrays.toString(weekValues));
     }
 
-    public XYDataset createDailyDataset(ChallengeDataDTO cha, Player player) {
+    public XYDataset createDailyDataset(ChallengeExpandedDTO cha, PlayerStateDTO player) {
 
-        String mode = (String) cha.getData().get("counterName");
+        String mode = (String) cha.getData("counterName");
 
         DateTime start = new DateTime(cha.getStart());
         int day = rs.getChallengeDay(start);

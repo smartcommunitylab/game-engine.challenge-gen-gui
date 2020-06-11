@@ -1,12 +1,11 @@
 package eu.fbk.das.challenge.gui.rs;
 
+import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
-import eu.trentorise.game.challenges.ChallengeInstanceFactory;
-import eu.trentorise.game.challenges.ChallengesRulesGenerator;
-import eu.trentorise.game.challenges.model.ChallengeDataDTO;
-import eu.trentorise.game.challenges.rest.ChallengeConcept;
-import eu.trentorise.game.challenges.rest.Player;
+
 import eu.fbk.das.GamificationEngineRestFacade;
+import it.smartcommunitylab.model.PlayerStateDTO;
+import it.smartcommunitylab.model.ext.GameConcept;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -84,22 +83,24 @@ e.printStackTrace();
         Map<String, Integer> completed =  new HashMap<>();
 
         for (String pId : controller.playerIds) {
-            Player player = facade.getPlayerState(conf.get("GAME_ID"), pId);
+            PlayerStateDTO player = facade.getPlayerState(conf.get("GAME_ID"), pId);
 
             // p(player.getState());
 
             // p(player.getState().getChallengeConcept());
 
-            if (player.getState().getChallengeConcept() == null)
-                continue;
+            Set<GameConcept> scores =  player.getState().get("ChallengeConcept");
+            if (scores == null) continue;
+            for (GameConcept cha : scores) {
 
-            for (ChallengeConcept cha: player.getState().getChallengeConcept()) {
+            /* TODO FIX
+
                 String s = cha.getName();
                 if (s.contains("survey") || s.contains("initial"))
                     continue;
 
                 completed.put(cha.getName(), cha.isCompleted() ? 1 : 0);
-
+*/
             }
         }
 
@@ -120,11 +121,11 @@ e.printStackTrace();
 
                 /*
         for (String s: res.keySet()) {
-            List<ChallengeDataDTO> lcha = res.get(s);
+            List<ChallengeExpandedDTO> lcha = res.get(s);
             if (lcha == null || lcha.isEmpty())
                 continue;
 
-                for (ChallengeDataDTO cha : lcha) {
+                for (ChallengeExpandedDTO cha : lcha) {
                     cha.setStart(Utils.parseDateTime("26/10/2018 00:00"));
                     cha.setEnd(Utils.parseDateTime("28/10/2018 23:59"));
                 }
@@ -144,7 +145,7 @@ e.printStackTrace();
 
     }
 
-    private Map<String, List<ChallengeDataDTO>> recommendation() {
+    private Map<String, List<ChallengeExpandedDTO>> recommendation() {
 
             dbg(logger, "Reading players from game");
 
@@ -155,7 +156,7 @@ e.printStackTrace();
 
             monday = jumpToMonday(date);
 
-            Map<String, List<ChallengeDataDTO>> challenges = new HashMap<>();
+            Map<String, List<ChallengeExpandedDTO>> challenges = new HashMap<>();
 
             currentPlayer = 1;
 
@@ -165,7 +166,7 @@ e.printStackTrace();
             if ("".equals(playerIds)) {
                 controller.totPlayers = controller.playerIds.size();
                 preprocessChallenges(controller.playerIds);
-                // generate for all player ids!
+                // generate for all PlayerStateDTO ids!
                 for (String pId : controller.playerIds) {
                     addChallenge(date, pId);
                 }
@@ -175,7 +176,7 @@ e.printStackTrace();
                 controller.totPlayers = splited.length;
                 for (String pId : splited)
                     if (!controller.playerIds.contains(pId))
-                        throw new IllegalArgumentException(f("Given player id %s is nowhere to be found in the game", pId));
+                        throw new IllegalArgumentException(f("Given PlayerStateDTO id %s is nowhere to be found in the game", pId));
 
                 for (String pId : splited) {
                     addChallenge(date, pId);
@@ -191,16 +192,16 @@ e.printStackTrace();
 
     private void addChallenge(DateTime date, String pId) {
 
-        List<ChallengeDataDTO> res = controller.rs.recommend(pId, null, null);
+        List<ChallengeExpandedDTO> res = controller.rs.recommend(pId, null, null, null);
         if (res != null && !res.isEmpty()) {
             controller.addChallenges(pId, res);
         }
 
-        controller.setStatusBar(false, "\rPlayer considered: %d / %d", currentPlayer++, controller.totPlayers);
+        controller.setStatusBar(false, "\rPlayerStateDTO considered: %d / %d", currentPlayer++, controller.totPlayers);
     }
 
-
-    private void saveChallanges(Map<String, List<ChallengeDataDTO>> res) {
+/*
+    private void saveChallanges(Map<String, List<ChallengeExpandedDTO>> res) {
 
         ChallengesRulesGenerator crg;
         try {
@@ -220,7 +221,7 @@ e.printStackTrace();
         }
 
 
-    }
+    }*/
 
     private boolean writeChallengesComplete() {
         fileName = f("challenges-%s-complete", formatDateTimeFileName(new DateTime()));
@@ -240,7 +241,7 @@ e.printStackTrace();
 
         fileName = f("challenges-%s.csv", formatDateTimeFileName(new DateTime()));
 
-        Map<String, List<ChallengeDataDTO>> challenges = controller.challenges;
+        Map<String, List<ChallengeExpandedDTO>> challenges = controller.challenges;
 
         try {
             BufferedWriter w = new BufferedWriter(new FileWriter(fileName));
@@ -249,12 +250,12 @@ e.printStackTrace();
 
             for (String playerId : challenges.keySet()) {
 
-                List<ChallengeDataDTO> lcha = challenges.get(playerId);
+                List<ChallengeExpandedDTO> lcha = challenges.get(playerId);
 
                 if (lcha == null || lcha.isEmpty())
                     continue;
 
-                for (ChallengeDataDTO cha : lcha) {
+                for (ChallengeExpandedDTO cha : lcha) {
                     wf(w, "%s\n", cha.printData());
                     w.flush();
                 }

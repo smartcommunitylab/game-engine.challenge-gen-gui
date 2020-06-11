@@ -1,8 +1,9 @@
 package eu.fbk.das.challenge.gui.util;
 
 import eu.fbk.das.challenge.gui.gen.ChallengeReport;
-import eu.trentorise.game.challenges.util.ChallengeRuleRow;
-import eu.trentorise.game.challenges.util.ChallengeRules;
+import eu.fbk.das.old.ChallengeRuleRow;
+import eu.fbk.das.old.ChallengeRules;
+
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;

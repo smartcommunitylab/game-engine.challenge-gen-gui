@@ -1,16 +1,18 @@
 package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
+import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
 import eu.fbk.das.rs.utils.ArrayUtils;
-import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 
-import eu.trentorise.game.challenges.rest.Player;
+
+
 import eu.fbk.das.GamificationEngineRestFacade;
-import eu.trentorise.game.challenges.util.ChallengeRuleRow;
-import eu.trentorise.game.challenges.util.ChallengeRules;
-import eu.trentorise.game.challenges.util.ChallengeRulesLoader;
 
+
+import eu.fbk.das.old.ChallengeRules;
+import eu.fbk.das.old.ChallengeRulesLoader;
+import it.smartcommunitylab.model.PlayerStateDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +35,7 @@ class RecommenderSystemController {
 
     public int totPlayers;
 
-    Map<String, List<ChallengeDataDTO>> challenges;
+    Map<String, List<ChallengeExpandedDTO>> challenges;
 
     private RecommenderSystemGui window;
 
@@ -254,11 +256,6 @@ class RecommenderSystemController {
         new RSUploader(this, prepareConf(), "output.json").execute();
     }
 
-
-    List<ChallengeRuleRow> getChallenges() {
-        return window.getChallenges().getChallenges();
-    }
-
     Set<String> getPlayerList() {
         // p(facade);
         return facade.getGamePlayers(window.getGameId());
@@ -350,7 +347,7 @@ class RecommenderSystemController {
         }
     }
 
-    public void addChallenges(String pId, List<ChallengeDataDTO> res) {
+    public void addChallenges(String pId, List<ChallengeExpandedDTO> res) {
         challenges.put(pId, res);
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> {
@@ -359,7 +356,7 @@ class RecommenderSystemController {
         }
     }
 
-    public Player getPlayer(String pId) {
+    public PlayerStateDTO getPlayer(String pId) {
         return facade.getPlayerState(window.getGameId(), pId);
     }
 
@@ -369,10 +366,10 @@ class RecommenderSystemController {
          ArrayList<Double> incrTot = new ArrayList<>();
 
          for (String pId: challenges.keySet())
-             for (ChallengeDataDTO ch: challenges.get(pId)) {
-                 double impr = Double.valueOf(ch.getInfo("improvement"));
-                 String counter = (String) ch.getData().get("counterName");
-                 int lvl = Integer.valueOf(ch.getInfo("playerLevel"));
+             for (ChallengeExpandedDTO ch: challenges.get(pId)) {
+                 double impr = Double.valueOf((Double) ch.getInfo("improvement"));
+                 String counter = (String) ch.getData("counterName");
+                 int lvl = Integer.valueOf((Integer) ch.getInfo("playerLevel"));
 
                  incrTot.add(impr);
 

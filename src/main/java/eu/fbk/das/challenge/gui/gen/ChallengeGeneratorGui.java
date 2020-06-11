@@ -2,8 +2,9 @@ package eu.fbk.das.challenge.gui.gen;
 
 import eu.fbk.das.challenge.gui.AboutDialog;
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
-import eu.trentorise.game.challenges.util.ChallengeRuleRow;
-import eu.trentorise.game.challenges.util.ChallengeRules;
+
+import eu.fbk.das.old.ChallengeRuleRow;
+import eu.fbk.das.old.ChallengeRules;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -747,7 +748,7 @@ public class ChallengeGeneratorGui {
         infoPanel.add(totalLabel, BorderLayout.NORTH);
 
         // add info about challenges for player
-        JLabel challengeNumberLabel = new JLabel("Challenges per player : " + values.toString());
+        JLabel challengeNumberLabel = new JLabel("Challenges per PlayerStateDTO : " + values.toString());
         challengeNumberLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         challengeNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
         infoPanel.add(challengeNumberLabel, BorderLayout.CENTER);

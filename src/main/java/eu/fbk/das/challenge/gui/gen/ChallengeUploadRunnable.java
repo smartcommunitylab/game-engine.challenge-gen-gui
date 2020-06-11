@@ -1,6 +1,6 @@
 package eu.fbk.das.challenge.gui.gen;
 
-import eu.trentorise.game.challenges.UploaderTool;
+import eu.fbk.das.old.UploaderTool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,10 +1,9 @@
 package eu.fbk.das.challenge.gui.rs;
 
-
-import eu.trentorise.game.challenges.model.ChallengeDataDTO;
-import eu.trentorise.game.challenges.model.ChallengeDataInternalDto;
+import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.GamificationEngineRestFacade;
 
+import it.smartcommunitylab.model.ChallengeConcept;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +29,7 @@ public class RSUploader extends SwingWorker<String, Object> {
     private String output;
     private GamificationEngineRestFacade facade;
 
-    Map<String, List<ChallengeDataDTO>> challenges;
+    Map<String, List<ChallengeExpandedDTO>> challenges;
 
     private String gameId;
 
@@ -101,7 +100,7 @@ public class RSUploader extends SwingWorker<String, Object> {
 
         for (String playerId : challenges.keySet()) {
 
-            List<ChallengeDataDTO> lcha = challenges.get(playerId);
+            List<ChallengeExpandedDTO> lcha = challenges.get(playerId);
 
             if (lcha == null || lcha.isEmpty())
                 continue;
@@ -119,7 +118,7 @@ public class RSUploader extends SwingWorker<String, Object> {
             int tot = lcha.size();
             int ix = 0;
 
-            for (ChallengeDataDTO cha : lcha) {
+            for (ChallengeExpandedDTO cha : lcha) {
 
                 // upload every challenge
 
@@ -140,16 +139,16 @@ public class RSUploader extends SwingWorker<String, Object> {
         return true;
     }
 
-    private String  existsPlayerChallenge(String gameId, String playerId, ChallengeDataDTO old) {
+    private String  existsPlayerChallenge(String gameId, String playerId, ChallengeExpandedDTO old) {
 
         DateTime currentChaEnd = jumpToMonday(new DateTime(old.getEnd()));
 
         List<String> already = new ArrayList<>();
-        List<LinkedHashMap<String, Object>> currentChallenges = facade.getChallengesPlayer(gameId, playerId);
-        for (LinkedHashMap<String, Object> cha: currentChallenges) {
-            DateTime existingChaEnd = jumpToMonday(new DateTime(cha.get("end")));
+        List<ChallengeConcept> currentChallenges = facade.getChallengesPlayer(gameId, playerId);
+        for (ChallengeConcept cha: currentChallenges) {
+            DateTime existingChaEnd = jumpToMonday(new DateTime(cha.getEnd()));
 
-            String s = (String) cha.get("name");
+            String s = (String) cha.getName();
             if (s.contains("survey") || s.contains("initial") || s.contains("bonus") || s.contains("group") || s.contains("recommend"))
                 continue;
 
@@ -160,22 +159,6 @@ public class RSUploader extends SwingWorker<String, Object> {
         }
 
         return String.join("\n", already);
-    }
-
-
-    private List<ChallengeDataInternalDto> prepareChallenges() {
-        List<ChallengeDataInternalDto> challenges = new ArrayList<>();
-
-        for (String user : controller.challenges.keySet())
-            for (ChallengeDataDTO cha : controller.challenges.get(user)) {
-                ChallengeDataInternalDto chaInt = new ChallengeDataInternalDto();
-                chaInt.setPlayerId(user);
-                chaInt.setGameId(gameId);
-                chaInt.setDto(cha);
-
-                challenges.add(chaInt);
-            }
-        return challenges;
     }
 
     /*

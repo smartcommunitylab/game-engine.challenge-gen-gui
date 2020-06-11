@@ -2,9 +2,10 @@ package eu.fbk.das.challenge.gui.gen;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
-import eu.trentorise.game.challenges.util.ChallengeRuleRow;
-import eu.trentorise.game.challenges.util.ChallengeRules;
-import eu.trentorise.game.challenges.util.ChallengeRulesLoader;
+
+import eu.fbk.das.old.ChallengeRuleRow;
+import eu.fbk.das.old.ChallengeRules;
+import eu.fbk.das.old.ChallengeRulesLoader;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -250,7 +251,7 @@ public class ChallengeGuiController {
             for (String key : map.keySet()) {
                 pieDataSet.setValue(key, map.get(key).size());
             }
-            // update challenge for player count
+            // update challenge for PlayerStateDTO count
 
             Map<String, List<ChallengeReport>> mapPlayer = report.stream()
                     .collect(Collectors.groupingBy(ChallengeReport::getPlayer));

@@ -1,8 +1,8 @@
 package eu.fbk.das.challenge.gui.gen;
 
 import com.google.common.base.Throwables;
-import eu.trentorise.game.challenges.ChallengeGeneratorTool;
-import eu.trentorise.game.challenges.util.ChallengeRules;
+import eu.fbk.das.old.ChallengeGeneratorTool;
+import eu.fbk.das.old.ChallengeRules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

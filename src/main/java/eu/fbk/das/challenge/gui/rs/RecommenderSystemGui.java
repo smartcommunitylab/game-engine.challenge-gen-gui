@@ -1,17 +1,17 @@
 package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
+import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.rs.utils.Pair;
 import eu.fbk.das.rs.utils.Utils;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
-import eu.trentorise.game.challenges.model.ChallengeDataDTO;
 
-import eu.trentorise.game.challenges.rest.ChallengeConcept;
-import eu.trentorise.game.challenges.rest.Player;
-import eu.trentorise.game.challenges.rest.PlayerLevel;
-import eu.trentorise.game.challenges.util.ChallengeRules;
-
+import eu.fbk.das.old.ChallengeRules;
+import it.smartcommunitylab.model.PlayerStateDTO;
+import it.smartcommunitylab.model.ext.ChallengeConcept;
+import it.smartcommunitylab.model.ext.GameConcept;
+import it.smartcommunitylab.model.ext.PlayerLevel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -206,7 +206,7 @@ public class RecommenderSystemGui {
             }
         }));
 
-        orderingPanel.add(new JButton(new AbstractAction("Player - Level") {
+        orderingPanel.add(new JButton(new AbstractAction("PlayerStateDTO - Level") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 sortChallengeTable(new int[] { 1, 0, 2}, new SortOrder[] {  SortOrder.DESCENDING,   SortOrder.ASCENDING, SortOrder.DESCENDING});
@@ -267,11 +267,11 @@ public class RecommenderSystemGui {
 
     private void showPredictCounter(int row) {
 
-        Pair<ChallengeDataDTO, Player> res = getChallengePlayer(row);
+        Pair<ChallengeExpandedDTO, PlayerStateDTO> res = getChallengePlayer(row);
         if (res == null)
             return;
-        ChallengeDataDTO found = res.getFirst();
-        Player player = res.getSecond();
+        ChallengeExpandedDTO found = res.getFirst();
+        PlayerStateDTO player = res.getSecond();
 
         JFrame frame = new JFrame(found.getInstanceName());
         Container contentPane = frame.getContentPane();
@@ -330,11 +330,11 @@ public class RecommenderSystemGui {
         contentPane.add(predictPanel, c);
     }
 
-    private void addPredictPanel(ChallengeDataDTO found, Player player, int ix, Container contentPane, GridBagConstraints c) {
+    private void addPredictPanel(ChallengeExpandedDTO found, PlayerStateDTO player, int ix, Container contentPane, GridBagConstraints c) {
 
         XYDataset dataset = controller.rsa.createPredictDataset(found, player, ix);
         int week = controller.rs.getChallengeWeek(new DateTime(found.getStart()));
-        ChartPanel predictPanel = createPredictChart(dataset, (String) found.getData().get("counterName"), week);
+        ChartPanel predictPanel = createPredictChart(dataset, (String) found.getData("counterName"), week);
 
         c.gridx = ix % 2;
         c.gridy = ix / 2;
@@ -342,11 +342,11 @@ public class RecommenderSystemGui {
     }
 
     private void showModeGraph(int row) {
-        Pair<ChallengeDataDTO, Player> res = getChallengePlayer(row);
+        Pair<ChallengeExpandedDTO, PlayerStateDTO> res = getChallengePlayer(row);
         if (res == null)
             return;
-        ChallengeDataDTO found = res.getFirst();
-        Player player = res.getSecond();
+        ChallengeExpandedDTO found = res.getFirst();
+        PlayerStateDTO player = res.getSecond();
 
         ChartPanel weeklyPanel = createWeeklyChart(found, player);
         ChartPanel dailyPanel = createDailyChart(found, player);
@@ -383,26 +383,26 @@ public class RecommenderSystemGui {
 
     }
 
-    private Pair<ChallengeDataDTO, Player> getChallengePlayer(int row) {
+    private Pair<ChallengeExpandedDTO, PlayerStateDTO> getChallengePlayer(int row) {
         String pId = String.valueOf(challengeTable.getValueAt(row, 0));
         String cId = String.valueOf(challengeTable.getValueAt(row, 2));
 
-        ChallengeDataDTO found  = null;
-        for (ChallengeDataDTO cha: controller.challenges.get(pId))
+        ChallengeExpandedDTO found  = null;
+        for (ChallengeExpandedDTO cha: controller.challenges.get(pId))
             if (cha.getInfo("id").equals(cId))
                 found = cha;
 
         if (found == null)
             return null;
 
-        Player player = controller.getPlayer(found.getInfo("player"));
-        return new Pair<ChallengeDataDTO, Player>(found, player);
+        PlayerStateDTO player = controller.getPlayer((String) found.getInfo("player"));
+        return new Pair<ChallengeExpandedDTO, PlayerStateDTO>(found, player);
     }
 
-    private Component challengesPanel(Player player) {
+    private Component challengesPanel(PlayerStateDTO player) {
         JPanel ip = new JPanel();
         ip.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
-                "Player info", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+                "PlayerStateDTO info", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 
         GridBagLayout gbl = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -410,7 +410,8 @@ public class RecommenderSystemGui {
         ip.setLayout(gbl);
 
         TreeMap<Integer, List<String>> info = new TreeMap<>();
-        for (ChallengeConcept chal : player.getState().getChallengeConcept()) {
+        for (GameConcept gc : player.getState().get("ChallengeConcept")) {
+            ChallengeConcept chal = (ChallengeConcept) gc;
             String nm = chal.getName();
             Map<String, Object> res = chal.getFields();
             if (!res.containsKey("counterName"))
@@ -447,10 +448,10 @@ public class RecommenderSystemGui {
         return ip;
     }
 
-    private Component playerInfoPanel(Player player) {
+    private Component playerInfoPanel(PlayerStateDTO player) {
         JPanel ip = new JPanel();
         ip.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
-                "Player info", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+                "PlayerStateDTO info", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 
         GridLayout gLayout = new GridLayout(0,2);
         ip.setLayout(gLayout);
@@ -470,11 +471,11 @@ public class RecommenderSystemGui {
         jp.add(new JLabel(s));
     }
 
-    private ChartPanel createDailyChart(ChallengeDataDTO cha, Player player) {
+    private ChartPanel createDailyChart(ChallengeExpandedDTO cha, PlayerStateDTO player) {
 
         XYDataset dataset = controller.rsa.createDailyDataset(cha, player);
 
-        String mode = (String) cha.getData().get("counterName");
+        String mode = (String) cha.getData("counterName");
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                 mode,
@@ -575,9 +576,9 @@ public class RecommenderSystemGui {
 
     }
 
-    private ChartPanel createWeeklyChart(ChallengeDataDTO cha, Player player) {
+    private ChartPanel createWeeklyChart(ChallengeExpandedDTO cha, PlayerStateDTO player) {
 
-        String mode = (String) cha.getData().get("counterName");
+        String mode = (String) cha.getData("counterName");
 
         XYDataset dataset = controller.rsa.createWeeklyDataset(cha, player);
 
@@ -849,7 +850,7 @@ public class RecommenderSystemGui {
         c.gridx = ix++;
         configurationPanel.add(dateField, c);
 
-        Label playerIdsLabel = new Label("Player Ids");
+        Label playerIdsLabel = new Label("PlayerStateDTO Ids");
         c.gridx = ix++;
         configurationPanel.add(playerIdsLabel, c);
 
@@ -977,7 +978,7 @@ public class RecommenderSystemGui {
         JMenu mnHelp = new JMenu("Help");
         menuBar.add(mnHelp);
 
-        mntmPlayerList = new JMenuItem("Player List");
+        mntmPlayerList = new JMenuItem("PlayerStateDTO List");
         mntmPlayerList.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -997,7 +998,7 @@ public class RecommenderSystemGui {
 
     private void PlayerListEvent() {
         Set<String> pIds = controller.getPlayerList();
-        String msg = f("List of player ids (%d): %s", pIds.size(), String.join(", ", pIds));
+        String msg = f("List of PlayerStateDTO ids (%d): %s", pIds.size(), String.join(", ", pIds));
         JOptionPane.showMessageDialog(app, msg);
     }
 
@@ -1138,12 +1139,12 @@ public class RecommenderSystemGui {
         refresh();
     } */
 
-    void addChallenges(List<ChallengeDataDTO> cha) {
+    void addChallenges(List<ChallengeExpandedDTO> cha) {
 
             if (cha == null || cha.isEmpty())
                 return;
 
-            for (ChallengeDataDTO crr : cha) {
+            for (ChallengeExpandedDTO crr : cha) {
 
                 /*                result.add(crr.no());
                 result.add(crr.getTarget());
@@ -1438,7 +1439,7 @@ public class RecommenderSystemGui {
         infoPanel.add(totalLabel, BorderLayout.NORTH);
 
         // add info about challenges for player
-        JLabel challengeNumberLabel = new JLabel("Challenges per player : " + values.toString());
+        JLabel challengeNumberLabel = new JLabel("Challenges per PlayerStateDTO : " + values.toString());
         challengeNumberLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         challengeNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
         infoPanel.add(challengeNumberLabel, BorderLayout.CENTER);
@@ -1489,7 +1490,7 @@ public class RecommenderSystemGui {
             passwordTextField.getPassword(), gameIdField.getText());
              */
 
-            String msg = f("List of player ids (%d): %s", controller.playerIds.size(), String.join(", ", controller.playerIds));
+            String msg = f("List of PlayerStateDTO ids (%d): %s", controller.playerIds.size(), String.join(", ", controller.playerIds));
             addLog(msg);
 
                     window.enableGenerate(valid);
@@ -1528,7 +1529,7 @@ public class RecommenderSystemGui {
         if (useRecommendationSystem) {
             RecommendationSystem rs = new RecommendationSystem(
                     new ChallengesConfig(useFiltering, filterIds));
-            Map<String, List<ChallengeDataDTO>> rsChallenges = rs
+            Map<String, List<ChallengeExpandedDTO>> rsChallenges = rs
                     .recommendation(users, CalendarUtil.getStart().getTime(),
                             CalendarUtil.getEnd().getTime());
             if (rsChallenges == null

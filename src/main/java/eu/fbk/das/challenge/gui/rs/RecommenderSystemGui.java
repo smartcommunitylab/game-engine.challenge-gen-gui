@@ -2,9 +2,9 @@ package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.model.ChallengeExpandedDTO;
+import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
 import eu.fbk.das.rs.utils.Pair;
 import eu.fbk.das.rs.utils.Utils;
-import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
 
 import eu.fbk.das.old.ChallengeRules;
@@ -1076,7 +1076,7 @@ public class RecommenderSystemGui {
 
     private void loadConf() {
 
-        RecommendationSystemConfig cfg = controller.rs.cfg;
+        RecommendationSystemConfig cfg = controller.cfg;
         p(cfg.get("HOST"));
         hostTextField.setText(cfg.get("HOST"));
         gameIdField.setText(cfg.get("GAME_ID"));

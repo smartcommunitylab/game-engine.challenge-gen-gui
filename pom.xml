@@ -6,11 +6,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>game-engine.challenge-gen-gui</name>
 	<description>challenge generator gui</description>
-	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<gui.mainClass>eu.fbk.das.challenge.gui.gen.ChallengeGeneratorGui</gui.mainClass>
-	</properties>
 
 	<repositories>
 		<repository>

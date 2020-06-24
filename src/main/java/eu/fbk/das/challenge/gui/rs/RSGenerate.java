@@ -145,7 +145,7 @@ e.printStackTrace();
 
     }
 
-    private Map<String, List<ChallengeExpandedDTO>> recommendation() {
+    private void recommendation() {
 
             dbg(logger, "Reading players from game");
 
@@ -156,49 +156,36 @@ e.printStackTrace();
 
             monday = jumpToMonday(date);
 
-            Map<String, List<ChallengeExpandedDTO>> challenges = new HashMap<>();
-
             currentPlayer = 1;
 
             controller.resetChallenges();
 
-            String playerIds = conf.get("PLAYER_IDS");
-            if ("".equals(playerIds)) {
-                controller.totPlayers = controller.playerIds.size();
-                preprocessChallenges(controller.playerIds);
-                // generate for all PlayerStateDTO ids!
-                for (String pId : controller.playerIds) {
-                    addChallenge(date, pId);
-                }
-            } else {
-                // check if given ids exists
-                String[] splited = playerIds.split("\\s+");
-                controller.totPlayers = splited.length;
-                for (String pId : splited)
+            String playerIdsValue = conf.get("PLAYER_IDS");
+            Set<String> pIds = controller.playerIds;
+
+            if (!("".equals(playerIdsValue))) {
+            String[] spl = playerIdsValue.split("\\s+");
+                pIds = new HashSet<>(Arrays.asList(spl));
+            }
+
+            controller.totPlayers = pIds.size();
+            controller.rs.preprocess(pIds);
+            // generate for all player ids
+            for (String pId : pIds) {
+
                     if (!controller.playerIds.contains(pId))
                         throw new IllegalArgumentException(f("Given PlayerStateDTO id %s is nowhere to be found in the game", pId));
 
-                for (String pId : splited) {
-                    addChallenge(date, pId);
+                List<ChallengeExpandedDTO> res = controller.rs.recommend(pId, null, null, null);
+                if (res != null && !res.isEmpty()) {
+                    controller.addChallenges(pId, res);
                 }
+
+                controller.setStatusBar(false, "\rPlayerStateDTO considered: %d / %d", currentPlayer++, controller.totPlayers);
+
             }
 
-            return challenges;
         }
-
-    private void preprocessChallenges(Set<String> playerIds) {
-        controller.rs.preprocess(playerIds);
-    }
-
-    private void addChallenge(DateTime date, String pId) {
-
-        List<ChallengeExpandedDTO> res = controller.rs.recommend(pId, null, null, null);
-        if (res != null && !res.isEmpty()) {
-            controller.addChallenges(pId, res);
-        }
-
-        controller.setStatusBar(false, "\rPlayerStateDTO considered: %d / %d", currentPlayer++, controller.totPlayers);
-    }
 
 /*
     private void saveChallanges(Map<String, List<ChallengeExpandedDTO>> res) {

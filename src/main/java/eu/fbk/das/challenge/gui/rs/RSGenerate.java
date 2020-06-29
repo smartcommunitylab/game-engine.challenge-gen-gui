@@ -1,5 +1,6 @@
 package eu.fbk.das.challenge.gui.rs;
 
+import eu.fbk.das.api.exec.RecommenderSystemWeekly;
 import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
 
@@ -170,13 +171,16 @@ e.printStackTrace();
 
             controller.totPlayers = pIds.size();
             controller.rs.preprocess(pIds);
+
+        RecommenderSystemWeekly rsw = new RecommenderSystemWeekly();
+
             // generate for all player ids
             for (String pId : pIds) {
-
                     if (!controller.playerIds.contains(pId))
                         throw new IllegalArgumentException(f("Given PlayerStateDTO id %s is nowhere to be found in the game", pId));
 
-                List<ChallengeExpandedDTO> res = controller.rs.recommend(pId, null, null, null);
+                List<ChallengeExpandedDTO> res = rsw.go(pId);
+
                 if (res != null && !res.isEmpty()) {
                     controller.addChallenges(pId, res);
                 }

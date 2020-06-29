@@ -8,6 +8,7 @@ import eu.fbk.das.rs.utils.Utils;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
 
 import eu.fbk.das.old.ChallengeRules;
+
 import it.smartcommunitylab.model.PlayerStateDTO;
 import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;

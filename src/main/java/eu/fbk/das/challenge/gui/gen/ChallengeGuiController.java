@@ -2,13 +2,11 @@ package eu.fbk.das.challenge.gui.gen;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
-
 import eu.fbk.das.old.ChallengeRuleRow;
 import eu.fbk.das.old.ChallengeRules;
 import eu.fbk.das.old.ChallengeRulesLoader;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
@@ -28,7 +26,7 @@ import java.util.stream.Collectors;
  */
 public class ChallengeGuiController {
 
-    private static final Logger logger = LogManager
+    private static final Logger logger = Logger
             .getLogger(ChallengeGuiController.class);
 
     private ChallengeGeneratorGui window;

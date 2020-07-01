@@ -2,13 +2,11 @@ package eu.fbk.das.challenge.gui.gen;
 
 import eu.fbk.das.challenge.gui.AboutDialog;
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
-
 import eu.fbk.das.old.ChallengeRuleRow;
 import eu.fbk.das.old.ChallengeRules;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -44,7 +42,7 @@ public class ChallengeGeneratorGui {
 
     private static final String CSV = ".csv";
 
-    private static final Logger logger = LogManager.getLogger(ChallengeGeneratorGui.class);
+    private static final Logger logger = Logger.getLogger(ChallengeGeneratorGui.class);
 
     private static final String[] challengeColNames = {"Name", "Model Name", "Goal Type", "Target",
             "Bonus", "Point type", "Period name", "Period target", "Difficulty",

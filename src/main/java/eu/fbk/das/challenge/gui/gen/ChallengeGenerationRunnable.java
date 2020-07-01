@@ -3,8 +3,7 @@ package eu.fbk.das.challenge.gui.gen;
 import com.google.common.base.Throwables;
 import eu.fbk.das.old.ChallengeGeneratorTool;
 import eu.fbk.das.old.ChallengeRules;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
 
@@ -13,7 +12,7 @@ import java.util.Date;
  */
 public class ChallengeGenerationRunnable implements Runnable {
 
-    private static final Logger logger = LogManager
+    private static final Logger logger = Logger
             .getLogger(ChallengeGenerationRunnable.class);
 
     private ChallengeGuiController controller;

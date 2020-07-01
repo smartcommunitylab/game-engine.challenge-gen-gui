@@ -1,8 +1,6 @@
 package eu.fbk.das.challenge.gui.rs;
 
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import java.util.Vector;
 
 class ChallengeModel extends DefaultTableModel {
 

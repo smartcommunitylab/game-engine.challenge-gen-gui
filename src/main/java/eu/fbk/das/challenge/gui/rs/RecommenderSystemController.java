@@ -1,37 +1,31 @@
 package eu.fbk.das.challenge.gui.rs;
 
+import eu.fbk.das.GamificationEngineRestFacade;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;
 import eu.fbk.das.model.ChallengeExpandedDTO;
-import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
-
-import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
-import eu.fbk.das.rs.utils.ArrayUtils;
-
-
-
-import eu.fbk.das.GamificationEngineRestFacade;
-
-
 import eu.fbk.das.old.ChallengeRules;
 import eu.fbk.das.old.ChallengeRulesLoader;
+import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
+import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
+import eu.fbk.das.rs.utils.ArrayUtils;
 import it.smartcommunitylab.model.PlayerStateDTO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static eu.fbk.das.rs.utils.Utils.*;
 import static eu.fbk.das.rs.challenges.evaluation.ChallengeAnalyzer.an;
+import static eu.fbk.das.rs.utils.Utils.f;
+import static eu.fbk.das.rs.utils.Utils.p;
 
 /**
  * Controller class for RecommenderSystemGui
  */
 class RecommenderSystemController {
 
-    private static final Logger logger = LogManager
+    private static final Logger logger = Logger
             .getLogger(RecommenderSystemController.class);
     protected final RecommenderSystemAnalyzer rsa;
     public final RecommendationSystemConfig cfg;

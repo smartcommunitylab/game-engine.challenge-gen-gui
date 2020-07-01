@@ -2,21 +2,18 @@ package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.model.ChallengeExpandedDTO;
+import eu.fbk.das.old.ChallengeRules;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
+import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
 import eu.fbk.das.rs.utils.Pair;
 import eu.fbk.das.rs.utils.Utils;
-import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
-
-import eu.fbk.das.old.ChallengeRules;
-
 import it.smartcommunitylab.model.PlayerStateDTO;
 import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;
 import it.smartcommunitylab.model.ext.PlayerLevel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -45,8 +42,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 import static eu.fbk.das.rs.utils.Utils.*;
@@ -55,7 +52,7 @@ public class RecommenderSystemGui {
 
     private static final String CSV = ".csv";
 
-    private static final Logger logger = LogManager.getLogger(RecommenderSystemGui.class);
+    private static final Logger logger = Logger.getLogger(RecommenderSystemGui.class);
 
     private static final String LAST_USED_FOLDER = "LAST_USED_FOLDER";
 

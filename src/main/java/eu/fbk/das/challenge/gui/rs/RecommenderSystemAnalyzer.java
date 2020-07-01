@@ -1,11 +1,8 @@
 package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.model.ChallengeExpandedDTO;
-import eu.fbk.das.rs.utils.PolynomialRegression;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
-
-
-import eu.trentorise.game.model.Game;
+import eu.fbk.das.rs.utils.PolynomialRegression;
 import it.smartcommunitylab.model.PlayerStateDTO;
 import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;

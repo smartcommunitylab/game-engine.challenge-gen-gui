@@ -1,15 +1,13 @@
 package eu.fbk.das.challenge.gui.rs;
 
+import eu.fbk.das.GamificationEngineRestFacade;
 import eu.fbk.das.api.exec.RecommenderSystemWeekly;
 import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.rs.challenges.evaluation.ChallengeDataGuru;
-
-import eu.fbk.das.GamificationEngineRestFacade;
 import it.smartcommunitylab.model.PlayerStateDTO;
 import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import javax.swing.*;
@@ -29,7 +27,7 @@ public class RSGenerate  extends SwingWorker<String, Object> {
 
     private String fileName;
 
-    private static final Logger logger = LogManager.getLogger(RSGenerate.class);
+    private static final Logger logger = Logger.getLogger(RSGenerate.class);
     private final GamificationEngineRestFacade facade;
 
     private RecommenderSystemController controller;

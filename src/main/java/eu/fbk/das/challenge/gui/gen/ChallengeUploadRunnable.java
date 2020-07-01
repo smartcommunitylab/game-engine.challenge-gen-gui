@@ -1,16 +1,14 @@
 package eu.fbk.das.challenge.gui.gen;
 
 import eu.fbk.das.old.UploaderTool;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 /**
  * {@link Runnable} class for challenge upload into GamificationEngine
  */
 public class ChallengeUploadRunnable implements Runnable {
 
-    private static final Logger logger = LogManager
-            .getLogger(ChallengeUploadRunnable.class);
+    final static Logger logger = Logger.getLogger(ChallengeUploadRunnable.class);
 
     private ChallengeGuiController controller;
     private String host;

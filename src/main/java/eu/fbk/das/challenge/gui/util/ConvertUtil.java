@@ -4,7 +4,6 @@ import eu.fbk.das.challenge.gui.gen.ChallengeReport;
 import eu.fbk.das.old.ChallengeRuleRow;
 import eu.fbk.das.old.ChallengeRules;
 
-
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.List;

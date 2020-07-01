@@ -1,16 +1,15 @@
 package eu.fbk.das.challenge.gui.rs;
 
-import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.GamificationEngineRestFacade;
-
+import eu.fbk.das.model.ChallengeExpandedDTO;
 import it.smartcommunitylab.model.ChallengeConcept;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static eu.fbk.das.rs.utils.Utils.*;
 
@@ -20,7 +19,7 @@ import static eu.fbk.das.rs.utils.Utils.*;
  */
 public class RSUploader extends SwingWorker<String, Object> {
 
-    private static final Logger logger = LogManager
+    private static final Logger logger = Logger
             .getLogger(RSUploader.class);
 
     private final Map<String, String> conf;

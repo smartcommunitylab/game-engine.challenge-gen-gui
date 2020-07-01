@@ -270,6 +270,8 @@ class RecommenderSystemController {
             setFacade(new GamificationEngineRestFacade(host, user, String.valueOf(pass)));
 
             playerIds = getPlayerList();
+            if (playerIds == null)
+                return false;
 
             String msg = "Connection parameters to gamification engine are ok";
             window.setStatusBar(msg, false);

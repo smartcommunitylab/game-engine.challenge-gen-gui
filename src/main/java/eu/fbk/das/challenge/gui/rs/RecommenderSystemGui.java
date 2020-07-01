@@ -1486,6 +1486,9 @@ public class RecommenderSystemGui {
             boolean valid = controller.checkFacade(hostTextField.getText(), userTextField.getText(),
                     passwordTextField.getPassword(), gameIdField.getText());
 
+            if (!valid)
+                return;
+
             /*
             boolean valid = controller.checkHost(hostTextField.getText(), userTextField.getText(),
             passwordTextField.getPassword(), gameIdField.getText());

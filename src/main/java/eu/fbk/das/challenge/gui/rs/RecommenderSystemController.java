@@ -19,6 +19,7 @@ import java.util.*;
 import static eu.fbk.das.rs.challenges.evaluation.ChallengeAnalyzer.an;
 import static eu.fbk.das.rs.utils.Utils.f;
 import static eu.fbk.das.rs.utils.Utils.p;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * Controller class for RecommenderSystemGui
@@ -264,8 +265,10 @@ class RecommenderSystemController {
             setFacade(new GamificationEngineRestFacade(host, user, String.valueOf(pass)));
 
             playerIds = getPlayerList();
-            if (playerIds == null)
+            if (playerIds == null) {
+                showMessageDialog(null, "Could not connect - check logs for detail");
                 return false;
+            }
 
             String msg = "Connection parameters to gamification engine are ok";
             window.setStatusBar(msg, false);
@@ -282,6 +285,7 @@ class RecommenderSystemController {
             window.setStatusBar(msg, true);
             logger.warn(msg);
             addLog(msg);
+
         }
 
         return false;
@@ -302,7 +306,7 @@ class RecommenderSystemController {
 
     public void newError(String format, Object... args) {
         String msg = String.format(format, args);
-        JOptionPane.showMessageDialog(window.app, msg,
+        showMessageDialog(window.app, msg,
                 "Failure", JOptionPane.ERROR_MESSAGE);
         setStatusBar(true, msg);
     }
@@ -312,7 +316,7 @@ class RecommenderSystemController {
     }
 
     public void newMessage(String msg) {
-        JOptionPane.showMessageDialog(window.app, msg,
+        showMessageDialog(window.app, msg,
                 "Dialog", JOptionPane.INFORMATION_MESSAGE);
         addLog(msg);
     }

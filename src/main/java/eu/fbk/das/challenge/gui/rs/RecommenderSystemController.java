@@ -193,12 +193,12 @@ class RecommenderSystemController {
 
     private Map<String, String> prepareConf() {
         Map<String, String> conf = new HashMap<>();
-        conf.put("HOST", window.getHost());
-        conf.put("GAME_ID", window.getGameId());
-        conf.put("USERNAME", window.getUser());
-        conf.put("PASSWORD", window.getPassword());
-        conf.put("DATE", window.getTextDate());
-        conf.put("PLAYER_IDS", window.getPlayerIds());
+        conf.put("host", window.getHost());
+        conf.put("gameId", window.getGameId());
+        conf.put("user", window.getUser());
+        conf.put("pass", window.getPassword());
+        conf.put("date", window.getTextDate());
+        conf.put("playerIds", window.getPlayerIds());
         conf.put("OUTPUT", OUTPUT);
         return conf;
     }
@@ -255,18 +255,17 @@ class RecommenderSystemController {
         new RSUploader(this, prepareConf(), "output.json").execute();
     }
 
-    Set<String> getPlayerList() {
+    Set<String> getPlayerList(String gameId) {
         // p(facade);
-        return facade.getGamePlayers(window.getGameId());
+        return facade.getGamePlayers(gameId);
     }
 
     boolean checkFacade(String host, String user, char[] pass, String gameId) {
         try {
             setFacade(new GamificationEngineRestFacade(host, user, String.valueOf(pass)));
 
-            playerIds = getPlayerList();
+            playerIds = getPlayerList(gameId);
             if (playerIds == null) {
-                showMessageDialog(null, "Could not connect - check logs for detail");
                 return false;
             }
 

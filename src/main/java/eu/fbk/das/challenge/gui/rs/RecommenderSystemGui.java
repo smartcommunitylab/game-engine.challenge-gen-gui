@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.prefs.Preferences;
 
 import static eu.fbk.das.rs.utils.Utils.*;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class RecommenderSystemGui {
 
@@ -910,18 +911,20 @@ public class RecommenderSystemGui {
         JPopupMenu popupMenu_1 = new JPopupMenu();
         addPopup(logList, popupMenu_1);
 
-        JMenuItem mntmSaveLog = new JMenuItem("save log");
-        Action saveAction = new SaveLogAction();
-        mntmSaveLog.setAction(saveAction);
-        popupMenu_1.add(mntmSaveLog);
-
         app.getContentPane().add(panel);
 
         JMenuBar menuBar = new JMenuBar();
         panel.add(menuBar, BorderLayout.NORTH);
 
+
+        /*
         JMenu mnNewMenu = new JMenu("File");
         menuBar.add(mnNewMenu);
+
+        JMenuItem mntmSaveLog = new JMenuItem("save log");
+        Action saveAction = new SaveLogAction();
+        mntmSaveLog.setAction(saveAction);
+        popupMenu_1.add(mntmSaveLog);
 
         JMenuItem mntmNewMenuItem = new JMenuItem("New");
         mntmNewMenuItem.addMouseListener(new MouseAdapter() {
@@ -933,12 +936,12 @@ public class RecommenderSystemGui {
         mnNewMenu.add(mntmNewMenuItem);
 
         JMenuItem mntmOpenMenuItem = new JMenuItem("Open");
-        /*mntmOpenMenuItem.addMouseListener(new MouseAdapter() {
+        mntmOpenMenuItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 OpenEvent();
             }
-        }); */
+        });
         mnNewMenu.add(mntmOpenMenuItem);
 
         JMenuItem mntmSaveMenuItem = new JMenuItem("Save");
@@ -960,6 +963,8 @@ public class RecommenderSystemGui {
         });
         mnNewMenu.add(mntmNewMenuItem_3);
 
+        */
+
         JMenu mnChallenges = new JMenu("Challenges");
         menuBar.add(mnChallenges);
 
@@ -973,6 +978,7 @@ public class RecommenderSystemGui {
         mntmUpload.setAction(new UploadAction());
         mnChallenges.add(mntmUpload);
 
+        /*
         JMenu mnHelp = new JMenu("Help");
         menuBar.add(mnHelp);
 
@@ -986,14 +992,14 @@ public class RecommenderSystemGui {
         mntmPlayerList.setEnabled(false);
         mnHelp.add(mntmPlayerList);
 
-        /*
+
         JMenuItem mntmAbout = new JMenuItem("About");
         Action aboutAction = new AboutAction();
         mntmAbout.setAction(aboutAction);
         mnHelp.add(mntmAbout);
         */
     }
-
+/*
     private void PlayerListEvent() {
         Set<String> pIds = controller.getPlayerList();
         String msg = f("List of PlayerStateDTO ids (%d): %s", pIds.size(), String.join(", ", pIds));
@@ -1483,8 +1489,10 @@ public class RecommenderSystemGui {
             boolean valid = controller.checkFacade(hostTextField.getText(), userTextField.getText(),
                     passwordTextField.getPassword(), gameIdField.getText());
 
-            if (!valid)
+            if (!valid) {
+                showMessageDialog(null, "Could not connect - check logs for detail");
                 return;
+            }
 
             /*
             boolean valid = controller.checkHost(hostTextField.getText(), userTextField.getText(),
@@ -1496,7 +1504,7 @@ public class RecommenderSystemGui {
 
                     window.enableGenerate(valid);
                     // window.enableUpload(valid);
-            mntmPlayerList.setEnabled(valid);
+            // mntmPlayerList.setEnabled(valid);
 
 
 

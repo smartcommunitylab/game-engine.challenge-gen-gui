@@ -83,7 +83,7 @@ e.printStackTrace();
         Map<String, Integer> completed =  new HashMap<>();
 
         for (String pId : controller.playerIds) {
-            PlayerStateDTO player = facade.getPlayerState(conf.get("GAME_ID"), pId);
+            PlayerStateDTO player = facade.getPlayerState(conf.get("gameId"), pId);
 
             // p(player.getState());
 
@@ -148,9 +148,9 @@ e.printStackTrace();
 
             dbg(logger, "Reading players from game");
 
-            DateTime date = stringToDate(conf.get("DATE"));
+            DateTime date = stringToDate(conf.get("date"));
             if (date == null) {
-                err(logger, "Invalid date! %s", conf.get("DATE"));
+                err(logger, "Invalid date! %s", conf.get("date"));
             }
 
             monday = jumpToMonday(date);
@@ -159,7 +159,7 @@ e.printStackTrace();
 
             controller.resetChallenges();
 
-            String playerIdsValue = conf.get("PLAYER_IDS");
+            String playerIdsValue = conf.get("playerIds");
             Set<String> pIds = controller.playerIds;
 
             if (!("".equals(playerIdsValue))) {
@@ -177,7 +177,7 @@ e.printStackTrace();
                     if (!controller.playerIds.contains(pId))
                         throw new IllegalArgumentException(f("Given PlayerStateDTO id %s is nowhere to be found in the game", pId));
 
-                List<ChallengeExpandedDTO> res = rsw.go(pId);
+                List<ChallengeExpandedDTO> res = rsw.go(conf, pId);
 
                 if (res != null && !res.isEmpty()) {
                     controller.addChallenges(pId, res);
@@ -199,7 +199,7 @@ e.printStackTrace();
 
             // TO REMOVE
 
-            crg.setChallenges(res, conf.get("GAME_ID"));
+            crg.setChallenges(res, conf.get("gameId"));
 
             crg.writeChallengesToFile();
 

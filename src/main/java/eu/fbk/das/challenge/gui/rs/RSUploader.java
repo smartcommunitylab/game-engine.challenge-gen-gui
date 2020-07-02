@@ -1,6 +1,7 @@
 package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.GamificationEngineRestFacade;
+import eu.fbk.das.api.exec.RecommenderSystemWeekly;
 import eu.fbk.das.model.ChallengeExpandedDTO;
 import it.smartcommunitylab.model.ChallengeConcept;
 import org.apache.log4j.Logger;
@@ -48,10 +49,10 @@ public class RSUploader extends SwingWorker<String, Object> {
 
         challenges = controller.challenges;
 
-        gameId = conf.get("GAME_ID");
-        DateTime date = stringToDate(conf.get("DATE"));
+        gameId = conf.get("gameId");
+        DateTime date = stringToDate(conf.get("date"));
         if (date == null) {
-            err(logger, "Invalid date! %s", conf.get("DATE"));
+            err(logger, "Invalid date! %s", conf.get("date"));
         }
 
         monday = jumpToMonday(date);
@@ -97,6 +98,8 @@ public class RSUploader extends SwingWorker<String, Object> {
 
         boolean success;
 
+        RecommenderSystemWeekly rsw = new RecommenderSystemWeekly();
+
         for (String playerId : challenges.keySet()) {
 
             List<ChallengeExpandedDTO> lcha = challenges.get(playerId);
@@ -125,7 +128,7 @@ public class RSUploader extends SwingWorker<String, Object> {
 
                 controller.setStatusBar(false, "Inserting challenge: %d / %d - %s\n", ++ix, tot, cha.getInstanceName());
 
-                success = facade.assignChallengeToPlayer(cha, gameId, playerId);
+                success = rsw.upload(conf, cha);
 
                 if (!success) {
                     controller.addLog("ERROR", cha.getInstanceName());

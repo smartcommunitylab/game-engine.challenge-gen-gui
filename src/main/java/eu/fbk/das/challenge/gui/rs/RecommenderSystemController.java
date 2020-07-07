@@ -191,7 +191,7 @@ class RecommenderSystemController {
         new RSGenerate(this, prepareConf()).execute();
     }
 
-    private Map<String, String> prepareConf() {
+    protected Map<String, String> prepareConf() {
         Map<String, String> conf = new HashMap<>();
         conf.put("host", window.getHost());
         conf.put("gameId", window.getGameId());
@@ -252,7 +252,8 @@ class RecommenderSystemController {
     void upload() {
         window.setStatusBar("Challenge upload in progress", false);
 
-        new RSUploader(this, prepareConf(), "output.json").execute();
+        RSUploader up = new RSUploader(this, prepareConf(), "output.json");
+        up.execute();
     }
 
     Set<String> getPlayerList(String gameId) {
@@ -357,6 +358,7 @@ class RecommenderSystemController {
                 window.addChallenges(res);
             });
         }
+
     }
 
     public PlayerStateDTO getPlayer(String pId) {

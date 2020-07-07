@@ -43,7 +43,7 @@ public class RSGenerate  extends SwingWorker<String, Object> {
 
         this.facade = controller.getFacade();
 
-        cdg = new ChallengeDataGuru(controller.rs);
+        cdg = new ChallengeDataGuru(controller.prepareConf());
     }
 
     @Override
@@ -160,20 +160,19 @@ e.printStackTrace();
             controller.resetChallenges();
 
             String playerIdsValue = conf.get("playerIds");
-            Set<String> pIds = controller.playerIds;
 
             if (!("".equals(playerIdsValue))) {
             String[] spl = playerIdsValue.split("\\s+");
-                pIds = new HashSet<>(Arrays.asList(spl));
+                controller.playerIds = new HashSet<>(Arrays.asList(spl));
             }
 
-            controller.totPlayers = pIds.size();
-            controller.rs.preprocess(pIds);
+            controller.totPlayers = controller.playerIds.size();
+            controller.rs.preprocess(controller.playerIds);
 
         RecommenderSystemWeekly rsw = new RecommenderSystemWeekly();
 
             // generate for all player ids
-            for (String pId : pIds) {
+            for (String pId : controller.playerIds) {
                     if (!controller.playerIds.contains(pId))
                         throw new IllegalArgumentException(f("Given PlayerStateDTO id %s is nowhere to be found in the game", pId));
 

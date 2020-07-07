@@ -47,6 +47,8 @@ public class RSUploader extends SwingWorker<String, Object> {
     @Override
     public String doInBackground() {
 
+        p("Start upload");
+
         challenges = controller.challenges;
 
         gameId = conf.get("gameId");
@@ -94,7 +96,7 @@ public class RSUploader extends SwingWorker<String, Object> {
 
         // int tot = 0;
 
-        controller.addLog("Read challenges: %d", controller.challenges.size());
+        // controller.addLog("Read challenges: %d", controller.challenges.size());
 
         boolean success;
 

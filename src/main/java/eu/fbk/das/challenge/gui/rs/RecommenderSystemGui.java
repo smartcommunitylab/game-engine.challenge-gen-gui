@@ -849,7 +849,7 @@ public class RecommenderSystemGui {
         c.gridx = ix++;
         configurationPanel.add(dateField, c);
 
-        Label playerIdsLabel = new Label("PlayerStateDTO Ids");
+        Label playerIdsLabel = new Label("Player Ids");
         c.gridx = ix++;
         configurationPanel.add(playerIdsLabel, c);
 
@@ -1190,10 +1190,14 @@ public class RecommenderSystemGui {
             }
         }
 
-    private void refresh() {
-        app.getContentPane().validate();
-        app.getContentPane().repaint();
-    }
+    protected synchronized void refresh() {
+                // SwingUtilities.updateComponentTreeUI(app);
+                //  app.invalidate();
+                app.revalidate();
+                app.repaint();
+        //p(new Date().getTime());
+        }
+
 
     void setStatusBar(String text, boolean error) {
         if (error) {

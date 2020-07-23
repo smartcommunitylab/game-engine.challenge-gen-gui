@@ -3,7 +3,7 @@ package eu.fbk.das.challenge.gui.rs;
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.old.ChallengeRules;
-import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
+import eu.fbk.das.GamificationConfig;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
 import eu.fbk.das.rs.utils.Pair;
 import eu.fbk.das.rs.utils.Utils;
@@ -35,7 +35,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -1080,10 +1079,10 @@ public class RecommenderSystemGui {
 
     private void loadConf() {
 
-        RecommendationSystemConfig cfg = controller.cfg;
+        HashMap<String, String> cfg = controller.cfg;
         p(cfg.get("HOST"));
         hostTextField.setText(cfg.get("HOST"));
-        gameIdField.setText(cfg.get("GAME_ID"));
+        gameIdField.setText(cfg.get("GAMEID"));
         userTextField.setText(cfg.get("USERNAME"));
         passwordTextField.setText(cfg.get("PASSWORD"));
 

@@ -6,7 +6,7 @@ import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.old.ChallengeRules;
 import eu.fbk.das.old.ChallengeRulesLoader;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
-import eu.fbk.das.rs.challenges.generation.RecommendationSystemConfig;
+import eu.fbk.das.GamificationConfig;
 import eu.fbk.das.rs.utils.ArrayUtils;
 import it.smartcommunitylab.model.PlayerStateDTO;
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ class RecommenderSystemController {
     private static final Logger logger = Logger
             .getLogger(RecommenderSystemController.class);
     protected final RecommenderSystemAnalyzer rsa;
-    public final RecommendationSystemConfig cfg;
+    public final HashMap<String, String> cfg;
 
     public int totPlayers;
 
@@ -50,7 +50,7 @@ class RecommenderSystemController {
     int[] order = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     RecommenderSystemController() {
-        cfg = new RecommendationSystemConfig();
+        cfg = new GamificationConfig(true).extract();
         rs = new RecommendationSystem(cfg);
         rsa = new RecommenderSystemAnalyzer(rs);
 

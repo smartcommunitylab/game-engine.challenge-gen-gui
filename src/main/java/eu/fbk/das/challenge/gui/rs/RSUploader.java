@@ -51,7 +51,7 @@ public class RSUploader extends SwingWorker<String, Object> {
 
         challenges = controller.challenges;
 
-        gameId = conf.get("gameId");
+        gameId = conf.get("GAMEID");
         DateTime date = stringToDate(conf.get("date"));
         if (date == null) {
             err(logger, "Invalid date! %s", conf.get("date"));

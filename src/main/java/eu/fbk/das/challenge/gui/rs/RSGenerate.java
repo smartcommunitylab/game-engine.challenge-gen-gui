@@ -83,7 +83,7 @@ e.printStackTrace();
         Map<String, Integer> completed =  new HashMap<>();
 
         for (String pId : controller.playerIds) {
-            PlayerStateDTO player = facade.getPlayerState(conf.get("gameId"), pId);
+            PlayerStateDTO player = facade.getPlayerState(conf.get("GAMEID"), pId);
 
             // p(player.getState());
 
@@ -198,7 +198,7 @@ e.printStackTrace();
 
             // TO REMOVE
 
-            crg.setChallenges(res, conf.get("gameId"));
+            crg.setChallenges(res, conf.get("GAMEID"));
 
             crg.writeChallengesToFile();
 

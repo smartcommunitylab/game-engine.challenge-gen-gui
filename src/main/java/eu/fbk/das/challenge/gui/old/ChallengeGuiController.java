@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui.gen;
+package eu.fbk.das.challenge.gui.old;
 
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.challenge.gui.util.PropertiesUtil;

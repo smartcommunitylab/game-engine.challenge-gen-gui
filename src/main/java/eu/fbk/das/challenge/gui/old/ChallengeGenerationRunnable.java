@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui.gen;
+package eu.fbk.das.challenge.gui.old;
 
 import com.google.common.base.Throwables;
 import eu.fbk.das.old.ChallengeGeneratorTool;

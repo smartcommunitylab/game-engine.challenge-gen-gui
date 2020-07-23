@@ -1,6 +1,6 @@
 package eu.fbk.das.challenge.gui.util;
 
-import eu.fbk.das.challenge.gui.gen.ChallengeReport;
+import eu.fbk.das.challenge.gui.old.ChallengeReport;
 import eu.fbk.das.old.ChallengeRuleRow;
 import eu.fbk.das.old.ChallengeRules;
 

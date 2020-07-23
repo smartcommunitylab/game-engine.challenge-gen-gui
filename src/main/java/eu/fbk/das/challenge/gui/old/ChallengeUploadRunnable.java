@@ -1,4 +1,4 @@
-package eu.fbk.das.challenge.gui.gen;
+package eu.fbk.das.challenge.gui.old;
 
 import eu.fbk.das.old.UploaderTool;
 import org.apache.log4j.Logger;

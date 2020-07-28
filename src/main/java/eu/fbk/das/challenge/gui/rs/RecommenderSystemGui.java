@@ -3,10 +3,9 @@ package eu.fbk.das.challenge.gui.rs;
 import eu.fbk.das.challenge.gui.util.ConvertUtil;
 import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.old.ChallengeRules;
-import eu.fbk.das.GamificationConfig;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystemStatistics;
-import eu.fbk.das.rs.utils.Pair;
-import eu.fbk.das.rs.utils.Utils;
+import eu.fbk.das.utils.Pair;
+import eu.fbk.das.utils.Utils;
 import it.smartcommunitylab.model.PlayerStateDTO;
 import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;
@@ -45,7 +44,7 @@ import java.util.List;
 import java.util.*;
 import java.util.prefs.Preferences;
 
-import static eu.fbk.das.rs.utils.Utils.*;
+import static eu.fbk.das.utils.Utils.*;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class RecommenderSystemGui {
@@ -1083,8 +1082,8 @@ public class RecommenderSystemGui {
         p(cfg.get("HOST"));
         hostTextField.setText(cfg.get("HOST"));
         gameIdField.setText(cfg.get("GAMEID"));
-        userTextField.setText(cfg.get("USERNAME"));
-        passwordTextField.setText(cfg.get("PASSWORD"));
+        userTextField.setText(cfg.get("USER"));
+        passwordTextField.setText(cfg.get("PASS"));
 
         String date = cfg.get("DATE");
         if (date.equals(""))

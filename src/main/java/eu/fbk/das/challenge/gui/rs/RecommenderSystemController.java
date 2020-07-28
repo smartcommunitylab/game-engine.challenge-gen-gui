@@ -7,7 +7,7 @@ import eu.fbk.das.old.ChallengeRules;
 import eu.fbk.das.old.ChallengeRulesLoader;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
 import eu.fbk.das.GamificationConfig;
-import eu.fbk.das.rs.utils.ArrayUtils;
+import eu.fbk.das.utils.ArrayUtils;
 import it.smartcommunitylab.model.PlayerStateDTO;
 import org.apache.log4j.Logger;
 
@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static eu.fbk.das.rs.challenges.evaluation.ChallengeAnalyzer.an;
-import static eu.fbk.das.rs.utils.Utils.f;
-import static eu.fbk.das.rs.utils.Utils.p;
+import static eu.fbk.das.utils.Utils.f;
+import static eu.fbk.das.utils.Utils.p;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 /**

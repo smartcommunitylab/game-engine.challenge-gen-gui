@@ -2,7 +2,7 @@ package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.model.ChallengeExpandedDTO;
 import eu.fbk.das.rs.challenges.generation.RecommendationSystem;
-import eu.fbk.das.rs.utils.PolynomialRegression;
+import eu.fbk.das.utils.PolynomialRegression;
 import it.smartcommunitylab.model.PlayerStateDTO;
 import it.smartcommunitylab.model.ext.ChallengeConcept;
 import it.smartcommunitylab.model.ext.GameConcept;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static eu.fbk.das.rs.challenges.generation.RecommendationSystem.fixMode;
-import static eu.fbk.das.rs.utils.Utils.*;
+import static eu.fbk.das.utils.Utils.*;
 
 public class RecommenderSystemAnalyzer {
 

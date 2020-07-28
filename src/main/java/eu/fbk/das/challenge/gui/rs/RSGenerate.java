@@ -16,7 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import static eu.fbk.das.rs.utils.Utils.*;
+import static eu.fbk.das.utils.Utils.*;
 
 /**
  * {@link Runnable} class for running challenge generation

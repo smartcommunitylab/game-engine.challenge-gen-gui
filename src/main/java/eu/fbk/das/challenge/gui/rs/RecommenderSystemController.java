@@ -193,10 +193,10 @@ class RecommenderSystemController {
 
     protected Map<String, String> prepareConf() {
         Map<String, String> conf = new HashMap<>();
-        conf.put("host", window.getHost());
-        conf.put("gameId", window.getGameId());
-        conf.put("user", window.getUser());
-        conf.put("pass", window.getPassword());
+        conf.put("HOST", window.getHost());
+        conf.put("GAMEID", window.getGameId());
+        conf.put("USER", window.getUser());
+        conf.put("PASS", window.getPassword());
         conf.put("date", window.getTextDate());
         conf.put("playerIds", window.getPlayerIds());
         conf.put("OUTPUT", OUTPUT);

@@ -150,6 +150,7 @@ public class RSUploader extends SwingWorker<String, Object> {
         List<String> already = new ArrayList<>();
         List<ChallengeConcept> currentChallenges = facade.getChallengesPlayer(gameId, playerId);
         for (ChallengeConcept cha: currentChallenges) {
+            p(cha);
             DateTime existingChaEnd = jumpToMonday(new DateTime(cha.getEnd()));
 
             String s = (String) cha.getName();

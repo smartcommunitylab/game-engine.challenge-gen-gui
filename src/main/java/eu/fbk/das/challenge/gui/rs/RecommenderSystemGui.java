@@ -1086,7 +1086,7 @@ public class RecommenderSystemGui {
         passwordTextField.setText(cfg.get("PASS"));
 
         String date = cfg.get("DATE");
-        if (date.equals(""))
+        if (date == null || date.equals(""))
             date = Utils.printDate(new DateTime());
         dateField.setText(date);
 

@@ -43,7 +43,7 @@ public class RSGenerate  extends SwingWorker<String, Object> {
 
         this.facade = controller.getFacade();
 
-        cdg = new ChallengeDataGuru(controller.prepareConf());
+        cdg = new ChallengeDataGuru(controller.rs);
     }
 
     @Override

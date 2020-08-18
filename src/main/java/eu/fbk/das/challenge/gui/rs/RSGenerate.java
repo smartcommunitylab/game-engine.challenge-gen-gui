@@ -212,7 +212,7 @@ e.printStackTrace();
     }*/
 
     private boolean writeChallengesComplete() {
-        fileName = f("challenges-%s-complete", formatDateTimeFileName(new DateTime()));
+        fileName = f("challenges-%s-complete", conf.get("date"));
 
         try {
             cdg.generate(fileName, controller.challenges, monday, ChallengeModel.challengeColNames);
@@ -227,7 +227,7 @@ e.printStackTrace();
 
     private boolean writeChallengesSimple() {
 
-        fileName = f("challenges-%s.csv", formatDateTimeFileName(new DateTime()));
+        fileName = f("challenges-%s.csv", conf.get("date"));
 
         Map<String, List<ChallengeExpandedDTO>> challenges = controller.challenges;
 

@@ -107,7 +107,7 @@ public class ChallengeGeneratorGui {
         challengeTable = new JTable(null, challengeColNames);
         challengeTable.setDragEnabled(true);
         challengeTable.setDropMode(DropMode.INSERT_ROWS);
-        challengeTable.setTransferHandler(new TableRowTransferHandler(challengeTable));
+        // challengeTable.setTransferHandler(new TableRowTransferHandler(challengeTable));
         challengeTable.setRowHeight(20);
         challengeTable.setModel(new DefaultTableModel(
                 new Object[][]{{"", "", "", "", "", "", "", "", "", "", "", "", null},},

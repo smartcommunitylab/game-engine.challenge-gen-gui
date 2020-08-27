@@ -176,7 +176,7 @@ e.printStackTrace();
                     if (!controller.playerIds.contains(pId))
                         throw new IllegalArgumentException(f("Given PlayerStateDTO id %s is nowhere to be found in the game", pId));
 
-                List<ChallengeExpandedDTO> res = rsw.go(conf, pId);
+                List<ChallengeExpandedDTO> res = rsw.go(conf, pId, null, null);
 
                 if (res != null && !res.isEmpty()) {
                     controller.addChallenges(pId, res);

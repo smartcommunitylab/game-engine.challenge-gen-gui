@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.fbk.das</groupId>
 	<artifactId>game-engine.challenge-gen-gui</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>game-engine.challenge-gen-gui</name>
 	<description>challenge generator gui</description>
 
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>it.smartcommunitylab.gamification</groupId>
 			<artifactId>challenge-gen</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
         <dependency>

@@ -78,7 +78,7 @@ public class TableRowTransferHandler extends TransferHandler {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return false;
     }

@@ -68,7 +68,7 @@ public class RSGenerate  extends SwingWorker<String, Object> {
 
 
         } catch (Exception e) {
-e.printStackTrace();
+            logger.error(e);
             p(e.getMessage());
             controller.newError("Error during challenge generation: %s", e.getMessage());
         }

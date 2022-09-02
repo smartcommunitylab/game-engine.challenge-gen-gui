@@ -1,8 +1,8 @@
 package eu.fbk.das.challenge.gui.rs;
 
 import eu.fbk.das.challenge.gui.util.TableUtil;
+import org.apache.log4j.Logger;
 
-import javax.activation.DataHandler;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -15,6 +15,8 @@ import java.util.Vector;
  */
 public class TableRowTransferHandler extends TransferHandler {
 
+    private static final Logger logger = Logger.getLogger(TableRowTransferHandler.class);
+
     private static final long serialVersionUID = -5005950304881134370L;
 
     private final DataFlavor localObjectFlavor = new DataFlavor(Integer.class,
@@ -25,12 +27,13 @@ public class TableRowTransferHandler extends TransferHandler {
         this.table = table;
     }
 
+    /*
     @Override
     protected Transferable createTransferable(JComponent c) {
         assert (c == table);
         return new DataHandler(new Integer(table.getSelectedRow()),
                 localObjectFlavor.getMimeType());
-    }
+    }*/
 
     @Override
     public boolean canImport(TransferHandler.TransferSupport info) {

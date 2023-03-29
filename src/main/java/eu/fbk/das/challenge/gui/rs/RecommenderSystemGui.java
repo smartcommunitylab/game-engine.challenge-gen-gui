@@ -330,7 +330,7 @@ public class RecommenderSystemGui {
     private void addPredictPanel(ChallengeExpandedDTO found, PlayerStateDTO player, int ix, Container contentPane, GridBagConstraints c) {
 
         XYDataset dataset = controller.rsa.createPredictDataset(found, player, ix);
-        int week = controller.rs.getChallengeWeek(new DateTime(found.getStart()));
+        int week = controller.rs.getChallengeWeek(new DateTime(), new DateTime(found.getStart()));
         ChartPanel predictPanel = createPredictChart(dataset, (String) found.getData("counterName"), week);
 
         c.gridx = ix % 2;
@@ -426,7 +426,7 @@ public class RecommenderSystemGui {
             r.add(printDate(new DateTime(chal.getEnd() )));
             r.add(chal.isCompleted() ? "Succ" : "Fail");
 
-            int wk = controller.rs.getChallengeWeek(new DateTime(chal.getEnd()));
+            int wk = controller.rs.getChallengeWeek(new DateTime(), new DateTime(chal.getEnd()));
             info.put(wk, r);
         }
 

@@ -192,7 +192,7 @@ public class RecommenderSystemAnalyzer {
                 continue;
             String cm = res.get("counterName").toString().toLowerCase().replace("_", " ");
             if (fixMode(cm).equals(fixMode(mode))) {
-                int wk = rs.getChallengeWeek(new DateTime(chal.getStart()));
+                int wk = 1; // rs.getChallengeWeek(new DateTime(), chal.getStart().);
                 double cnt = Double.valueOf(res.get("target").toString());
                 if (chal.isCompleted()) {
                     success_series.add(wk, cnt);
@@ -213,7 +213,7 @@ public class RecommenderSystemAnalyzer {
     private void prepare(ChallengeExpandedDTO cha, PlayerStateDTO player) {
         mode = (String) cha.getData("counterName");
         start = new DateTime(cha.getStart());
-        week = rs.getChallengeWeek(start);
+        week = rs.getChallengeWeek(new DateTime(), start);
 
         getWeeklyData(player);
 
@@ -251,7 +251,7 @@ public class RecommenderSystemAnalyzer {
         String mode = (String) cha.getData("counterName");
 
         DateTime start = new DateTime(cha.getStart());
-        int day = rs.getChallengeDay(start);
+        int day = rs.getChallengeDay(new DateTime(), start);
         DateTime aux = new DateTime();
         XYSeries series = new XYSeries("daily");
         for (int ix = day; ix >= 0 && ix >= day -7; ix--) {
